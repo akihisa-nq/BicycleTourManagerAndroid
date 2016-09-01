@@ -37,6 +37,7 @@ import net.nqlab.btmw.AccessToken;
 import net.nqlab.sample.ServerInfo;
 
 public class MainActivity extends ActionBarActivity {
+	RestAdapter m_adapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,19 +45,11 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         // JSONのパーサー
-        Gson gson = new GsonBuilder()
+        final Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .registerTypeAdapter(Date.class, new DateTypeAdapter())
                 .create();
  
-        // RestAdapterの生成
-        final RestAdapter adapter = new RestAdapter.Builder()
-                .setEndpoint(ServerInfo.URL_BASE)
-                .setConverter(new GsonConverter(gson))
-                .setLogLevel(RestAdapter.LogLevel.FULL)
-                .setLog(new AndroidLog("=NETWORK="))
-                .build();
-
 		// PIN コード取得
 		Uri uri = Uri.parse(
 			ServerInfo.URL_BASE
@@ -78,48 +71,27 @@ public class MainActivity extends ActionBarActivity {
 			.setView(editView)
 			.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int whichButton) {
-					// editView.getText().toString()
-				}
-			})
-			.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-				}
-			})
-			.show();
-        String code = editView.getText().toString();
+					String code = editView.getText().toString();
 
-		// アクセス トークン取得
-		final AccessToken token = adapter.create(LoginApi.class).getAccessToken(
-			"authorization_code",
-			ServerInfo.CLIENT_ID,
-			ServerInfo.CLIENT_SECRET,
-			code,
-			ServerInfo.REDIRECT_URL
-			);
+					// RestAdapterの生成
+					RestAdapter adapter = new RestAdapter.Builder()
+						.setEndpoint(ServerInfo.URL_BASE)
+						.setConverter(new GsonConverter(gson))
+						.setLogLevel(RestAdapter.LogLevel.FULL)
+						.setLog(new AndroidLog("=NETWORK="))
+						.build();
 
-		// 生成しなおし
-        final RestAdapter adapter2 = new RestAdapter.Builder()
-                .setEndpoint(ServerInfo.URL_BASE)
-                .setConverter(new GsonConverter(gson))
-                .setLogLevel(RestAdapter.LogLevel.FULL)
-                .setLog(new AndroidLog("=NETWORK="))
-				.setRequestInterceptor(new RequestInterceptor() {
-						@Override
-						public void intercept(RequestInterceptor.RequestFacade request) {
-							request.addHeader("Authorization", "Bearer " + token.getAccessToken());
-						}
-					})
-                .build();
-
-		// 要求に応じて API 実行
-        Button button = (Button)findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // 非同期処理の実行
-                adapter2.create(ExclusionAreaApi.class).list()
+					// アクセス トークン取得
+					adapter.create(LoginApi.class).getAccessToken(
+							"authorization_code",
+							ServerInfo.CLIENT_ID,
+							ServerInfo.CLIENT_SECRET,
+							code,
+							ServerInfo.REDIRECT_URL
+							)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<ExclusionAreaList>() {
+                        .subscribe(new Observer<AccessToken>() {
                             @Override
                             public void onCompleted() {
                                 Log.d("MainActivity", "onCompleted()");
@@ -131,13 +103,65 @@ public class MainActivity extends ActionBarActivity {
                             }
 
                             @Override
-                            public void onNext(ExclusionAreaList list) {
+                            public void onNext(AccessToken token) {
                                 Log.d("MainActivity", "onNext()");
-                                if (list != null) {
-                                    ((TextView) findViewById(R.id.textView)).setText(list.getExclusionAreas().get(0).getPoint());
+                                if (token != null) {
+									final String accessToken = token.getAccessToken();
+
+									m_adapter = new RestAdapter.Builder()
+										.setEndpoint(ServerInfo.URL_BASE)
+										.setConverter(new GsonConverter(gson))
+										.setLogLevel(RestAdapter.LogLevel.FULL)
+										.setLog(new AndroidLog("=NETWORK="))
+										.setRequestInterceptor(new RequestInterceptor() {
+												@Override
+												public void intercept(RequestInterceptor.RequestFacade request) {
+													request.addHeader("Authorization", "Bearer " + accessToken);
+												}
+											})
+										.build();
                                 }
                             }
                         });
+				}
+			})
+			.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+				}
+			})
+			.show();
+
+		// 要求に応じて API 実行
+        Button button = (Button)findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+				if (m_adapter == null) {
+					return;
+				}
+
+                // 非同期処理の実行
+                m_adapter.create(ExclusionAreaApi.class).list()
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<ExclusionAreaList>() {
+                        @Override
+                        public void onCompleted() {
+                            Log.d("MainActivity", "onCompleted()");
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("MainActivity", "Error : " + e.toString());
+                        }
+
+                        @Override
+                        public void onNext(ExclusionAreaList list) {
+                            Log.d("MainActivity", "onNext()");
+                            if (list != null) {
+                                ((TextView) findViewById(R.id.textView)).setText(list.getExclusionAreas().get(0).getPoint());
+                            }
+                        }
+                    });
             }
         });
     }

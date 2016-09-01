@@ -3,12 +3,13 @@ package net.nqlab.btmw;
 import retrofit.http.POST;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.Field;
- 
+import rx.Observable;
+
 public interface LoginApi {
  
     @FormUrlEncoded
     @POST("/oauth/token")
-    AccessToken getAccessToken(
+    Observable<AccessToken> getAccessToken(
             @Field("grant_type") String grant_type,
             @Field("client_id") String client_id,
             @Field("client_secret") String client_secret,
