@@ -8,6 +8,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.EditText;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -46,7 +49,25 @@ public class MainActivity extends ActionBarActivity {
                 .setLogLevel(RestAdapter.LogLevel.FULL)
                 .setLog(new AndroidLog("=NETWORK="))
                 .build();
- 
+
+		//テキスト入力を受け付けるビューを作成します。
+		final EditText editView = new EditText(MainActivity.this);
+		new AlertDialog.Builder(MainActivity.this)
+			.setIcon(android.R.drawable.ic_dialog_info)
+			.setTitle("テキスト入力ダイアログ")
+			//setViewにてビューを設定します。
+			.setView(editView)
+			.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					// editView.getText().toString()
+				}
+			})
+			.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+				}
+			})
+			.show();
+        // editView.getText().toString()
 
         Button button = (Button)findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
