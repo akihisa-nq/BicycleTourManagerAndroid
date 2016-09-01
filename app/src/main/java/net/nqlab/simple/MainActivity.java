@@ -33,15 +33,6 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button button = (Button)findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // do something when the button is clicked
-                TextView text = (TextView)findViewById(R.id.textView);
-                text.setText("Hello?");
-            }
-        });
-
         // JSONのパーサー
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -49,36 +40,42 @@ public class MainActivity extends ActionBarActivity {
                 .create();
  
         // RestAdapterの生成
-        RestAdapter adapter = new RestAdapter.Builder()
-                .setEndpoint("http://api.openweathermap.org")
+        final RestAdapter adapter = new RestAdapter.Builder()
+                .setEndpoint("http://192.168.42.1:3000/")
                 .setConverter(new GsonConverter(gson))
                 .setLogLevel(RestAdapter.LogLevel.FULL)
                 .setLog(new AndroidLog("=NETWORK="))
                 .build();
  
-        // 非同期処理の実行
-        adapter.create(ExclusionAreaApi.class).list()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<ExclusionAreaList>() {
-                    @Override
-                    public void onCompleted() {
-                        Log.d("MainActivity", "onCompleted()");
-                    }
- 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e("MainActivity", "Error : " + e.toString());
-                    }
- 
-                    @Override
-                    public void onNext(ExclusionAreaList list) {
-                        Log.d("MainActivity", "onNext()");
-                        if (list != null) {
-                            ((TextView) findViewById(R.id.textView)).setText(list.getExclusionAreas().get(0).getPoint());
-                        }
-                    }
-                });
+
+        Button button = (Button)findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // 非同期処理の実行
+                adapter.create(ExclusionAreaApi.class).list()
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<ExclusionAreaList>() {
+                            @Override
+                            public void onCompleted() {
+                                Log.d("MainActivity", "onCompleted()");
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.e("MainActivity", "Error : " + e.toString());
+                            }
+
+                            @Override
+                            public void onNext(ExclusionAreaList list) {
+                                Log.d("MainActivity", "onNext()");
+                                if (list != null) {
+                                    ((TextView) findViewById(R.id.textView)).setText(list.getExclusionAreas().get(0).getPoint());
+                                }
+                            }
+                        });
+            }
+        });
     }
 
     @Override

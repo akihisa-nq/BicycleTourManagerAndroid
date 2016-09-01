@@ -7,7 +7,7 @@ import rx.Observable;
  
 public interface ExclusionAreaApi {
  
-    @GET("/api/exclusion_areas/list")
+    @GET("/api/exclusion_area/list")
     public Observable<ExclusionAreaList> list();
  
 }
