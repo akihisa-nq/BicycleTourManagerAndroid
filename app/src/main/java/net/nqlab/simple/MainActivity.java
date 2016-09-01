@@ -34,17 +34,14 @@ import net.nqlab.btmw.ExclusionAreaList;
 import net.nqlab.btmw.LoginApi;
 import net.nqlab.btmw.AccessToken;
 
+import net.nqlab.sample.ServerInfo;
+
 public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-		final String URL_BASE = "http://192.168.42.1:3000";
-		final String CLIENT_ID = "";
-		final String CLIENT_SECRET = "";
-		final String REDIRECT_URL = "";
 
         // JSONのパーサー
         Gson gson = new GsonBuilder()
@@ -54,7 +51,7 @@ public class MainActivity extends ActionBarActivity {
  
         // RestAdapterの生成
         final RestAdapter adapter = new RestAdapter.Builder()
-                .setEndpoint(URL_BASE)
+                .setEndpoint(ServerInfo.URL_BASE)
                 .setConverter(new GsonConverter(gson))
                 .setLogLevel(RestAdapter.LogLevel.FULL)
                 .setLog(new AndroidLog("=NETWORK="))
@@ -62,13 +59,13 @@ public class MainActivity extends ActionBarActivity {
 
 		// PIN コード取得
 		Uri uri = Uri.parse(
-			URL_BASE
+			ServerInfo.URL_BASE
 				+ "/oauth/authorize?"
-				+ "client_id=" + CLIENT_ID
-				+ "&secret=" + CLIENT_SECRET
-				+ "&redirect_url=" + REDIRECT_URL
-				+ "&code="
-				);
+				+ "client_id=" + ServerInfo.CLIENT_ID
+				+ "&redirect_uri=" + java.net.URLEncoder.encode(ServerInfo.REDIRECT_URL)
+				+ "&response_type=code"
+				+ "&scope="
+			);
 		Intent i = new Intent(Intent.ACTION_VIEW,uri);
 		startActivity(i);
 
@@ -92,18 +89,24 @@ public class MainActivity extends ActionBarActivity {
         String code = editView.getText().toString();
 
 		// アクセス トークン取得
-		final AccessToken token = adapter.create(LoginApi.class).getAccessToken(code);
+		final AccessToken token = adapter.create(LoginApi.class).getAccessToken(
+			"authorization_code",
+			ServerInfo.CLIENT_ID,
+			ServerInfo.CLIENT_SECRET,
+			code,
+			ServerInfo.REDIRECT_URL
+			);
 
 		// 生成しなおし
         final RestAdapter adapter2 = new RestAdapter.Builder()
-                .setEndpoint(URL_BASE)
+                .setEndpoint(ServerInfo.URL_BASE)
                 .setConverter(new GsonConverter(gson))
                 .setLogLevel(RestAdapter.LogLevel.FULL)
                 .setLog(new AndroidLog("=NETWORK="))
 				.setRequestInterceptor(new RequestInterceptor() {
 						@Override
 						public void intercept(RequestInterceptor.RequestFacade request) {
-							request.addHeader("Authorization", token.getAccessToken());
+							request.addHeader("Authorization", "Bearer " + token.getAccessToken());
 						}
 					})
                 .build();
