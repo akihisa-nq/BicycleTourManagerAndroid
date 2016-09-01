@@ -11,6 +11,8 @@ import android.widget.TextView;
 import android.widget.EditText;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -20,6 +22,7 @@ import com.google.gson.internal.bind.DateTypeAdapter;
 import java.util.Date;
  
 import retrofit.RestAdapter;
+import retrofit.RequestInterceptor;
 import retrofit.android.AndroidLog;
 import retrofit.converter.GsonConverter;
 import rx.Observer;
@@ -28,6 +31,8 @@ import rx.schedulers.Schedulers;
 
 import net.nqlab.btmw.ExclusionAreaApi;
 import net.nqlab.btmw.ExclusionAreaList;
+import net.nqlab.btmw.LoginApi;
+import net.nqlab.btmw.AccessToken;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -35,6 +40,11 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+		final String URL_BASE = "http://192.168.42.1:3000";
+		final String CLIENT_ID = "";
+		final String CLIENT_SECRET = "";
+		final String REDIRECT_URL = "";
 
         // JSONのパーサー
         Gson gson = new GsonBuilder()
@@ -44,11 +54,23 @@ public class MainActivity extends ActionBarActivity {
  
         // RestAdapterの生成
         final RestAdapter adapter = new RestAdapter.Builder()
-                .setEndpoint("http://192.168.42.1:3000/")
+                .setEndpoint(URL_BASE)
                 .setConverter(new GsonConverter(gson))
                 .setLogLevel(RestAdapter.LogLevel.FULL)
                 .setLog(new AndroidLog("=NETWORK="))
                 .build();
+
+		// PIN コード取得
+		Uri uri = Uri.parse(
+			URL_BASE
+				+ "/oauth/authorize?"
+				+ "client_id=" + CLIENT_ID
+				+ "&secret=" + CLIENT_SECRET
+				+ "&redirect_url=" + REDIRECT_URL
+				+ "&code="
+				);
+		Intent i = new Intent(Intent.ACTION_VIEW,uri);
+		startActivity(i);
 
 		//テキスト入力を受け付けるビューを作成します。
 		final EditText editView = new EditText(MainActivity.this);
@@ -67,13 +89,31 @@ public class MainActivity extends ActionBarActivity {
 				}
 			})
 			.show();
-        // editView.getText().toString()
+        String code = editView.getText().toString();
 
+		// アクセス トークン取得
+		final AccessToken token = adapter.create(LoginApi.class).getAccessToken(code);
+
+		// 生成しなおし
+        final RestAdapter adapter2 = new RestAdapter.Builder()
+                .setEndpoint(URL_BASE)
+                .setConverter(new GsonConverter(gson))
+                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setLog(new AndroidLog("=NETWORK="))
+				.setRequestInterceptor(new RequestInterceptor() {
+						@Override
+						public void intercept(RequestInterceptor.RequestFacade request) {
+							request.addHeader("Authorization", token.getAccessToken());
+						}
+					})
+                .build();
+
+		// 要求に応じて API 実行
         Button button = (Button)findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // 非同期処理の実行
-                adapter.create(ExclusionAreaApi.class).list()
+                adapter2.create(ExclusionAreaApi.class).list()
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<ExclusionAreaList>() {
