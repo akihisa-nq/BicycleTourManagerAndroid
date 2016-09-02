@@ -34,7 +34,7 @@ import net.nqlab.btmw.ExclusionAreaList;
 import net.nqlab.btmw.LoginApi;
 import net.nqlab.btmw.AccessToken;
 
-import net.nqlab.sample.ServerInfo;
+import net.nqlab.simple.ServerInfo;
 
 public class MainActivity extends ActionBarActivity {
 	RestAdapter m_adapter = null;
