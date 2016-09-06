@@ -30,34 +30,49 @@ public class BtmwApi {
     private RestAdapter mAdapter = null;
     private SecureSaveData mSecureSaveData;
     private SaveData mSaveData;
+    private String mAccessToken;
+	private Gson mGson;
 
     public BtmwApi(SecureSaveData secureSaveData, SaveData saveData) {
+        mGson = new GsonBuilder()
+            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+            .registerTypeAdapter(Date.class, new DateTypeAdapter())
+            .create();
         mSecureSaveData = secureSaveData;
         mSaveData = saveData;
     }
 
-    private void createSession(String token)
+    private boolean createSession(String token)
     {
-        final String accessToken = token;
-
-        // JSONのパーサー
-        final Gson gson = new GsonBuilder()
-            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-            .registerTypeAdapter(Date.class, new DateTypeAdapter())
-            .create();
+        mAccessToken = token;
 
         mAdapter = new RestAdapter.Builder()
             .setEndpoint(ServerInfo.URL_BASE)
-            .setConverter(new GsonConverter(gson))
+            .setConverter(new GsonConverter(mGson))
             .setLogLevel(RestAdapter.LogLevel.FULL)
             .setLog(new AndroidLog("=NETWORK="))
             .setRequestInterceptor(new RequestInterceptor() {
                     @Override
                     public void intercept(RequestInterceptor.RequestFacade request) {
-                        request.addHeader("Authorization", "Bearer " + accessToken);
+                        request.addHeader("Authorization", "Bearer " + mAccessToken);
                     }
                 })
             .build();
+
+        try {
+            ExclusionAreaList list = getExclusionAreaApi().list().toBlocking().first();
+            if (list == null) {
+				mAdapter = null;
+				mAccessToken = null;
+                return false;
+            }
+        } catch (Exception e) {
+			mAdapter = null;
+			mAccessToken = null;
+            return false;
+        }
+
+		return true;
     }
 
     public boolean restoreSession()
@@ -72,24 +87,14 @@ public class BtmwApi {
             return false;
         }
 
-        createSession(token);
-
-        try {
-            ExclusionAreaList list = getExclusionAreaApi().list().toBlocking().first();
-            if (list == null) {
-                return false;
-            }
-        } catch (Exception e) {
-            return false;
-        }
-
-        return true;
+        return createSession(token);
     }
 
     public void login(String code) {
         // RestAdapterの生成
         RestAdapter adapter = new RestAdapter.Builder()
             .setEndpoint(ServerInfo.URL_BASE)
+            .setConverter(new GsonConverter(mGson))
             .setLogLevel(RestAdapter.LogLevel.FULL)
             .setLog(new AndroidLog("=NETWORK="))
             .build();
