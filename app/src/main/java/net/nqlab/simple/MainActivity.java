@@ -36,14 +36,21 @@ import net.nqlab.btmw.LoginApi;
 import net.nqlab.btmw.AccessToken;
 
 import net.nqlab.simple.ServerInfo;
+import net.nqlab.simple.SecureSaveData;
+import net.nqlab.simple.SaveData;
 
 public class MainActivity extends ActionBarActivity {
-    private RestAdapter m_adapter = null;
+    private RestAdapter mAdapter = null;
+    private SecureSaveData mSecureSaveData = null;
+    private SaveData mSaveData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mSecureSaveData = new SecureSaveData();
+        mSaveData = new SaveData(getApplicationContext());
 
         // JSONのパーサー
         final Gson gson = new GsonBuilder()
@@ -113,8 +120,9 @@ public class MainActivity extends ActionBarActivity {
                                 Log.d("MainActivity", "onNext()");
                                 if (token != null) {
                                     final String accessToken = token.getAccessToken();
+                                    mSaveData.save("token", mSecureSaveData.encryptString(accessToken));
 
-                                    m_adapter = new RestAdapter.Builder()
+                                    mAdapter = new RestAdapter.Builder()
                                         .setEndpoint(ServerInfo.URL_BASE)
                                         .setConverter(new GsonConverter(gson))
                                         .setLogLevel(RestAdapter.LogLevel.FULL)
@@ -141,12 +149,12 @@ public class MainActivity extends ActionBarActivity {
         Button button = (Button)findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (m_adapter == null) {
+                if (mAdapter == null) {
                     return;
                 }
 
                 // 非同期処理の実行
-                m_adapter.create(ExclusionAreaApi.class).list()
+                mAdapter.create(ExclusionAreaApi.class).list()
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<ExclusionAreaList>() {
