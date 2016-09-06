@@ -35,35 +35,37 @@ public class MainActivity extends ActionBarActivity {
 
         mSecureSaveData = new SecureSaveData();
         mSaveData = new SaveData(getApplicationContext());
-		mApi = new BtmwApi(mSecureSaveData, mSaveData);
+        mApi = new BtmwApi(mSecureSaveData, mSaveData);
  
-        // PIN コード取得
-        final CustomTabsIntent tabsIntent = new CustomTabsIntent.Builder()
-            .setShowTitle(true)
-            // .setToolbarColor(ContextCompat.getColor(this, R.color.primary))
-            // .setStartAnimations(this, R.anim.slide_in_right, R.anim.slide_out_left)
-            // .setExitAnimations(this, android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-            .build();
-        tabsIntent.launchUrl(this, mApi.getLoginUri());
+        if (! mApi.restoreSession()) {
+            // PIN コード取得
+            final CustomTabsIntent tabsIntent = new CustomTabsIntent.Builder()
+                .setShowTitle(true)
+                // .setToolbarColor(ContextCompat.getColor(this, R.color.primary))
+                // .setStartAnimations(this, R.anim.slide_in_right, R.anim.slide_out_left)
+                // .setExitAnimations(this, android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                .build();
+            tabsIntent.launchUrl(this, mApi.getLoginUri());
 
-        //テキスト入力を受け付けるビューを作成します。
-        final EditText editView = new EditText(MainActivity.this);
-        new AlertDialog.Builder(MainActivity.this)
-            .setIcon(android.R.drawable.ic_dialog_info)
-            .setTitle("テキスト入力ダイアログ")
-            //setViewにてビューを設定します。
-            .setView(editView)
-            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    String code = editView.getText().toString();
-					mApi.login(code);
-                }
-            })
-            .setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                }
-            })
-            .show();
+            //テキスト入力を受け付けるビューを作成します。
+            final EditText editView = new EditText(MainActivity.this);
+            new AlertDialog.Builder(MainActivity.this)
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .setTitle("テキスト入力ダイアログ")
+                //setViewにてビューを設定します。
+                .setView(editView)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String code = editView.getText().toString();
+                        mApi.login(code);
+                    }
+                })
+                .setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                })
+                .show();
+        }
 
         // 要求に応じて API 実行
         Button button = (Button)findViewById(R.id.button);
@@ -75,26 +77,23 @@ public class MainActivity extends ActionBarActivity {
 
                 // 非同期処理の実行
                 mApi.getExclusionAreaApi().list()
-					.subscribeOn(Schedulers.newThread())
-					.observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<ExclusionAreaList>() {
                         @Override
                         public void onCompleted() {
-                            Log.d("MainActivity", "onCompleted()");
                         }
 
                         @Override
                         public void onError(Throwable e) {
-                            Log.e("MainActivity", "Error : " + e.toString());
                         }
 
                         @Override
                         public void onNext(ExclusionAreaList list) {
-                            Log.d("MainActivity", "onNext()");
                             if (list != null) {
                                 ((TextView) findViewById(R.id.textView)).setText(
-									list.getExclusionAreas().get(0).getPoint()
-									);
+                                    list.getExclusionAreas().get(0).getPoint()
+                                    );
                             }
                         }
                     });

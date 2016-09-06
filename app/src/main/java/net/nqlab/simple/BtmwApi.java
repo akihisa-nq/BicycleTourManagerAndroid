@@ -36,17 +36,51 @@ public class BtmwApi {
         mSaveData = saveData;
     }
 
-    public void login(String code) {
+    private void createSession(String token)
+    {
+        final String accessToken = token;
+
         // JSONのパーサー
         final Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .registerTypeAdapter(Date.class, new DateTypeAdapter())
             .create();
 
+        mAdapter = new RestAdapter.Builder()
+            .setEndpoint(ServerInfo.URL_BASE)
+            .setConverter(new GsonConverter(gson))
+            .setLogLevel(RestAdapter.LogLevel.FULL)
+            .setLog(new AndroidLog("=NETWORK="))
+            .setRequestInterceptor(new RequestInterceptor() {
+                    @Override
+                    public void intercept(RequestInterceptor.RequestFacade request) {
+                        request.addHeader("Authorization", "Bearer " + accessToken);
+                    }
+                })
+            .build();
+    }
+
+    public boolean restoreSession()
+    {
+        String encryptedToken = mSaveData.load("token");
+        if (encryptedToken == null) {
+            return false;
+        }
+
+        String token = mSecureSaveData.decryptString(encryptedToken);
+        if (token == null) {
+            return false;
+        }
+
+        createSession(token);
+
+        return true;
+    }
+
+    public void login(String code) {
         // RestAdapterの生成
         RestAdapter adapter = new RestAdapter.Builder()
             .setEndpoint(ServerInfo.URL_BASE)
-            .setConverter(new GsonConverter(gson))
             .setLogLevel(RestAdapter.LogLevel.FULL)
             .setLog(new AndroidLog("=NETWORK="))
             .build();
@@ -73,21 +107,9 @@ public class BtmwApi {
                 @Override
                 public void onNext(AccessToken token) {
                     if (token != null) {
-                        final String accessToken = token.getAccessToken();
+                        String accessToken = token.getAccessToken();
                         mSaveData.save("token", mSecureSaveData.encryptString(accessToken));
-
-                        mAdapter = new RestAdapter.Builder()
-                            .setEndpoint(ServerInfo.URL_BASE)
-                            .setConverter(new GsonConverter(gson))
-                            .setLogLevel(RestAdapter.LogLevel.FULL)
-                            .setLog(new AndroidLog("=NETWORK="))
-                            .setRequestInterceptor(new RequestInterceptor() {
-                                    @Override
-                                    public void intercept(RequestInterceptor.RequestFacade request) {
-                                        request.addHeader("Authorization", "Bearer " + accessToken);
-                                    }
-                                })
-                            .build();
+                        createSession(accessToken);
                     }
                 }
             });

@@ -44,5 +44,24 @@ public class SaveData extends SQLiteOpenHelper {
             db.execSQL("insert into tokens(key, data) values  ('" + key + "', '" + value + "');");
         }
     }
+
+	public String load(String key)
+	{
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor cur = db.query(
+            "tokens",                   // from
+            new String[] { "data" },    // select
+            "key = '" + key + "'",      // where
+            null,                       // group by
+            null,                       // having
+            null,                       // order by
+            null                        // limit
+            );
+        if (cur.moveToFirst()) {
+			return cur.getString(0);
+		} else {
+			return null;
+		}
+	}
 }
 
