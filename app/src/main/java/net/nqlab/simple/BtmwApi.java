@@ -74,6 +74,15 @@ public class BtmwApi {
 
         createSession(token);
 
+        try {
+            ExclusionAreaList list = getExclusionAreaApi().list().toBlocking().first();
+            if (list == null) {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+
         return true;
     }
 
