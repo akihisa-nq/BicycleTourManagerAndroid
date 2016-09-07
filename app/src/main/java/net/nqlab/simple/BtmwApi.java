@@ -94,7 +94,7 @@ public class BtmwApi {
 
     public boolean restoreSession()
     {
-        String encryptedToken = mSaveData.load("token");
+        String encryptedToken = mSaveData.loadToken("token");
         if (encryptedToken == null) {
             return false;
         }
@@ -142,7 +142,7 @@ public class BtmwApi {
                 public void onNext(AccessToken token) {
                     if (token != null) {
                         String accessToken = token.getAccessToken();
-                        mSaveData.save("token", mSecureSaveData.encryptString(accessToken));
+                        mSaveData.saveToken("token", mSecureSaveData.encryptString(accessToken));
                         createSession(accessToken);
                     }
                 }
@@ -187,5 +187,10 @@ public class BtmwApi {
 	public void unregisterLoginAdapter()
 	{
 		mLoginAdapter = null;
+	}
+
+	public String toJson(Object obj)
+	{
+		return mGson.toJson(obj);
 	}
 }

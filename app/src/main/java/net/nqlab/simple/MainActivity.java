@@ -26,36 +26,9 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // 要求に応じて API 実行
         Button button = (Button)findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (! getBtmwApplication().getApi().isLogin()) {
-                    return;
-                }
-
-                // 非同期処理の実行
-                getBtmwApplication().getApi().getExclusionAreaApi().list()
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<ExclusionAreaList>() {
-                        @Override
-                        public void onCompleted() {
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                        }
-
-                        @Override
-                        public void onNext(ExclusionAreaList list) {
-                            if (list != null) {
-                                ((TextView) findViewById(R.id.textView)).setText(
-                                    list.getExclusionAreas().get(0).getPoint()
-                                    );
-                            }
-                        }
-                    });
             }
         });
     }

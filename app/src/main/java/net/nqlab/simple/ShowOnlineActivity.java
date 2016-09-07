@@ -8,6 +8,11 @@ import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import net.nqlab.btmw.TourPlanSchedule;
+
 import net.nqlab.simple.BtmwApplication;
 
 public class ShowOnlineActivity extends ActionBarActivity {
@@ -49,4 +54,37 @@ public class ShowOnlineActivity extends ActionBarActivity {
     {
         return (BtmwApplication) getApplicationContext();
     }
+
+	private void download(int id)
+	{
+        if (! getBtmwApplication().getApi().isLogin()) {
+            return;
+        }
+
+		getBtmwApplication().getApi().getTourPlanApi().schedule(id)
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Observer<TourPlanSchedule>() {
+                @Override
+                public void onCompleted() {
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                }
+
+                @Override
+                public void onNext(TourPlanSchedule schedule) {
+                    if (schedule != null) {
+						String strData = getBtmwApplication().getApi().toJson(schedule);
+						String strSaveData = getBtmwApplication().getSecureSaveData().encryptString(strData);
+						getBtmwApplication().getSaveData().saveTourPlan(
+							schedule.getId(),
+							schedule.getName(),
+							strSaveData
+							);
+                    }
+                }
+			});
+	}
 }
