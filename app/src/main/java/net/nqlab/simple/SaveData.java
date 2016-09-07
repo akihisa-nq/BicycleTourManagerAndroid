@@ -28,40 +28,47 @@ public class SaveData extends SQLiteOpenHelper {
 
     public void save(String key, String value)
     {
-        SQLiteDatabase db = getWritableDatabase();
-        Cursor cur = db.query(
-            "tokens",                   // from
-            new String[] { "data" },    // select
-            "key = '" + key + "'",      // where
-            null,                       // group by
-            null,                       // having
-            null,                       // order by
-            null                        // limit
-            );
-        if (cur.moveToFirst()) {
-            db.execSQL("update tokens set value = '" + value + "' where key = '" + key + "';");
-        } else {
+        Cursor cur = null;
+        try {
+            SQLiteDatabase db = getWritableDatabase();
+            db.execSQL("delete from tokens where  key = '" + key + "';");
             db.execSQL("insert into tokens(key, data) values  ('" + key + "', '" + value + "');");
+        } catch (Exception e) {
+
+        } finally {
+            if (cur != null) {
+                cur.close();
+            }
         }
     }
 
 	public String load(String key)
 	{
-        SQLiteDatabase db = getWritableDatabase();
-        Cursor cur = db.query(
-            "tokens",                   // from
-            new String[] { "data" },    // select
-            "key = '" + key + "'",      // where
-            null,                       // group by
-            null,                       // having
-            null,                       // order by
-            null                        // limit
+        String ret = null;
+        Cursor cur = null;
+        try {
+            SQLiteDatabase db = getWritableDatabase();
+            cur = db.query(
+                    "tokens",                   // from
+                    new String[]{"data"},    // select
+                    "key = '" + key + "'",      // where
+                    null,                       // group by
+                    null,                       // having
+                    null,                       // order by
+                    null                        // limit
             );
-        if (cur.moveToFirst()) {
-			return cur.getString(0);
-		} else {
-			return null;
-		}
+            if (cur.moveToFirst()) {
+                ret = cur.getString(0);
+            }
+        } catch (Exception e) {
+
+        } finally {
+            if (cur != null) {
+                cur.close();
+            }
+        }
+
+        return ret;
 	}
 }
 
