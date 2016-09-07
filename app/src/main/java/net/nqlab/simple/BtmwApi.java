@@ -8,6 +8,7 @@ import net.nqlab.btmw.ExclusionAreaApi;
 import net.nqlab.btmw.ExclusionAreaList;
 import net.nqlab.btmw.LoginApi;
 import net.nqlab.btmw.AccessToken;
+import net.nqlab.btmw.TourPlanApi;
 
 import retrofit.RestAdapter;
 import retrofit.RequestInterceptor;
@@ -151,5 +152,11 @@ public class BtmwApi {
     {
         if (mAdapter == null) { return null; }
         return mAdapter.create(ExclusionAreaApi.class);
+    }
+
+    public TourPlanApi getTourPlanApi()
+    {
+        if (mAdapter == null) { return null; }
+        return mAdapter.create(TourPlanApi.class);
     }
 }

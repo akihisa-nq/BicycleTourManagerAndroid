@@ -9,28 +9,28 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class ExclusionAreaList {
+public class TourPlanList {
 
-    @SerializedName("exclusion_areas")
+    @SerializedName("tour_plans")
     @Expose
-    private List<ExclusionArea> exclusionAreas = new ArrayList<ExclusionArea>();
+    private List<TourPlan> tourPlans = new ArrayList<TourPlan>();
 
     /**
      * 
      * @return
-     *     The exclusionAreas
+     *     The tourPlans
      */
-    public List<ExclusionArea> getExclusionAreas() {
-        return exclusionAreas;
+    public List<TourPlan> getTourPlans() {
+        return tourPlans;
     }
 
     /**
      * 
-     * @param exclusionAreas
-     *     The exclusion_areas
+     * @param tourPlans
+     *     The tour_plans
      */
-    public void setExclusionAreas(List<ExclusionArea> exclusionAreas) {
-        this.exclusionAreas = exclusionAreas;
+    public void setTourPlans(List<TourPlan> tourPlans) {
+        this.tourPlans = tourPlans;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class ExclusionAreaList {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(exclusionAreas).toHashCode();
+        return new HashCodeBuilder().append(tourPlans).toHashCode();
     }
 
     @Override
@@ -48,11 +48,11 @@ public class ExclusionAreaList {
         if (other == this) {
             return true;
         }
-        if ((other instanceof ExclusionAreaList) == false) {
+        if ((other instanceof TourPlanList) == false) {
             return false;
         }
-        ExclusionAreaList rhs = ((ExclusionAreaList) other);
-        return new EqualsBuilder().append(exclusionAreas, rhs.exclusionAreas).isEquals();
+        TourPlanList rhs = ((TourPlanList) other);
+        return new EqualsBuilder().append(tourPlans, rhs.tourPlans).isEquals();
     }
 
 }

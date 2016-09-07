@@ -33,6 +33,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.0'
     compile 'com.android.support:customtabs:24.2.0'
 
+    compile 'org.apache.commons:commons-lang3:3.4'
     compile 'org.glassfish:javax.annotation:3.1.1-b02'
     compile 'com.squareup.okhttp:okhttp:2.7.5'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
