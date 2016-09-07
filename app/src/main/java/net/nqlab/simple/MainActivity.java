@@ -11,9 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.EditText;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -28,36 +25,6 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        if (! getBtmwApplication().getApi().restoreSession()) {
-            // PIN コード取得
-            final CustomTabsIntent tabsIntent = new CustomTabsIntent.Builder()
-                .setShowTitle(true)
-                // .setToolbarColor(ContextCompat.getColor(this, R.color.primary))
-                // .setStartAnimations(this, R.anim.slide_in_right, R.anim.slide_out_left)
-                // .setExitAnimations(this, android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-                .build();
-            tabsIntent.launchUrl(this, getBtmwApplication().getApi().getLoginUri());
-
-            //テキスト入力を受け付けるビューを作成します。
-            final EditText editView = new EditText(MainActivity.this);
-            new AlertDialog.Builder(MainActivity.this)
-                .setIcon(android.R.drawable.ic_dialog_info)
-                .setTitle("テキスト入力ダイアログ")
-                //setViewにてビューを設定します。
-                .setView(editView)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String code = editView.getText().toString();
-                        getBtmwApplication().getApi().login(code);
-                    }
-                })
-                .setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                    }
-                })
-                .show();
-        }
 
         // 要求に応じて API 実行
         Button button = (Button)findViewById(R.id.button);

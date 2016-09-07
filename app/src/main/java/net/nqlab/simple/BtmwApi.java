@@ -26,6 +26,7 @@ import com.google.gson.internal.bind.DateTypeAdapter;
 import net.nqlab.simple.ServerInfo;
 import net.nqlab.simple.SecureSaveData;
 import net.nqlab.simple.SaveData;
+import net.nqlab.simple.BtmwApiLoginAdapter;
 
 public class BtmwApi {
     private RestAdapter mAdapter = null;
@@ -33,6 +34,7 @@ public class BtmwApi {
     private SaveData mSaveData;
     private String mAccessToken;
 	private Gson mGson;
+	private BtmwApiLoginAdapter mLoginAdapter;
 
     public BtmwApi(SecureSaveData secureSaveData, SaveData saveData) {
         mGson = new GsonBuilder()
@@ -65,13 +67,27 @@ public class BtmwApi {
             if (list == null) {
 				mAdapter = null;
 				mAccessToken = null;
+
+				if (mLoginAdapter != null) {
+					mLoginAdapter.onLoginFailure();
+				}
+
                 return false;
             }
         } catch (Exception e) {
 			mAdapter = null;
 			mAccessToken = null;
+
+			if (mLoginAdapter != null) {
+				mLoginAdapter.onLoginFailure();
+			}
+
             return false;
         }
+
+		if (mLoginAdapter != null) {
+			mLoginAdapter.onLoginSuccess();
+		}
 
 		return true;
     }
@@ -117,6 +133,9 @@ public class BtmwApi {
 
                 @Override
                 public void onError(Throwable e) {
+					if (mLoginAdapter != null) {
+						mLoginAdapter.onLoginFailure();
+					}
                 }
 
                 @Override
@@ -159,4 +178,14 @@ public class BtmwApi {
         if (mAdapter == null) { return null; }
         return mAdapter.create(TourPlanApi.class);
     }
+
+	public void registerLoginAdapter(BtmwApiLoginAdapter loginAdapter)
+	{
+		mLoginAdapter = loginAdapter;
+	}
+
+	public void unregisterLoginAdapter()
+	{
+		mLoginAdapter = null;
+	}
 }
