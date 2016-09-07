@@ -13,6 +13,8 @@ public class BtmwApplication extends Application {
 
     @Override
     public void onCreate() {
+		super.onCreate();
+
         mSecureSaveData = new SecureSaveData();
         mSaveData = new SaveData(this);
         mApi = new BtmwApi(mSecureSaveData, mSaveData);
@@ -20,6 +22,7 @@ public class BtmwApplication extends Application {
  
     @Override
     public void onTerminate() {
+		super.onTerminate();
     }
 
     public SecureSaveData getSecureSaveData()
