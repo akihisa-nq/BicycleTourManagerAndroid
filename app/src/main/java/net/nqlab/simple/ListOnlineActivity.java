@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import net.nqlab.btmw.TourPlan;
+
 import net.nqlab.simple.BtmwApplication;
 
 public class ListOnlineActivity extends ActionBarActivity {
@@ -16,6 +18,19 @@ public class ListOnlineActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_online);
+
+        ListView listView = (ListView)findViewById(R.id.listView);
+
+        ArrayList<TourPlan> list = new ArrayList<>();
+        ListOnlineListViewAdapter adapter = new ListOnlineListViewAdapter(ListOnlineActivity.this);
+        adapter.setTourPlanList(list);
+        listView.setAdapter(adapter);
+
+		// Tweet tweet = new Tweet();
+		// tweet.setName("HogeFuga");
+		// tweet.setTweet("‚ ‚¢‚¤‚¦‚¨‚©‚«‚­‚¯‚±");
+		// list.add(tweet);
+		// adapter.notifyDataSetChanged();
     }
 
     @Override
