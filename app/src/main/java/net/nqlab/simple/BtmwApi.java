@@ -67,27 +67,13 @@ public class BtmwApi {
             if (list == null) {
 				mAdapter = null;
 				mAccessToken = null;
-
-				if (mLoginAdapter != null) {
-					mLoginAdapter.onLoginFailure();
-				}
-
                 return false;
             }
         } catch (Exception e) {
-			mAdapter = null;
-			mAccessToken = null;
-
-			if (mLoginAdapter != null) {
-				mLoginAdapter.onLoginFailure();
-			}
-
-            return false;
+			 mAdapter = null;
+			 mAccessToken = null;
+             return false;
         }
-
-		if (mLoginAdapter != null) {
-			mLoginAdapter.onLoginSuccess();
-		}
 
 		return true;
     }
@@ -143,7 +129,15 @@ public class BtmwApi {
                     if (token != null) {
                         String accessToken = token.getAccessToken();
                         mSaveData.saveToken("token", mSecureSaveData.encryptString(accessToken));
-                        createSession(accessToken);
+                        if (createSession(accessToken)) {
+                            if (mLoginAdapter != null) {
+                                mLoginAdapter.onLoginSuccess();
+                            }
+                        } else {
+                            if (mLoginAdapter != null) {
+                                mLoginAdapter.onLoginFailure();
+                            }
+                        }
                     }
                 }
             });

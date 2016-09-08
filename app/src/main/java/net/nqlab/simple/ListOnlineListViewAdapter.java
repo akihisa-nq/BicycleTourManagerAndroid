@@ -1,19 +1,28 @@
 package net.nqlab.simple;
 
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.TextView;
+
+import java.util.List;
+
 import net.nqlab.btmw.TourPlan;
 
 public class ListOnlineListViewAdapter extends BaseAdapter {
 
-    Context context;
-    LayoutInflater layoutInflater = null;
-    ArrayList<TourPlan> mTourPlanList;
+    private Context mContext;
+    private LayoutInflater mLayoutInflater = null;
+    private List<TourPlan> mTourPlanList;
 
     public ListOnlineListViewAdapter(Context context) {
-        this.context = context;
-        this.layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mContext = context;
+        mLayoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public void setTourPlanList(ArrayList<TourPlan> tourPlanList) {
+    public void setTourPlanList(List<TourPlan> tourPlanList) {
         mTourPlanList = tourPlanList;
     }
 
@@ -34,10 +43,11 @@ public class ListOnlineListViewAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        convertView = layoutInflater.inflate(R.layout.list_item_list_online,parent,false);
+        convertView = mLayoutInflater.inflate(R.layout.list_item_list_online,parent,false);
 
         ((TextView)convertView.findViewById(R.id.name)).setText(mTourPlanList.get(position).getName());
-        // ((TextView)convertView.findViewById(R.id.tweet)).setText(mTourPlanList.get(position).getTweet());
+        ((TextView)convertView.findViewById(R.id.distance)).setText(mTourPlanList.get(position).getDistance().toString() + "km");
+        ((TextView)convertView.findViewById(R.id.elevation)).setText(mTourPlanList.get(position).getElevation().toString() + "m");
 
         return convertView;
     }

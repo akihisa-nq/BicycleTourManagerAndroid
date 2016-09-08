@@ -2,6 +2,7 @@ package net.nqlab.simple;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.content.Intent;
 
@@ -15,12 +16,18 @@ import net.nqlab.btmw.TourPlanSchedule;
 
 import net.nqlab.simple.BtmwApplication;
 
-public class ShowOnlineActivity extends ActionBarActivity {
+public class ShowOnlineActivity extends AppCompatActivity {
+    private int mTourPlanId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_online);
+
+        Intent intent = getIntent();
+        mTourPlanId = intent.getIntExtra("TourPlan", 0);
+
+        download();
     }
 
     @Override
@@ -55,13 +62,13 @@ public class ShowOnlineActivity extends ActionBarActivity {
         return (BtmwApplication) getApplicationContext();
     }
 
-	private void download(int id)
+	private void download()
 	{
         if (! getBtmwApplication().getApi().isLogin()) {
             return;
         }
 
-		getBtmwApplication().getApi().getTourPlanApi().schedule(id)
+		getBtmwApplication().getApi().getTourPlanApi().schedule(mTourPlanId)
             .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Observer<TourPlanSchedule>() {

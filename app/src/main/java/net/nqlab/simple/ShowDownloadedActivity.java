@@ -1,6 +1,6 @@
 package net.nqlab.simple;
 
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.content.Intent;
@@ -10,7 +10,7 @@ import android.view.MenuItem;
 
 import net.nqlab.simple.BtmwApplication;
 
-public class ShowDownloadedActivity extends ActionBarActivity {
+public class ShowDownloadedActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

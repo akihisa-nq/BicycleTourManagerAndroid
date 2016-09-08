@@ -1,18 +1,29 @@
 package net.nqlab.simple;
 
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.content.Intent;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
 import net.nqlab.btmw.TourPlan;
-
+import net.nqlab.btmw.TourPlanList;
+import net.nqlab.btmw.TourPlanSchedule;
 import net.nqlab.simple.BtmwApplication;
 
-public class ListOnlineActivity extends ActionBarActivity {
+import java.util.ArrayList;
+import java.util.List;
+
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
+public class ListOnlineActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,17 +31,42 @@ public class ListOnlineActivity extends ActionBarActivity {
         setContentView(R.layout.activity_list_online);
 
         ListView listView = (ListView)findViewById(R.id.listView);
-
-        ArrayList<TourPlan> list = new ArrayList<>();
-        ListOnlineListViewAdapter adapter = new ListOnlineListViewAdapter(ListOnlineActivity.this);
-        adapter.setTourPlanList(list);
+        final ListOnlineListViewAdapter adapter = new ListOnlineListViewAdapter(ListOnlineActivity.this);
+        adapter.setTourPlanList(new ArrayList<TourPlan>());
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                ListView listView = (ListView)adapterView;
+                TourPlan item = (TourPlan)listView.getItemAtPosition(position);
 
-		// Tweet tweet = new Tweet();
-		// tweet.setName("HogeFuga");
-		// tweet.setTweet("‚ ‚¢‚¤‚¦‚¨‚©‚«‚­‚¯‚±");
-		// list.add(tweet);
-		// adapter.notifyDataSetChanged();
+                Intent intent = new Intent();
+                intent.setClassName("net.nqlab.simple", "net.nqlab.simple.ShowOnlineActivity");
+                intent.putExtra("TourPlan", item.getId().intValue());
+                startActivity(intent);
+            }
+        });
+
+        getBtmwApplication().getApi().getTourPlanApi().list()
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Observer<TourPlanList>() {
+                @Override
+                public void onCompleted() {
+
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+
+                @Override
+                public void onNext(TourPlanList tourPlanList) {
+                    adapter.setTourPlanList(tourPlanList.getTourPlans());
+                    adapter.notifyDataSetChanged();
+                }
+            });
     }
 
     @Override

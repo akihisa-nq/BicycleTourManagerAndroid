@@ -1,6 +1,6 @@
 package net.nqlab.simple;
 
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.content.Intent;
@@ -16,56 +16,11 @@ import android.widget.EditText;
 import net.nqlab.simple.BtmwApplication;
 import net.nqlab.simple.BtmwApiLoginAdapter;
 
-public class LoginActivity extends ActionBarActivity {
-
+public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-		getBtmwApplication().getApi().registerLoginAdapter(new BtmwApiLoginAdapter() {
-			public void onLoginSuccess() {
-				Intent intent = new Intent();
-				intent.setClassName("net.nqlab.simple", "net.nqlab.simple.ListOnlineActivity");
-				startActivity(intent);
-			}
-
-			public void onLoginFailure() {
-				Intent intent = new Intent();
-				intent.setClassName("net.nqlab.simple", "net.nqlab.simple.ListDownloadedActivity");
-				startActivity(intent);
-			}
-		});
-
-        if (! getBtmwApplication().getApi().restoreSession()) {
-            // PIN コード取得
-            final CustomTabsIntent tabsIntent = new CustomTabsIntent.Builder()
-                .setShowTitle(true)
-                // .setToolbarColor(ContextCompat.getColor(this, R.color.primary))
-                // .setStartAnimations(this, R.anim.slide_in_right, R.anim.slide_out_left)
-                // .setExitAnimations(this, android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-                .build();
-            tabsIntent.launchUrl(this, getBtmwApplication().getApi().getLoginUri());
-
-            //テキスト入力を受け付けるビューを作成します。
-            final EditText editView = new EditText(LoginActivity.this);
-            new AlertDialog.Builder(LoginActivity.this)
-                .setIcon(android.R.drawable.ic_dialog_info)
-                .setTitle("テキスト入力ダイアログ")
-                //setViewにてビューを設定します。
-                .setView(editView)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String code = editView.getText().toString();
-                        getBtmwApplication().getApi().login(code);
-                    }
-                })
-                .setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                    }
-                })
-                .show();
-        }
     }
 
     @Override
@@ -93,11 +48,86 @@ public class LoginActivity extends ActionBarActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-		getBtmwApplication().getApi().unregisterLoginAdapter();
+        getBtmwApplication().getApi().unregisterLoginAdapter();
     }
 
-    private BtmwApplication getBtmwApplication()
+    @Override
+    protected void onResume()
     {
+        super.onResume();
+        login();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    private BtmwApplication getBtmwApplication() {
         return (BtmwApplication) getApplicationContext();
+    }
+
+    private void login()
+    {
+        getBtmwApplication().getApi().registerLoginAdapter(new BtmwApiLoginAdapter() {
+            public void onLoginSuccess() {
+                switchListOnlineActivity();
+            }
+
+            public void onLoginFailure() {
+                switchListDownloadedActivity();
+            }
+        });
+
+        if (getBtmwApplication().getApi().restoreSession()) {
+            switchListOnlineActivity();
+
+        } else {
+            // PIN コード取得
+            final CustomTabsIntent tabsIntent = new CustomTabsIntent.Builder()
+                    .setShowTitle(true)
+                    // .setToolbarColor(ContextCompat.getColor(this, R.color.primary))
+                    // .setStartAnimations(this, R.anim.slide_in_right, R.anim.slide_out_left)
+                    // .setExitAnimations(this, android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                    .build();
+            tabsIntent.launchUrl(this, getBtmwApplication().getApi().getLoginUri());
+
+            //テキスト入力を受け付けるビューを作成します。
+            final EditText editView = new EditText(LoginActivity.this);
+            new AlertDialog.Builder(LoginActivity.this)
+                    .setIcon(android.R.drawable.ic_dialog_info)
+                    .setTitle("テキスト入力ダイアログ")
+                    //setViewにてビューを設定します。
+                    .setView(editView)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            String code = editView.getText().toString();
+                            getBtmwApplication().getApi().login(code);
+                        }
+                    })
+                    .setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            switchListDownloadedActivity();
+                        }
+                    })
+                    .show();
+        }
+    }
+
+    private void switchListDownloadedActivity() {
+        Intent intent = new Intent();
+        intent.setClassName("net.nqlab.simple", "net.nqlab.simple.ListDownloadedActivity");
+        startActivity(intent);
+    }
+
+    private void switchListOnlineActivity() {
+        Intent intent = new Intent();
+        intent.setClassName("net.nqlab.simple", "net.nqlab.simple.ListOnlineActivity");
+        startActivity(intent);
     }
 }

@@ -36,6 +36,9 @@ public class TourPlan {
     @SerializedName("resource_set_id")
     @Expose
     private Integer resourceSetId;
+    @SerializedName("distance")
+    @Expose
+    private Integer distance;
 
     /**
      * 
@@ -199,6 +202,24 @@ public class TourPlan {
         this.resourceSetId = resourceSetId;
     }
 
+    /**
+     * 
+     * @return
+     *     The distance
+     */
+    public Integer getDistance() {
+        return distance;
+    }
+
+    /**
+     * 
+     * @param distance
+     *     The distance
+     */
+    public void setDistance(Integer distance) {
+        this.distance = distance;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
@@ -206,7 +227,7 @@ public class TourPlan {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(id).append(name).append(published).append(createdAt).append(updatedAt).append(timeZone).append(startTime).append(elevation).append(resourceSetId).toHashCode();
+        return new HashCodeBuilder().append(id).append(name).append(published).append(createdAt).append(updatedAt).append(timeZone).append(startTime).append(elevation).append(resourceSetId).append(distance).toHashCode();
     }
 
     @Override
@@ -218,7 +239,7 @@ public class TourPlan {
             return false;
         }
         TourPlan rhs = ((TourPlan) other);
-        return new EqualsBuilder().append(id, rhs.id).append(name, rhs.name).append(published, rhs.published).append(createdAt, rhs.createdAt).append(updatedAt, rhs.updatedAt).append(timeZone, rhs.timeZone).append(startTime, rhs.startTime).append(elevation, rhs.elevation).append(resourceSetId, rhs.resourceSetId).isEquals();
+        return new EqualsBuilder().append(id, rhs.id).append(name, rhs.name).append(published, rhs.published).append(createdAt, rhs.createdAt).append(updatedAt, rhs.updatedAt).append(timeZone, rhs.timeZone).append(startTime, rhs.startTime).append(elevation, rhs.elevation).append(resourceSetId, rhs.resourceSetId).append(distance, rhs.distance).isEquals();
     }
 
 }
