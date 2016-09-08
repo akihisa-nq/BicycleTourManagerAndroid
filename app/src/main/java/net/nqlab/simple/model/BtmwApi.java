@@ -1,4 +1,4 @@
-package net.nqlab.simple;
+package net.nqlab.simple.model;
 
 import java.util.Date;
 
@@ -23,10 +23,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.bind.DateTypeAdapter;
 
-import net.nqlab.simple.ServerInfo;
-import net.nqlab.simple.SecureSaveData;
-import net.nqlab.simple.SaveData;
-import net.nqlab.simple.BtmwApiLoginAdapter;
+import net.nqlab.simple.model.ServerInfo;
+import net.nqlab.simple.model.SecureSaveData;
+import net.nqlab.simple.model.SaveData;
+import net.nqlab.simple.model.BtmwApiLoginAdapter;
 
 public class BtmwApi {
     private RestAdapter mAdapter = null;

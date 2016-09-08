@@ -1,10 +1,10 @@
-package net.nqlab.simple;
+package net.nqlab.simple.controller;
  
 import android.app.Application;
 
-import net.nqlab.simple.SecureSaveData;
-import net.nqlab.simple.SaveData;
-import net.nqlab.simple.BtmwApi;
+import net.nqlab.simple.model.SecureSaveData;
+import net.nqlab.simple.model.SaveData;
+import net.nqlab.simple.model.BtmwApi;
  
 public class BtmwApplication extends Application {
     private SecureSaveData mSecureSaveData = null;

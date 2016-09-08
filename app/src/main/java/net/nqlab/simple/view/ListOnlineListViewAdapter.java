@@ -1,4 +1,4 @@
-package net.nqlab.simple;
+package net.nqlab.simple.view;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import net.nqlab.btmw.TourPlan;
+import net.nqlab.simple.R;
 
 public class ListOnlineListViewAdapter extends BaseAdapter {
 

@@ -1,4 +1,4 @@
-package net.nqlab.simple;
+package net.nqlab.simple.model;
 
 import android.util.Log;
 import android.util.Base64;

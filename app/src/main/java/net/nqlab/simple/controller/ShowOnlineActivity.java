@@ -1,8 +1,7 @@
-package net.nqlab.simple;
+package net.nqlab.simple.controller;
 
-import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
 import android.content.Intent;
 
@@ -14,7 +13,8 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import net.nqlab.btmw.TourPlanSchedule;
 
-import net.nqlab.simple.BtmwApplication;
+import net.nqlab.simple.controller.BtmwApplication;
+import net.nqlab.simple.R;
 
 public class ShowOnlineActivity extends AppCompatActivity {
     private int mTourPlanId;

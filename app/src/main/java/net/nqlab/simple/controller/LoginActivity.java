@@ -13,13 +13,17 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.widget.EditText;
 
-import net.nqlab.simple.BtmwApplication;
-import net.nqlab.simple.BtmwApiLoginAdapter;
+import net.nqlab.simple.controller.BtmwApplication;
+import net.nqlab.simple.model.BtmwApiLoginAdapter;
 import net.nqlab.simple.R;
 
 public class LoginActivity extends AppCompatActivity {
+    private boolean mTryLogin;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mTryLogin = false;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
     }
@@ -75,6 +79,10 @@ public class LoginActivity extends AppCompatActivity {
 
     private void login()
     {
+        if (mTryLogin) {
+            return;
+        }
+
         getBtmwApplication().getApi().registerLoginAdapter(new BtmwApiLoginAdapter() {
             public void onLoginSuccess() {
                 switchListOnlineActivity();
@@ -89,6 +97,9 @@ public class LoginActivity extends AppCompatActivity {
             switchListOnlineActivity();
 
         } else {
+            // 多重ログイン回避
+            mTryLogin = true;
+
             // PIN コード取得
             final CustomTabsIntent tabsIntent = new CustomTabsIntent.Builder()
                     .setShowTitle(true)
@@ -98,12 +109,12 @@ public class LoginActivity extends AppCompatActivity {
                     .build();
             tabsIntent.launchUrl(this, getBtmwApplication().getApi().getLoginUri());
 
-            //テキスト入力を受け付けるビューを作成します。
+            //テキスト入力を受け付けるビューを作成します
             final EditText editView = new EditText(LoginActivity.this);
             new AlertDialog.Builder(LoginActivity.this)
                     .setIcon(android.R.drawable.ic_dialog_info)
-                    .setTitle("テキスト入力ダイアログ")
-                    //setViewにてビューを設定します。
+                    .setTitle("認証コードの入力")
+                    //setViewにてビューを設定します
                     .setView(editView)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
@@ -121,14 +132,18 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void switchListDownloadedActivity() {
+        mTryLogin = false;
+
         Intent intent = new Intent();
-        intent.setClassName("net.nqlab.simple", "net.nqlab.simple.ListDownloadedActivity");
+        intent.setClassName("net.nqlab.simple", "net.nqlab.simple.controller.ListDownloadedActivity");
         startActivity(intent);
     }
 
     private void switchListOnlineActivity() {
+        mTryLogin = false;
+
         Intent intent = new Intent();
-        intent.setClassName("net.nqlab.simple", "net.nqlab.simple.ListOnlineActivity");
+        intent.setClassName("net.nqlab.simple", "net.nqlab.simple.controller.ListOnlineActivity");
         startActivity(intent);
     }
 }

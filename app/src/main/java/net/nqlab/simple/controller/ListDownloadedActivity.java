@@ -1,4 +1,4 @@
-package net.nqlab.simple;
+package net.nqlab.simple.controller;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,14 +8,15 @@ import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import net.nqlab.simple.BtmwApplication;
+import net.nqlab.simple.controller.BtmwApplication;
+import net.nqlab.simple.R;
 
-public class ShowDownloadedActivity extends AppCompatActivity {
+public class ListDownloadedActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_show_downloaded);
+        setContentView(R.layout.activity_list_downloaded);
     }
 
     @Override

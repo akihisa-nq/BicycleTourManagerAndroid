@@ -1,4 +1,4 @@
-package net.nqlab.simple;
+package net.nqlab.simple.controller;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,7 +14,9 @@ import android.widget.ListView;
 import net.nqlab.btmw.TourPlan;
 import net.nqlab.btmw.TourPlanList;
 import net.nqlab.btmw.TourPlanSchedule;
-import net.nqlab.simple.BtmwApplication;
+import net.nqlab.simple.controller.BtmwApplication;
+import net.nqlab.simple.view.ListOnlineListViewAdapter;
+import net.nqlab.simple.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +43,7 @@ public class ListOnlineActivity extends AppCompatActivity {
                 TourPlan item = (TourPlan)listView.getItemAtPosition(position);
 
                 Intent intent = new Intent();
-                intent.setClassName("net.nqlab.simple", "net.nqlab.simple.ShowOnlineActivity");
+                intent.setClassName("net.nqlab.simple", "net.nqlab.simple.controller.ShowOnlineActivity");
                 intent.putExtra("TourPlan", item.getId().intValue());
                 startActivity(intent);
             }

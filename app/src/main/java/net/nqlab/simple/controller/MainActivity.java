@@ -1,21 +1,37 @@
-package net.nqlab.simple;
+package net.nqlab.simple.controller;
 
 import android.support.v7.app.AppCompatActivity;
+import android.support.customtabs.CustomTabsIntent;
 import android.os.Bundle;
 import android.util.Log;
 import android.content.Intent;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
-import net.nqlab.simple.BtmwApplication;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import net.nqlab.btmw.ExclusionAreaList;
 
-public class ListDownloadedActivity extends AppCompatActivity {
+import net.nqlab.simple.controller.BtmwApplication;
+import net.nqlab.simple.R;
+
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list_downloaded);
+        setContentView(R.layout.activity_main);
+
+        Button button = (Button)findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            }
+        });
     }
 
     @Override

@@ -1,4 +1,4 @@
-package net.nqlab.simple;
+package net.nqlab.simple.model;
 
 public class ServerInfo {
     static public final String URL_BASE = "";
