@@ -1,4 +1,4 @@
-package net.nqlab.simple;
+package net.nqlab.simple.controller;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +15,7 @@ import android.widget.EditText;
 
 import net.nqlab.simple.BtmwApplication;
 import net.nqlab.simple.BtmwApiLoginAdapter;
+import net.nqlab.simple.R;
 
 public class LoginActivity extends AppCompatActivity {
     @Override

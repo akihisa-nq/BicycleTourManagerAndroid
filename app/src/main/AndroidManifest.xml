@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme"
         android:name="net.nqlab.simple.BtmwApplication" >
       <activity
-          android:name="net.nqlab.simple.LoginActivity"
+          android:name="net.nqlab.simple.controller.LoginActivity"
           android:label="@string/title_activity_login" >
         <intent-filter>
           <action android:name="android.intent.action.MAIN" />
