@@ -19,10 +19,6 @@
         </intent-filter>
       </activity>
       <activity
-            android:name="net.nqlab.simple.controller.MainActivity"
-            android:label="@string/title_activity_main" >
-      </activity>
-      <activity
             android:name="net.nqlab.simple.controller.ShowDownloadedActivity"
             android:label="@string/title_activity_show_downloaded" >
       </activity>

@@ -7,6 +7,8 @@ import android.content.Intent;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -27,7 +29,12 @@ public class ShowOnlineActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mTourPlanId = intent.getIntExtra("TourPlan", 0);
 
-        download();
+        Button button = (Button)findViewById(R.id.download);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                download();
+            }
+        });
     }
 
     @Override
@@ -62,13 +69,13 @@ public class ShowOnlineActivity extends AppCompatActivity {
         return (BtmwApplication) getApplicationContext();
     }
 
-	private void download()
-	{
+    private void download()
+    {
         if (! getBtmwApplication().getApi().isLogin()) {
             return;
         }
 
-		getBtmwApplication().getApi().getTourPlanApi().schedule(mTourPlanId)
+        getBtmwApplication().getApi().getTourPlanApi().schedule(mTourPlanId)
             .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Observer<TourPlanSchedule>() {
@@ -83,15 +90,15 @@ public class ShowOnlineActivity extends AppCompatActivity {
                 @Override
                 public void onNext(TourPlanSchedule schedule) {
                     if (schedule != null) {
-						String strData = getBtmwApplication().getApi().toJson(schedule);
-						String strSaveData = getBtmwApplication().getSecureSaveData().encryptString(strData);
-						getBtmwApplication().getSaveData().saveTourPlan(
-							schedule.getId(),
-							schedule.getName(),
-							strSaveData
-							);
+                        String strData = getBtmwApplication().getApi().toJson(schedule);
+                        String strSaveData = getBtmwApplication().getSecureSaveData().encryptString(strData);
+                        getBtmwApplication().getSaveData().saveTourPlan(
+                            schedule.getId(),
+                            schedule.getName(),
+                            strSaveData
+                            );
                     }
                 }
-			});
-	}
+            });
+    }
 }
