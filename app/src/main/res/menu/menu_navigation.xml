@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_login"
+            android:title="Login" />
+        <item
+            android:id="@+id/menu_list_online"
+            android:title="Online List" />
+        <item
+            android:id="@+id/menu_list_downloaded"
+            android:title="Downloaded List" />
+    </group>
+    <item
+        android:title="その他">
+        <menu android:checkableBehavior="single">
+            <item
+                android:id="@+id/menu_app_description"
+                android:title="このアプリについて" />
+            <item
+                android:id="@+id/menu_setting"
+                android:title="設定" />
+        </menu>
+    </item>
+</menu>

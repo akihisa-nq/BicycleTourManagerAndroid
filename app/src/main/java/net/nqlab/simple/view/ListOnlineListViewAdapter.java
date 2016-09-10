@@ -26,7 +26,6 @@ public class ListOnlineListViewAdapter extends BaseAdapter {
     private Context mContext;
     private BtmwApi mApi;
     private boolean bBusy;
-    private LayoutInflater mLayoutInflater = null;
     private List<TourPlan> mTourPlanList;
     private int mOffset;
     private int mTotalCount;
@@ -39,7 +38,6 @@ public class ListOnlineListViewAdapter extends BaseAdapter {
 
     public ListOnlineListViewAdapter(Context context, BtmwApi api) {
         mContext = context;
-        mLayoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mApi = api;
         mTotalCount = 0;
         mOffset = 0;
@@ -74,7 +72,9 @@ public class ListOnlineListViewAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         checkItemAt(position);
-        convertView = mLayoutInflater.inflate(R.layout.list_item_list_online,parent,false);
+
+        LayoutInflater layoutInflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        convertView = layoutInflater.inflate(R.layout.list_item_list_online,parent,false);
 
         TourPlan plan;
         int positionList = position - mOffset;
