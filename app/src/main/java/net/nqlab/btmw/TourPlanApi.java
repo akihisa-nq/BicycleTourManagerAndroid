@@ -8,7 +8,7 @@ import rx.Observable;
 public interface TourPlanApi {
  
     @GET("/api/tour_plan/list")
-    public Observable<TourPlanList> list();
+    public Observable<TourPlanList> list(@Query("offset") Integer offset, @Query("limit") Integer limit);
 
     @GET("/api/tour_plan/{id}")
     public Observable<TourPlan> show(@Path("id") int id);
