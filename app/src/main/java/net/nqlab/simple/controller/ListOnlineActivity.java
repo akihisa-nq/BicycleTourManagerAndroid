@@ -32,7 +32,7 @@ public class ListOnlineActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_online);
-        getBtmwApplication().setupNavigation(this);
+        getBtmwApplication().setupNavigation(this, R.id.drawer_layout_list_online);
 
         ListView listView = (ListView)findViewById(R.id.listView);
         final ListOnlineListViewAdapter adapter = new ListOnlineListViewAdapter(ListOnlineActivity.this, getBtmwApplication().getApi());

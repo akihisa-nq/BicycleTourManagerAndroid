@@ -17,6 +17,7 @@ public class ListDownloadedActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_downloaded);
+        getBtmwApplication().setupNavigation(this, R.id.drawer_layout_list_downloaded);
     }
 
     @Override

@@ -25,6 +25,7 @@ public class ShowOnlineActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_online);
+        getBtmwApplication().setupNavigation(this, R.id.drawer_layout_show_online);
 
         Intent intent = getIntent();
         mTourPlanId = intent.getIntExtra("TourPlan", 0);

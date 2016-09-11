@@ -82,12 +82,12 @@ public class BtmwApplication extends Application {
         };
     }
 
-    public void setupNavigation(AppCompatActivity activity)
+    public void setupNavigation(AppCompatActivity activity, int parent)
     {
-        Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) activity.findViewById(parent).findViewById(R.id.toolbar);
         activity.setSupportActionBar(toolbar);
 
-        DrawerLayout drawerLayout = (DrawerLayout) activity.findViewById(R.id.drawer_layout);
+        DrawerLayout drawerLayout = (DrawerLayout) activity.findViewById(parent);
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
                 activity,
                 drawerLayout,
@@ -109,7 +109,7 @@ public class BtmwApplication extends Application {
         drawerToggle.setDrawerIndicatorEnabled(true);
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        NavigationView navView = (NavigationView) activity.findViewById(R.id.navigation_header);
+        NavigationView navView = (NavigationView) activity.findViewById(parent).findViewById(R.id.navigation_header);
         navView.setNavigationItemSelectedListener(createNavigationItemSelectedListener(activity));
     }
 }
