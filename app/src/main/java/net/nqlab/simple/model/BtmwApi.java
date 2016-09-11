@@ -1,5 +1,6 @@
 package net.nqlab.simple.model;
 
+import java.lang.reflect.Type;
 import java.util.Date;
 
 import android.net.Uri;
@@ -85,7 +86,7 @@ public class BtmwApi {
             return false;
         }
 
-        String token = mSecureSaveData.decryptString(encryptedToken);
+        String token = mSecureSaveData.decryptKey(encryptedToken);
         if (token == null) {
             return false;
         }
@@ -128,7 +129,7 @@ public class BtmwApi {
                 public void onNext(AccessToken token) {
                     if (token != null) {
                         String accessToken = token.getAccessToken();
-                        mSaveData.saveToken("token", mSecureSaveData.encryptString(accessToken));
+                        mSaveData.saveToken("token", mSecureSaveData.encryptKey(accessToken));
                         if (createSession(accessToken)) {
                             if (mLoginAdapter != null) {
                                 mLoginAdapter.onLoginSuccess();
@@ -187,4 +188,9 @@ public class BtmwApi {
 	{
 		return mGson.toJson(obj);
 	}
+
+    public Object fromJson(String str, Type type)
+    {
+        return mGson.fromJson(str, type);
+    }
 }

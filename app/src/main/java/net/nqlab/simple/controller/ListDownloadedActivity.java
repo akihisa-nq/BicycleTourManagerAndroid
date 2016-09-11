@@ -7,17 +7,42 @@ import android.content.Intent;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
+import net.nqlab.btmw.TourPlanSchedule;
 import net.nqlab.simple.controller.BtmwApplication;
 import net.nqlab.simple.R;
+import net.nqlab.simple.view.ListDownloadedListViewAdapter;
 
 public class ListDownloadedActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_downloaded);
         getBtmwApplication().setupNavigation(this, R.id.drawer_layout_list_downloaded);
+
+        ListView listView = (ListView)findViewById(R.id.listView);
+        final ListDownloadedListViewAdapter adapter = new ListDownloadedListViewAdapter(
+                ListDownloadedActivity.this,
+                getBtmwApplication().getSaveData(),
+                getBtmwApplication().getSecureSaveData(),
+                getBtmwApplication().getApi()
+            );
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                ListView listView = (ListView)adapterView;
+                TourPlanSchedule item = (TourPlanSchedule)listView.getItemAtPosition(position);
+
+                Intent intent = new Intent();
+                intent.setClassName("net.nqlab.simple", "net.nqlab.simple.controller.ShowDownloadedActivity");
+                intent.putExtra("TourPlan", item.getId().intValue());
+                startActivity(intent);
+                }
+            });
     }
 
     @Override

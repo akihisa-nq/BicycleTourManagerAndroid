@@ -18,7 +18,7 @@
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:title="@string/title_activity_list_downloaded" />
+            app:title="@string/title_activity_show_downloaded" />
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

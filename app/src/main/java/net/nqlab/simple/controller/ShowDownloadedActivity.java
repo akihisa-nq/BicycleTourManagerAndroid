@@ -8,16 +8,28 @@ import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import net.nqlab.btmw.TourPlanSchedule;
 import net.nqlab.simple.controller.BtmwApplication;
 import net.nqlab.simple.R;
+import net.nqlab.simple.model.TourPlanScheduleStore;
 
 public class ShowDownloadedActivity extends AppCompatActivity {
+    TourPlanSchedule mTourPlan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_downloaded);
         getBtmwApplication().setupNavigation(this, R.id.drawer_layout_show_downloaded);
+
+        Intent intent = getIntent();
+        int tourPlanId = intent.getIntExtra("TourPlan", 0);
+
+        mTourPlan = new TourPlanScheduleStore(
+                getBtmwApplication().getSaveData(),
+                getBtmwApplication().getSecureSaveData(),
+                getBtmwApplication().getApi()
+            ).load(tourPlanId);
     }
 
     @Override

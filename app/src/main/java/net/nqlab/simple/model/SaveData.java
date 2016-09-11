@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 
 import android.database.Cursor;
+import android.util.Log;
 
 public class SaveData extends SQLiteOpenHelper {
     private static final String DB = "sqlite_sample.db";
@@ -17,6 +18,7 @@ public class SaveData extends SQLiteOpenHelper {
         super(c, DB, null, DB_VERSION_ADD_TOUR_PLAN);
     }
 
+    @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(
 			"create table tokens ("
@@ -32,6 +34,7 @@ public class SaveData extends SQLiteOpenHelper {
 			);
     }
 
+    @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		if (oldVersion < newVersion) {
 			// up
@@ -56,7 +59,9 @@ public class SaveData extends SQLiteOpenHelper {
             SQLiteDatabase db = getWritableDatabase();
             db.execSQL("delete from tokens where  key = '" + key + "';");
             db.execSQL("insert into tokens(key, data) values  ('" + key + "', '" + value + "');");
+
         } catch (Exception e) {
+            Log.e("SaveData", e.getMessage());
 
         } finally {
             if (cur != null) {
@@ -83,9 +88,11 @@ public class SaveData extends SQLiteOpenHelper {
             if (cur.moveToFirst()) {
                 ret = cur.getString(0);
             }
-        } catch (Exception e) {
 
-        } finally {
+        } catch (Exception e) {
+            Log.e("SaveData", e.getMessage());
+
+       } finally {
             if (cur != null) {
                 cur.close();
             }
@@ -94,30 +101,25 @@ public class SaveData extends SQLiteOpenHelper {
         return ret;
 	}
 
-    public void saveTourPlan(int id, String name, String json)
-    {
-        Cursor cur = null;
+    public void saveTourPlanSchedle(int id, String name, String json) {
         try {
             SQLiteDatabase db = getWritableDatabase();
-            db.execSQL("delete from tour_plans where  id = '" + id + "';");
+            db.execSQL("delete from tour_plans where _id = " + id + ";");
 
-			SQLiteStatement stmt = db.compileStatement("INSERT INTO cat(id, name, json) VALUES(?, ?, ?)");
+			SQLiteStatement stmt = db.compileStatement("INSERT INTO tour_plans(_id, name, json) VALUES(?, ?, ?)");
 			stmt.bindLong(1, id);
 			stmt.bindString(2, name);
 			stmt.bindString(3, json);
 			stmt.executeInsert();
 
         } catch (Exception e) {
+            Log.e("SaveData", e.getMessage());
 
         } finally {
-            if (cur != null) {
-                cur.close();
-            }
         }
     }
 
-	public String loadTourPlan(int id)
-	{
+	public String loadTourPlanSchedle(int id) {
         String ret = null;
         Cursor cur = null;
         try {
@@ -134,7 +136,9 @@ public class SaveData extends SQLiteOpenHelper {
             if (cur.moveToFirst()) {
                 ret = cur.getString(0);
             }
+
         } catch (Exception e) {
+            Log.e("SaveData", e.getMessage());
 
         } finally {
             if (cur != null) {
@@ -144,5 +148,40 @@ public class SaveData extends SQLiteOpenHelper {
 
         return ret;
 	}
+
+    public interface TourPlanScheduleVisitor {
+        void visit(int id, String name);
+    }
+
+    public void listTourPlanSchedle(TourPlanScheduleVisitor visitor) {
+        String ret = null;
+        Cursor cur = null;
+        try {
+            SQLiteDatabase db = getWritableDatabase();
+            cur = db.query(
+                    "tour_plans",                // from
+                    new String[]{"_id", "name"}, // select
+                    null,                         // where
+                    null,                         // group by
+                    null,                         // having
+                    null,                         // order by
+                    null                          // limit
+            );
+            if (cur.moveToFirst()) {
+                do {
+                    int id = cur.getInt(0);
+                    String name = cur.getString(1);
+                    visitor.visit(id, name);
+                } while (cur.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("SaveData", e.getMessage());
+
+        } finally {
+            if (cur != null) {
+                cur.close();
+            }
+        }
+    }
 }
 

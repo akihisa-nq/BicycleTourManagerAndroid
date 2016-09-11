@@ -17,15 +17,23 @@ import net.nqlab.btmw.TourPlanSchedule;
 
 import net.nqlab.simple.controller.BtmwApplication;
 import net.nqlab.simple.R;
+import net.nqlab.simple.model.TourPlanScheduleStore;
 
 public class ShowOnlineActivity extends AppCompatActivity {
     private int mTourPlanId;
+    private TourPlanScheduleStore mStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_online);
         getBtmwApplication().setupNavigation(this, R.id.drawer_layout_show_online);
+
+        mStore = new TourPlanScheduleStore(
+            getBtmwApplication().getSaveData(),
+            getBtmwApplication().getSecureSaveData(),
+            getBtmwApplication().getApi()
+            );
 
         Intent intent = getIntent();
         mTourPlanId = intent.getIntExtra("TourPlan", 0);
@@ -91,13 +99,7 @@ public class ShowOnlineActivity extends AppCompatActivity {
                 @Override
                 public void onNext(TourPlanSchedule schedule) {
                     if (schedule != null) {
-                        String strData = getBtmwApplication().getApi().toJson(schedule);
-                        String strSaveData = getBtmwApplication().getSecureSaveData().encryptString(strData);
-                        getBtmwApplication().getSaveData().saveTourPlan(
-                            schedule.getId(),
-                            schedule.getName(),
-                            strSaveData
-                            );
+                        mStore.store(schedule);
                     }
                 }
             });
