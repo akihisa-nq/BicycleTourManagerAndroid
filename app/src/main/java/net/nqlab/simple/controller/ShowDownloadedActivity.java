@@ -16,6 +16,8 @@ import net.nqlab.simple.model.TourPlanScheduleStore;
 import net.nqlab.simple.view.ShowDownloadedExpandableListViewAdapter;
 
 public class ShowDownloadedActivity extends AppCompatActivity {
+    private TourPlanSchedule mTourPlan;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,21 +26,21 @@ public class ShowDownloadedActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         int tourPlanId = intent.getIntExtra("TourPlan", 0);
-        TourPlanSchedule plan = new TourPlanScheduleStore(
+        mTourPlan = new TourPlanScheduleStore(
                 getBtmwApplication().getSaveData(),
                 getBtmwApplication().getSecureSaveData(),
                 getBtmwApplication().getApi()
             ).load(tourPlanId);
 
         ExpandableListView listView = (ExpandableListView)findViewById(R.id.expandableListView);
-        final ShowDownloadedExpandableListViewAdapter adapter = new ShowDownloadedExpandableListViewAdapter(this, plan);
+        final ShowDownloadedExpandableListViewAdapter adapter = new ShowDownloadedExpandableListViewAdapter(this, mTourPlan);
         listView.setAdapter(adapter);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_show_downloaded, menu);
         return true;
     }
 
@@ -50,8 +52,14 @@ public class ShowDownloadedActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_go: {
+                    Intent intent = new Intent();
+                    intent.setClassName("net.nqlab.simple", "net.nqlab.simple.controller.GoActivity");
+                    intent.putExtra("TourPlan", mTourPlan.getId());
+                    startActivity(intent);
+                     return true;
+                }
         }
 
         return super.onOptionsItemSelected(item);

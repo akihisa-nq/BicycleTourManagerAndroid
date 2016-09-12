@@ -34,6 +34,10 @@
             android:name="net.nqlab.simple.controller.ListOnlineActivity"
             android:label="@string/title_activity_list_online" >
       </activity>
+      <activity
+            android:name="net.nqlab.simple.controller.GoActivity"
+            android:label="@string/title_activity_go" >
+      </activity>
     </application>
 
 </manifest>
