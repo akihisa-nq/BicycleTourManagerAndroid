@@ -127,7 +127,7 @@ public class SaveData extends SQLiteOpenHelper {
             cur = db.query(
                     "tour_plans",               // from
                     new String[]{"json"},       // select
-                    "id = '" + id + "'",        // where
+                    "_id = " + id,               // where
                     null,                       // group by
                     null,                       // having
                     null,                       // order by

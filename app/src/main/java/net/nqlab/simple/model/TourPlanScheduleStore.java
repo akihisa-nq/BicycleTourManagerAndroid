@@ -60,7 +60,9 @@ public class TourPlanScheduleStore {
     public TourPlanSchedule load(int id)
     {
         String entryptedJson = mSaveData.loadTourPlanSchedle(id);
-        String json = mSecureSaveData.decryptKey(entryptedJson);
+        byte[] iv = getInitialVector();
+        byte[] password = getPassword();
+        String json = mSecureSaveData.decryptString(password, iv, entryptedJson);
         return (TourPlanSchedule) mApi.fromJson(json, TourPlanSchedule.class);
     }
 

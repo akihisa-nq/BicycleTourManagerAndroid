@@ -7,7 +7,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class Route {
+public class TourPlanPoint {
 
     @SerializedName("name")
     @Expose
@@ -508,10 +508,10 @@ public class Route {
         if (other == this) {
             return true;
         }
-        if ((other instanceof Route) == false) {
+        if ((other instanceof TourPlanPoint) == false) {
             return false;
         }
-        Route rhs = ((Route) other);
+        TourPlanPoint rhs = ((TourPlanPoint) other);
         return new EqualsBuilder().append(name, rhs.name).append(comment, rhs.comment).append(restTime, rhs.restTime).append(targetSpeed, rhs.targetSpeed).append(limitSpeed, rhs.limitSpeed).append(elevation, rhs.elevation).append(distanceAddition, rhs.distanceAddition).append(targetTimeAddition, rhs.targetTimeAddition).append(limitTimeAddition, rhs.limitTimeAddition).append(roadNw, rhs.roadNw).append(roadN, rhs.roadN).append(roadNe, rhs.roadNe).append(roadW, rhs.roadW).append(roadE, rhs.roadE).append(roadSw, rhs.roadSw).append(roadS, rhs.roadS).append(roadSe, rhs.roadSe).append(directionImage, rhs.directionImage).append(pcTotalDistance, rhs.pcTotalDistance).append(totalDistance, rhs.totalDistance).append(pcTotalTargetTime, rhs.pcTotalTargetTime).append(pcTotalLimitTime, rhs.pcTotalLimitTime).append(pass, rhs.pass).isEquals();
     }
 

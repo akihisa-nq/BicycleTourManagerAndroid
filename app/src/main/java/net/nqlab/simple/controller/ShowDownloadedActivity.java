@@ -7,15 +7,15 @@ import android.content.Intent;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ExpandableListView;
 
 import net.nqlab.btmw.TourPlanSchedule;
 import net.nqlab.simple.controller.BtmwApplication;
 import net.nqlab.simple.R;
 import net.nqlab.simple.model.TourPlanScheduleStore;
+import net.nqlab.simple.view.ShowDownloadedExpandableListViewAdapter;
 
 public class ShowDownloadedActivity extends AppCompatActivity {
-    TourPlanSchedule mTourPlan;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,12 +24,15 @@ public class ShowDownloadedActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         int tourPlanId = intent.getIntExtra("TourPlan", 0);
-
-        mTourPlan = new TourPlanScheduleStore(
+        TourPlanSchedule plan = new TourPlanScheduleStore(
                 getBtmwApplication().getSaveData(),
                 getBtmwApplication().getSecureSaveData(),
                 getBtmwApplication().getApi()
             ).load(tourPlanId);
+
+        ExpandableListView listView = (ExpandableListView)findViewById(R.id.expandableListView);
+        final ShowDownloadedExpandableListViewAdapter adapter = new ShowDownloadedExpandableListViewAdapter(this, plan);
+        listView.setAdapter(adapter);
     }
 
     @Override

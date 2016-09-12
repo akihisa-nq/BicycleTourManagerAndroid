@@ -179,6 +179,22 @@ public class SecureSaveData {
         }
         return null;
     }
+
+    public String decryptString(byte[] password, byte[] ivData, String data) {
+        try {
+            SecretKey skey = new SecretKeySpec(password, "AES");
+            IvParameterSpec iv = new IvParameterSpec(ivData);
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.DECRYPT_MODE, skey, iv);
+            byte[] byteResult = cipher.doFinal(Base64.decode(data, Base64.DEFAULT));
+            return new String(byteResult, "UTF-8");
+
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+
+        }
+        return null;
+    }
 }
 
 

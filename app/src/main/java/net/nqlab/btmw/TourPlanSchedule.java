@@ -36,9 +36,12 @@ public class TourPlanSchedule {
     @SerializedName("resource_set_id")
     @Expose
     private Integer resourceSetId;
-    @SerializedName("schedules")
+    @SerializedName("distance")
     @Expose
-    private Schedules schedules;
+    private Integer distance;
+    @SerializedName("tour_plan_schedules")
+    @Expose
+    private TourPlanSchedules tourPlanSchedules;
 
     /**
      * 
@@ -205,19 +208,37 @@ public class TourPlanSchedule {
     /**
      * 
      * @return
-     *     The schedules
+     *     The distance
      */
-    public Schedules getSchedules() {
-        return schedules;
+    public Integer getDistance() {
+        return distance;
     }
 
     /**
      * 
-     * @param schedules
-     *     The schedules
+     * @param distance
+     *     The distance
      */
-    public void setSchedules(Schedules schedules) {
-        this.schedules = schedules;
+    public void setDistance(Integer distance) {
+        this.distance = distance;
+    }
+
+    /**
+     * 
+     * @return
+     *     The tourPlanSchedules
+     */
+    public TourPlanSchedules getTourPlanSchedules() {
+        return tourPlanSchedules;
+    }
+
+    /**
+     * 
+     * @param tourPlanSchedules
+     *     The tour_plan_schedules
+     */
+    public void setTourPlanSchedules(TourPlanSchedules tourPlanSchedules) {
+        this.tourPlanSchedules = tourPlanSchedules;
     }
 
     @Override
@@ -227,7 +248,7 @@ public class TourPlanSchedule {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(id).append(name).append(published).append(createdAt).append(updatedAt).append(timeZone).append(startTime).append(elevation).append(resourceSetId).append(schedules).toHashCode();
+        return new HashCodeBuilder().append(id).append(name).append(published).append(createdAt).append(updatedAt).append(timeZone).append(startTime).append(elevation).append(resourceSetId).append(distance).append(tourPlanSchedules).toHashCode();
     }
 
     @Override
@@ -239,7 +260,7 @@ public class TourPlanSchedule {
             return false;
         }
         TourPlanSchedule rhs = ((TourPlanSchedule) other);
-        return new EqualsBuilder().append(id, rhs.id).append(name, rhs.name).append(published, rhs.published).append(createdAt, rhs.createdAt).append(updatedAt, rhs.updatedAt).append(timeZone, rhs.timeZone).append(startTime, rhs.startTime).append(elevation, rhs.elevation).append(resourceSetId, rhs.resourceSetId).append(schedules, rhs.schedules).isEquals();
+        return new EqualsBuilder().append(id, rhs.id).append(name, rhs.name).append(published, rhs.published).append(createdAt, rhs.createdAt).append(updatedAt, rhs.updatedAt).append(timeZone, rhs.timeZone).append(startTime, rhs.startTime).append(elevation, rhs.elevation).append(resourceSetId, rhs.resourceSetId).append(distance, rhs.distance).append(tourPlanSchedules, rhs.tourPlanSchedules).isEquals();
     }
 
 }
