@@ -1,9 +1,13 @@
 package net.nqlab.simple.model;
 
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import android.net.Uri;
+import android.nfc.FormatException;
 
 import net.nqlab.btmw.ExclusionAreaApi;
 import net.nqlab.btmw.ExclusionAreaList;
@@ -34,8 +38,9 @@ public class BtmwApi {
     private SecureSaveData mSecureSaveData;
     private SaveData mSaveData;
     private String mAccessToken;
-	private Gson mGson;
-	private BtmwApiLoginAdapter mLoginAdapter;
+    private Gson mGson;
+    private BtmwApiLoginAdapter mLoginAdapter;
+    private SimpleDateFormat mFormat;
 
     public BtmwApi(SecureSaveData secureSaveData, SaveData saveData) {
         mGson = new GsonBuilder()
@@ -44,6 +49,7 @@ public class BtmwApi {
             .create();
         mSecureSaveData = secureSaveData;
         mSaveData = saveData;
+        mFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm::ss", Locale.JAPANESE);
     }
 
     private boolean createSession(String token)
@@ -66,17 +72,17 @@ public class BtmwApi {
         try {
             ExclusionAreaList list = getExclusionAreaApi().list().toBlocking().first();
             if (list == null) {
-				mAdapter = null;
-				mAccessToken = null;
+                mAdapter = null;
+                mAccessToken = null;
                 return false;
             }
         } catch (Exception e) {
-			 mAdapter = null;
-			 mAccessToken = null;
+             mAdapter = null;
+             mAccessToken = null;
              return false;
         }
 
-		return true;
+        return true;
     }
 
     public boolean restoreSession()
@@ -120,9 +126,9 @@ public class BtmwApi {
 
                 @Override
                 public void onError(Throwable e) {
-					if (mLoginAdapter != null) {
-						mLoginAdapter.onLoginFailure();
-					}
+                    if (mLoginAdapter != null) {
+                        mLoginAdapter.onLoginFailure();
+                    }
                 }
 
                 @Override
@@ -174,23 +180,35 @@ public class BtmwApi {
         return mAdapter.create(TourPlanApi.class);
     }
 
-	public void registerLoginAdapter(BtmwApiLoginAdapter loginAdapter)
-	{
-		mLoginAdapter = loginAdapter;
-	}
+    public void registerLoginAdapter(BtmwApiLoginAdapter loginAdapter)
+    {
+        mLoginAdapter = loginAdapter;
+    }
 
-	public void unregisterLoginAdapter()
-	{
-		mLoginAdapter = null;
-	}
+    public void unregisterLoginAdapter()
+    {
+        mLoginAdapter = null;
+    }
 
-	public String toJson(Object obj)
-	{
-		return mGson.toJson(obj);
-	}
+    public String toJson(Object obj)
+    {
+        return mGson.toJson(obj);
+    }
 
     public Object fromJson(String str, Type type)
     {
         return mGson.fromJson(str, type);
+    }
+
+    public Date fromStringToDate(String strDate) {
+        try {
+            return mFormat.parse(strDate);
+        } catch (ParseException e) {
+            return new Date();
+        }
+    }
+
+    public String fromDateToString(Date date) {
+        return mFormat.format(date);
     }
 }

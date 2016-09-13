@@ -99,8 +99,12 @@ public class ShowDownloadedExpandableListViewAdapter extends BaseExpandableListA
 
         TourPlanSchedulePoint point = getRoute(groupPosition).getTourPlanSchedulePoints().get(childPosition);
         ((TextView)convertView.findViewById(R.id.name)).setText(point.getName());
-        ((TextView)convertView.findViewById(R.id.distance)).setText("+" + point.getDistanceAddition().toString() + "km");
-        ((TextView)convertView.findViewById(R.id.elevation)).setText(point.getElevation().toString() + "m");
+        ((TextView)convertView.findViewById(R.id.distance)).setText(
+                "+" + FormatHelper.formatDistance(point.getDistanceAddition())
+            );
+        ((TextView)convertView.findViewById(R.id.elevation)).setText(
+                FormatHelper.formatElevation(point.getElevation())
+            );
 
         return convertView;
     }

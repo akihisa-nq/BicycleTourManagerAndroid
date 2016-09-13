@@ -21,12 +21,14 @@ import net.nqlab.simple.model.BtmwApi;
 public class GoListViewAdapter extends BaseAdapter {
 
     private Context mContext;
+    private BtmwApi mApi;
     private TourPlanSchedule mTourPlan;
     private int mTourPlanRouteIndex;
     private int mTourPlanPointIndex;
 
-    public GoListViewAdapter(Context context, TourPlanSchedule plan) {
+    public GoListViewAdapter(Context context, BtmwApi api, TourPlanSchedule plan) {
         mContext = context;
+        mApi = api;
         mTourPlan = plan;
         mTourPlanRouteIndex = 0;
         mTourPlanPointIndex = 0;
@@ -96,9 +98,67 @@ public class GoListViewAdapter extends BaseAdapter {
             convertView.setBackgroundColor(mContext.getColor(R.color.go_not_current_point));
         }
 
+        if (! point.getPass()) {
+            // 道
+            ((TextView)convertView.findViewById(R.id.text_view_nw)).setText(point.getRoadNw());
+            ((TextView)convertView.findViewById(R.id.text_view_n )).setText(point.getRoadN() );
+            ((TextView)convertView.findViewById(R.id.text_view_ne)).setText(point.getRoadNe());
+            ((TextView)convertView.findViewById(R.id.text_view_w )).setText(point.getRoadW() );
+            ((TextView)convertView.findViewById(R.id.text_view_e )).setText(point.getRoadE() );
+            ((TextView)convertView.findViewById(R.id.text_view_sw)).setText(point.getRoadSw());
+            ((TextView)convertView.findViewById(R.id.text_view_s )).setText(point.getRoadS() );
+            ((TextView)convertView.findViewById(R.id.text_view_se)).setText(point.getRoadSe());
+
+            GoDirectionView direction = ((GoDirectionView)convertView.findViewById(R.id.direction));
+            direction.setRoadNw(!point.getRoadNw().isEmpty());
+            direction.setRoadN( !point.getRoadN().isEmpty() );
+            direction.setRoadNe(!point.getRoadNe().isEmpty());
+            direction.setRoadW( !point.getRoadW().isEmpty() );
+            direction.setRoadE( !point.getRoadE().isEmpty() );
+            direction.setRoadSw(!point.getRoadSw().isEmpty());
+            direction.setRoadS( !point.getRoadS().isEmpty() );
+            direction.setRoadSe(!point.getRoadSe().isEmpty());
+            direction.setSource(point.getSource());
+            direction.setDestination(point.getDestination());
+        }
+
+        // 名前とコメント
         ((TextView)convertView.findViewById(R.id.name)).setText(point.getName());
-        ((TextView)convertView.findViewById(R.id.distance)).setText("+" + point.getDistanceAddition().toString() + "km");
-        ((TextView)convertView.findViewById(R.id.elevation)).setText(point.getElevation().toString() + "m");
+        ((TextView)convertView.findViewById(R.id.comment)).setText(point.getComment());
+
+        // 距離の加算と高度
+        ((TextView)convertView.findViewById(R.id.distance_addition)).setText(
+                "+" + FormatHelper.formatDistance(point.getDistanceAddition())
+            );
+        ((TextView)convertView.findViewById(R.id.elevation)).setText(
+                FormatHelper.formatElevation(point.getElevation())
+            );
+
+        // 速度
+        ((TextView)convertView.findViewById(R.id.target_speed)).setText(
+                FormatHelper.formatSpeed(point.getTargetSpeed())
+            );
+        ((TextView)convertView.findViewById(R.id.elevation)).setText(
+                FormatHelper.formatSpeed(point.getLimitSpeed())
+            );
+
+        // 時間の加算
+        ((TextView)convertView.findViewById(R.id.target_time_addition)).setText(
+                FormatHelper.formatTimeAddition(point.getTargetTimeAddition())
+            );
+        ((TextView)convertView.findViewById(R.id.limit_time_addition)).setText(
+                FormatHelper.formatTimeAddition(point.getLimitTimeAddition())
+            );
+
+        if (! point.getPass()) {
+            // PC からの総距離と時間のリミット
+            ((TextView) convertView.findViewById(R.id.pc_total_distance)).setText(
+                    FormatHelper.formatDistance(point.getPcTotalDistance())
+                    );
+            ((TextView) convertView.findViewById(R.id.total_limit_time)).setText(
+                    FormatHelper.formatTime(mApi, point.getTotalLimitTime())
+                );
+        }
 
         return convertView;
     }

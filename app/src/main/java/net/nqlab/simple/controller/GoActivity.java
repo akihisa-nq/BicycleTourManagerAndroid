@@ -45,7 +45,7 @@ public class GoActivity extends AppCompatActivity {
             ).load(tourPlanId);
 
         final ListView listView = (ListView)findViewById(R.id.listView);
-        mAdapter = new GoListViewAdapter(GoActivity.this, mTourPlan);
+        mAdapter = new GoListViewAdapter(GoActivity.this, getBtmwApplication().getApi(), mTourPlan);
         listView.setAdapter(mAdapter);
 
         final GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {

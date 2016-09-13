@@ -63,9 +63,12 @@ public class TourPlanSchedulePoint {
     @SerializedName("road_se")
     @Expose
     private String roadSe;
-    @SerializedName("direction_image")
+    @SerializedName("source")
     @Expose
-    private String directionImage;
+    private String source;
+    @SerializedName("destination")
+    @Expose
+    private String destination;
     @SerializedName("pc_total_distance")
     @Expose
     private Double pcTotalDistance;
@@ -78,6 +81,12 @@ public class TourPlanSchedulePoint {
     @SerializedName("pc_total_limit_time")
     @Expose
     private String pcTotalLimitTime;
+    @SerializedName("total_target_time")
+    @Expose
+    private String totalTargetTime;
+    @SerializedName("total_limit_time")
+    @Expose
+    private String totalLimitTime;
     @SerializedName("pass")
     @Expose
     private Boolean pass;
@@ -409,19 +418,37 @@ public class TourPlanSchedulePoint {
     /**
      * 
      * @return
-     *     The directionImage
+     *     The source
      */
-    public String getDirectionImage() {
-        return directionImage;
+    public String getSource() {
+        return source;
     }
 
     /**
      * 
-     * @param directionImage
-     *     The direction_image
+     * @param source
+     *     The source
      */
-    public void setDirectionImage(String directionImage) {
-        this.directionImage = directionImage;
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    /**
+     * 
+     * @return
+     *     The destination
+     */
+    public String getDestination() {
+        return destination;
+    }
+
+    /**
+     * 
+     * @param destination
+     *     The destination
+     */
+    public void setDestination(String destination) {
+        this.destination = destination;
     }
 
     /**
@@ -499,6 +526,42 @@ public class TourPlanSchedulePoint {
     /**
      * 
      * @return
+     *     The totalTargetTime
+     */
+    public String getTotalTargetTime() {
+        return totalTargetTime;
+    }
+
+    /**
+     * 
+     * @param totalTargetTime
+     *     The total_target_time
+     */
+    public void setTotalTargetTime(String totalTargetTime) {
+        this.totalTargetTime = totalTargetTime;
+    }
+
+    /**
+     * 
+     * @return
+     *     The totalLimitTime
+     */
+    public String getTotalLimitTime() {
+        return totalLimitTime;
+    }
+
+    /**
+     * 
+     * @param totalLimitTime
+     *     The total_limit_time
+     */
+    public void setTotalLimitTime(String totalLimitTime) {
+        this.totalLimitTime = totalLimitTime;
+    }
+
+    /**
+     * 
+     * @return
      *     The pass
      */
     public Boolean getPass() {
@@ -521,7 +584,7 @@ public class TourPlanSchedulePoint {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(id).append(name).append(comment).append(restTime).append(targetSpeed).append(limitSpeed).append(elevation).append(distanceAddition).append(targetTimeAddition).append(limitTimeAddition).append(roadNw).append(roadN).append(roadNe).append(roadW).append(roadE).append(roadSw).append(roadS).append(roadSe).append(directionImage).append(pcTotalDistance).append(totalDistance).append(pcTotalTargetTime).append(pcTotalLimitTime).append(pass).toHashCode();
+        return new HashCodeBuilder().append(id).append(name).append(comment).append(restTime).append(targetSpeed).append(limitSpeed).append(elevation).append(distanceAddition).append(targetTimeAddition).append(limitTimeAddition).append(roadNw).append(roadN).append(roadNe).append(roadW).append(roadE).append(roadSw).append(roadS).append(roadSe).append(source).append(destination).append(pcTotalDistance).append(totalDistance).append(pcTotalTargetTime).append(pcTotalLimitTime).append(totalTargetTime).append(totalLimitTime).append(pass).toHashCode();
     }
 
     @Override
@@ -533,7 +596,7 @@ public class TourPlanSchedulePoint {
             return false;
         }
         TourPlanSchedulePoint rhs = ((TourPlanSchedulePoint) other);
-        return new EqualsBuilder().append(id, rhs.id).append(name, rhs.name).append(comment, rhs.comment).append(restTime, rhs.restTime).append(targetSpeed, rhs.targetSpeed).append(limitSpeed, rhs.limitSpeed).append(elevation, rhs.elevation).append(distanceAddition, rhs.distanceAddition).append(targetTimeAddition, rhs.targetTimeAddition).append(limitTimeAddition, rhs.limitTimeAddition).append(roadNw, rhs.roadNw).append(roadN, rhs.roadN).append(roadNe, rhs.roadNe).append(roadW, rhs.roadW).append(roadE, rhs.roadE).append(roadSw, rhs.roadSw).append(roadS, rhs.roadS).append(roadSe, rhs.roadSe).append(directionImage, rhs.directionImage).append(pcTotalDistance, rhs.pcTotalDistance).append(totalDistance, rhs.totalDistance).append(pcTotalTargetTime, rhs.pcTotalTargetTime).append(pcTotalLimitTime, rhs.pcTotalLimitTime).append(pass, rhs.pass).isEquals();
+        return new EqualsBuilder().append(id, rhs.id).append(name, rhs.name).append(comment, rhs.comment).append(restTime, rhs.restTime).append(targetSpeed, rhs.targetSpeed).append(limitSpeed, rhs.limitSpeed).append(elevation, rhs.elevation).append(distanceAddition, rhs.distanceAddition).append(targetTimeAddition, rhs.targetTimeAddition).append(limitTimeAddition, rhs.limitTimeAddition).append(roadNw, rhs.roadNw).append(roadN, rhs.roadN).append(roadNe, rhs.roadNe).append(roadW, rhs.roadW).append(roadE, rhs.roadE).append(roadSw, rhs.roadSw).append(roadS, rhs.roadS).append(roadSe, rhs.roadSe).append(source, rhs.source).append(destination, rhs.destination).append(pcTotalDistance, rhs.pcTotalDistance).append(totalDistance, rhs.totalDistance).append(pcTotalTargetTime, rhs.pcTotalTargetTime).append(pcTotalLimitTime, rhs.pcTotalLimitTime).append(totalTargetTime, rhs.totalTargetTime).append(totalLimitTime, rhs.totalLimitTime).append(pass, rhs.pass).isEquals();
     }
 
 }

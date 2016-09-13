@@ -88,8 +88,12 @@ public class ListOnlineListViewAdapter extends BaseAdapter {
         }
 
         ((TextView)convertView.findViewById(R.id.name)).setText(plan.getName());
-        ((TextView)convertView.findViewById(R.id.distance)).setText(plan.getDistance().toString() + "km");
-        ((TextView)convertView.findViewById(R.id.elevation)).setText(plan.getElevation().toString() + "m");
+        ((TextView)convertView.findViewById(R.id.distance)).setText(
+                FormatHelper.formatDistance(plan.getDistance())
+            );
+        ((TextView)convertView.findViewById(R.id.elevation)).setText(
+                FormatHelper.formatElevation(plan.getElevation())
+            );
 
         return convertView;
     }
