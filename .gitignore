@@ -5,3 +5,4 @@
 .DS_Store
 /build
 app/src/main/java/net/nqlab/simple/model/ServerInfo.java
+app/src/release/java/net/nqlab/simple/model/ServerInfo.java

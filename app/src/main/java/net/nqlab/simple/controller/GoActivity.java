@@ -71,6 +71,7 @@ public class GoActivity extends AppCompatActivity {
             @Override
             public void onLongPress(MotionEvent motionEvent) {
                 mAdapter.succeed();
+                GoActivity.this.goToPoint();
             }
         });
         listView.setOnTouchListener(new View.OnTouchListener() {
@@ -173,7 +174,7 @@ public class GoActivity extends AppCompatActivity {
 
     private void goToPoint() {
         int selection = mAdapter.getCurrentPosition();
-        for (int i = 0; i < 3 && selection > 0; i++) {
+        for (int i = 0; i < 1 && selection > 0; i++) {
             --selection;
         }
         final ListView listView = (ListView)findViewById(R.id.listView);

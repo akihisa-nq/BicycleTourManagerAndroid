@@ -20,7 +20,8 @@
             android:layout_gravity="bottom|right" 
             android:text="New Text"
             android:id="@+id/text_view_nw"
-            />
+            android:textIsSelectable="false"
+            android:textSize="@dimen/abc_text_size_headline_material" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -28,7 +29,9 @@
             android:layout_columnWeight="1"
             android:layout_gravity="bottom|center_horizontal"
             android:text="New Text"
-            android:id="@+id/text_view_n"/>
+            android:id="@+id/text_view_n"
+            android:textIsSelectable="false"
+            android:textSize="@dimen/abc_text_size_headline_material" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -36,7 +39,9 @@
             android:layout_columnWeight="1"
             android:layout_gravity="bottom|left"
             android:text="New Text"
-            android:id="@+id/text_view_ne"/>
+            android:id="@+id/text_view_ne"
+            android:textIsSelectable="false"
+            android:textSize="@dimen/abc_text_size_headline_material" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -45,7 +50,8 @@
             android:layout_gravity="center_vertical|right"
             android:text="New Text"
             android:id="@+id/text_view_w"
-             />
+            android:textIsSelectable="false"
+            android:textSize="@dimen/abc_text_size_headline_material" />
 
         <net.nqlab.simple.view.GoDirectionView
             android:layout_width="64dp"
@@ -62,7 +68,8 @@
             android:layout_gravity="center_vertical|left"
             android:text="New Text"
             android:id="@+id/text_view_e"
-             />
+            android:textIsSelectable="false"
+            android:textSize="@dimen/abc_text_size_headline_material" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -71,7 +78,8 @@
             android:layout_gravity="top|right"
             android:text="New Text"
             android:id="@+id/text_view_sw"
-             />
+            android:textIsSelectable="false"
+            android:textSize="@dimen/abc_text_size_headline_material" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -80,7 +88,8 @@
             android:layout_gravity="top|center_horizontal"
             android:text="New Text"
             android:id="@+id/text_view_s"
-             />
+            android:textIsSelectable="false"
+            android:textSize="@dimen/abc_text_size_headline_material" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -89,7 +98,8 @@
             android:layout_gravity="top|left"
             android:text="New Text"
             android:id="@+id/text_view_se"
-             />
+            android:textIsSelectable="false"
+            android:textSize="@dimen/abc_text_size_headline_material" />
 
     </GridLayout>
 
@@ -104,13 +114,13 @@
         android:layout_marginRight="12dp"
         android:columnCount="2"
         android:rowCount="4"
-        >
+        android:useDefaultMargins="false">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_gravity="center_vertical|left" 
+            android:layout_columnWeight="0.5"
+            android:layout_gravity="fill_horizontal|left|center_vertical"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="name"
             android:id="@+id/name"
@@ -119,8 +129,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_gravity="center_vertical|left" 
+            android:layout_columnWeight="0.5"
+            android:layout_gravity="center_vertical|left"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="comment"
             android:id="@+id/comment"
@@ -129,82 +139,82 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_gravity="center_vertical|left" 
+            android:layout_columnWeight="0.5"
+            android:layout_gravity="center_vertical|left"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="0km"
             android:id="@+id/distance_addition"
-            android:textSize="@dimen/abc_text_size_body_1_material" />
+            android:textSize="@dimen/abc_text_size_display_1_material" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_gravity="center_vertical|left" 
+            android:layout_columnWeight="0.5"
+            android:layout_gravity="center_vertical|left"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="0m"
             android:id="@+id/elevation"
-            android:textSize="@dimen/abc_text_size_body_1_material" />
+            android:textSize="@dimen/abc_text_size_display_1_material" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_gravity="center_vertical|left" 
+            android:layout_columnWeight="0.5"
+            android:layout_gravity="center_vertical|left"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="15km/h"
             android:id="@+id/target_speed"
-            android:textSize="@dimen/abc_text_size_body_1_material" />
+            android:textSize="@dimen/abc_text_size_headline_material" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_gravity="center_vertical|left" 
+            android:layout_columnWeight="0.5"
+            android:layout_gravity="center_vertical|left"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="15km/h"
             android:id="@+id/limit_speed"
-            android:textSize="@dimen/abc_text_size_body_1_material" />
+            android:textSize="@dimen/abc_text_size_headline_material" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_gravity="center_vertical|left" 
+            android:layout_columnWeight="0.5"
+            android:layout_gravity="center_vertical|left"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="+00:00"
             android:id="@+id/target_time_addition"
-            android:textSize="@dimen/abc_text_size_body_1_material" />
+            android:textSize="@dimen/abc_text_size_headline_material" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_columnWeight="1"
-            android:layout_gravity="center_vertical|left" 
+            android:layout_gravity="center_vertical|left"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="+00:00"
             android:id="@+id/limit_time_addition"
-            android:textSize="@dimen/abc_text_size_body_1_material" />
+            android:textSize="@dimen/abc_text_size_headline_material" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_gravity="center_vertical|left" 
+            android:layout_columnWeight="0.5"
+            android:layout_gravity="left|center_vertical"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="15km"
             android:id="@+id/pc_total_distance"
-            android:textSize="@dimen/abc_text_size_body_1_material" />
+            android:textSize="@dimen/abc_text_size_headline_material" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_gravity="center_vertical|left" 
+            android:layout_columnWeight="0.5"
+            android:layout_gravity="center_vertical|left"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="00:00"
             android:id="@+id/total_limit_time"
-            android:textSize="@dimen/abc_text_size_body_1_material" />
+            android:textSize="@dimen/abc_text_size_headline_material" />
     </GridLayout>
 
 </RelativeLayout>

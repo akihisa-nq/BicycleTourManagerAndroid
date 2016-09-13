@@ -1,0 +1,8 @@
+package net.nqlab.simple.model;
+
+public class ServerInfo {
+    static public final String URL_BASE = "";
+    static public final String CLIENT_ID = "";
+    static public final String CLIENT_SECRET = "";
+    static public final String REDIRECT_URL = "";
+}
