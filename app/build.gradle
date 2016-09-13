@@ -16,12 +16,24 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
     }
+
+    signingConfigs {
+        myConfig {
+            storeFile file("../../btma.keystore")
+            keyAlias "btma_history"
+            keyPassword "btma_world"
+            storePassword "btma_black_world"
+        }
+    }
+
     buildTypes {
         release {
+		    signingConfig signingConfigs.myConfig
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     lintOptions {
         lintConfig file("lint.xml")
         // abortOnError false
