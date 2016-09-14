@@ -84,6 +84,9 @@ public class ShowOnlineActivity extends AppCompatActivity {
             return;
         }
 
+        final Button button = (Button) findViewById(R.id.download);
+        button.setText(getResources().getText(R.string.download));
+
         getBtmwApplication().getApi().getTourPlanApi().schedule(mTourPlanId)
             .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
@@ -94,6 +97,7 @@ public class ShowOnlineActivity extends AppCompatActivity {
 
                 @Override
                 public void onError(Throwable e) {
+                    button.setText(getResources().getText(R.string.download_failure));
                 }
 
                 @Override
@@ -101,6 +105,7 @@ public class ShowOnlineActivity extends AppCompatActivity {
                     if (schedule != null) {
                         mStore.store(schedule);
                     }
+                    button.setText(getResources().getText(R.string.download_success));
                 }
             });
     }

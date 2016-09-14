@@ -9,6 +9,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.NoSuchAlgorithmException;
 import java.security.KeyManagementException;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -99,6 +100,11 @@ public class BtmwApi {
 					return true;
 				}
 			});
+
+            client.setReadTimeout(1, TimeUnit.MINUTES);
+            client.setWriteTimeout(1, TimeUnit.MINUTES);
+            client.setConnectTimeout(1, TimeUnit.MINUTES);
+
 		} catch (NoSuchAlgorithmException | KeyManagementException e) {
 			e.printStackTrace();
 		}
