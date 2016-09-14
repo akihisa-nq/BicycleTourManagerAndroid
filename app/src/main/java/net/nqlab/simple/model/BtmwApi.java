@@ -5,6 +5,17 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.security.NoSuchAlgorithmException;
+import java.security.KeyManagementException;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
 
 import android.net.Uri;
 import android.nfc.FormatException;
@@ -15,6 +26,9 @@ import net.nqlab.btmw.LoginApi;
 import net.nqlab.btmw.AccessToken;
 import net.nqlab.btmw.TourPlanApi;
 
+import com.squareup.okhttp.OkHttpClient;
+
+import retrofit.client.OkClient;
 import retrofit.RestAdapter;
 import retrofit.RequestInterceptor;
 import retrofit.android.AndroidLog;
@@ -52,6 +66,45 @@ public class BtmwApi {
         mFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm::ss", Locale.JAPANESE);
     }
 
+	public OkClient createOkClient() {
+		OkHttpClient client = new OkHttpClient();
+		final TrustManager[] trustManagers = new TrustManager[]{
+				new X509TrustManager() {
+					@Override
+					public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+						// 特に何もしない
+					}
+
+					@Override
+					public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+						// 特に何もしない
+					}
+
+					@Override
+					public X509Certificate[] getAcceptedIssuers() {
+						return null;
+					}
+				}
+		};
+
+		try {
+			final SSLContext sslContext = SSLContext.getInstance("SSL");
+			sslContext.init(null, trustManagers, new java.security.SecureRandom());
+			final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+			client.setSslSocketFactory(sslSocketFactory);
+			client.setHostnameVerifier(new HostnameVerifier() {
+				@Override
+				public boolean verify(String hostname, SSLSession session) {
+					// ホスト名の検証を行わない
+					return true;
+				}
+			});
+		} catch (NoSuchAlgorithmException | KeyManagementException e) {
+			e.printStackTrace();
+		}
+		return new OkClient(client);
+	}
+
     private boolean createSession(String token)
     {
         mAccessToken = token;
@@ -67,6 +120,7 @@ public class BtmwApi {
                         request.addHeader("Authorization", "Bearer " + mAccessToken);
                     }
                 })
+			.setClient(createOkClient())
             .build();
 
         try {
@@ -107,6 +161,7 @@ public class BtmwApi {
             .setConverter(new GsonConverter(mGson))
             .setLogLevel(RestAdapter.LogLevel.FULL)
             .setLog(new AndroidLog("=NETWORK="))
+			.setClient(createOkClient())
             .build();
 
         // アクセス トークン取得
