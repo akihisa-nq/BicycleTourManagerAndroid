@@ -40,4 +40,8 @@ public class FormatHelper
         Date date = api.fromStringToDate(time);
         return new SimpleDateFormat("HH:mm", Locale.JAPAN).format(date);
     }
+
+    public static String formatRestTime(double time) {
+        return Math.round(time * 60.0) + "min";
+    }
 }

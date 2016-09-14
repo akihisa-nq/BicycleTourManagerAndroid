@@ -124,7 +124,10 @@ public class GoListViewAdapter extends BaseAdapter {
 
         // 名前とコメント
         ((TextView)convertView.findViewById(R.id.name)).setText(point.getName());
-        ((TextView)convertView.findViewById(R.id.comment)).setText(point.getComment());
+        ((TextView)convertView.findViewById(R.id.comment)).setText(
+                point.getComment()
+                + (point.getRestTime() > 0 ? " (" + FormatHelper.formatRestTime(point.getRestTime()) + ")" : "")
+        );
 
         // 距離の加算と高度
         ((TextView)convertView.findViewById(R.id.distance_addition)).setText(
@@ -144,10 +147,10 @@ public class GoListViewAdapter extends BaseAdapter {
 
         // 時間の加算
         ((TextView)convertView.findViewById(R.id.target_time_addition)).setText(
-                FormatHelper.formatTimeAddition(point.getTargetTimeAddition())
+                "+" + FormatHelper.formatTimeAddition(point.getTargetTimeAddition())
             );
         ((TextView)convertView.findViewById(R.id.limit_time_addition)).setText(
-                FormatHelper.formatTimeAddition(point.getLimitTimeAddition())
+                "+" + FormatHelper.formatTimeAddition(point.getLimitTimeAddition())
             );
 
         if (! point.getPass()) {
