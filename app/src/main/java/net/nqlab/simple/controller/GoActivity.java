@@ -174,9 +174,6 @@ public class GoActivity extends AppCompatActivity {
 
     private void goToPoint() {
         int selection = mAdapter.getCurrentPosition();
-        for (int i = 0; i < 1 && selection > 0; i++) {
-            --selection;
-        }
         final ListView listView = (ListView)findViewById(R.id.listView);
         listView.setSelection(selection);
     }

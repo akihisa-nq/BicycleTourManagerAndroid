@@ -63,16 +63,20 @@ public class GoDirectionView extends View {
         );
     }
 
+    private boolean isSourceOrDestinationMatch(String dir) {
+        return dir.equals(mSource) || dir.equals(mDestination);
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
-        if (mRoadNw) { drawRoad(canvas, R.drawable.ic_normal_nw); }
-        if (mRoadN ) { drawRoad(canvas, R.drawable.ic_normal_n ); }
-        if (mRoadNe) { drawRoad(canvas, R.drawable.ic_normal_ne); }
-        if (mRoadW ) { drawRoad(canvas, R.drawable.ic_normal_w ); }
-        if (mRoadE ) { drawRoad(canvas, R.drawable.ic_normal_e ); }
-        if (mRoadSw) { drawRoad(canvas, R.drawable.ic_normal_sw); }
-        if (mRoadS ) { drawRoad(canvas, R.drawable.ic_normal_s ); }
-        if (mRoadSe) { drawRoad(canvas, R.drawable.ic_normal_se); }
+        if (mRoadNw || isSourceOrDestinationMatch("nw")) { drawRoad(canvas, R.drawable.ic_normal_nw); }
+        if (mRoadN  || isSourceOrDestinationMatch("n" )) { drawRoad(canvas, R.drawable.ic_normal_n ); }
+        if (mRoadNe || isSourceOrDestinationMatch("ne")) { drawRoad(canvas, R.drawable.ic_normal_ne); }
+        if (mRoadW  || isSourceOrDestinationMatch("w" )) { drawRoad(canvas, R.drawable.ic_normal_w ); }
+        if (mRoadE  || isSourceOrDestinationMatch("e" )) { drawRoad(canvas, R.drawable.ic_normal_e ); }
+        if (mRoadSw || isSourceOrDestinationMatch("sw")) { drawRoad(canvas, R.drawable.ic_normal_sw); }
+        if (mRoadS  || isSourceOrDestinationMatch("s" )) { drawRoad(canvas, R.drawable.ic_normal_s ); }
+        if (mRoadSe || isSourceOrDestinationMatch("se")) { drawRoad(canvas, R.drawable.ic_normal_se); }
 
         if (mSource.equals("nw")) { drawRoad(canvas, R.drawable.ic_orig_nw); }
         else if (mSource.equals("n")) { drawRoad(canvas, R.drawable.ic_orig_n); }

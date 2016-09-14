@@ -13,7 +13,7 @@
         android:layout_marginTop="0dp"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
-        android:columnCount="4"
+        android:columnCount="3"
         android:rowCount="2"
         android:useDefaultMargins="true">
 
@@ -25,6 +25,16 @@
             android:text="name"
             android:id="@+id/name"
             android:textSize="@dimen/abc_text_size_headline_material"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|left"
+            android:layout_columnSpan="2"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="comment"
+            android:id="@+id/comment"
+            android:textSize="@dimen/abc_text_size_headline_material" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -51,15 +61,6 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="15km/h"
             android:id="@+id/limit_speed"
-            android:textSize="@dimen/abc_text_size_headline_material" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|left"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="comment"
-            android:id="@+id/comment"
             android:textSize="@dimen/abc_text_size_headline_material" />
 
         <TextView

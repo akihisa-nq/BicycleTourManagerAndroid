@@ -89,7 +89,7 @@ public class GoListViewAdapter extends BaseAdapter {
         if (point.getPass()) {
             convertView = layoutInflater.inflate(R.layout.list_item_go_pass,parent,false);
         } else {
-            convertView = layoutInflater.inflate(R.layout.list_item_go_junction,parent,false);
+                convertView = layoutInflater.inflate(R.layout.list_item_go_junction,parent,false);
         }
 
         if (position == mTourPlanPointIndex) {
@@ -138,7 +138,7 @@ public class GoListViewAdapter extends BaseAdapter {
         ((TextView)convertView.findViewById(R.id.target_speed)).setText(
                 FormatHelper.formatSpeed(point.getTargetSpeed())
             );
-        ((TextView)convertView.findViewById(R.id.elevation)).setText(
+        ((TextView)convertView.findViewById(R.id.limit_speed)).setText(
                 FormatHelper.formatSpeed(point.getLimitSpeed())
             );
 

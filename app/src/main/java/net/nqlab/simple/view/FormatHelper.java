@@ -8,12 +8,8 @@ import java.util.Locale;
 
 public class FormatHelper
 {
-    private static String formatFloatingPoint(double val) {
-        return String.format(Locale.JAPAN, "%.2f", val);
-    }
-
     public static String formatDistance(double val) {
-        return formatFloatingPoint(val) + "km";
+        return String.format(Locale.JAPAN, "%.1f", val) + "km";
     }
 
     public static String formatDistane(int val) {
@@ -21,7 +17,7 @@ public class FormatHelper
     }
 
     public static String formatElevation(double val) {
-        return formatFloatingPoint(val) + "m";
+        return Math.round(val) + "m";
     }
 
     public static String formatElevation(int val) {
