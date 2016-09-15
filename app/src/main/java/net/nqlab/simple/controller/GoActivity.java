@@ -49,29 +49,21 @@ public class GoActivity extends AppCompatActivity {
         listView.setAdapter(mAdapter);
 
         final GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
-            private int mTapCount = 0;
-
             @Override
             public boolean onSingleTapConfirmed(MotionEvent motionEvent) {
-                mTapCount = 0;
                 return super.onSingleTapConfirmed(motionEvent);
             }
 
             @Override
             public boolean onDoubleTap(MotionEvent motionEvent) {
-                if (mTapCount == 2) {
-                    showSetRouteDialog();
-                    mTapCount = 0;
-                } else {
-                    ++mTapCount;
-                }
+                mAdapter.succeed();
+                GoActivity.this.goToPoint();
                 return super.onDoubleTap(motionEvent);
             }
 
             @Override
             public void onLongPress(MotionEvent motionEvent) {
-                mAdapter.succeed();
-                GoActivity.this.goToPoint();
+                showSetRouteDialog();
             }
         });
         listView.setOnTouchListener(new View.OnTouchListener() {
