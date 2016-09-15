@@ -27,7 +27,25 @@ public class GoDirectionView extends View {
 
     public GoDirectionView(Context context) {
         super(context);
+        initialize();
+    }
 
+    public GoDirectionView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        initialize();
+    }
+
+    public GoDirectionView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        initialize();
+    }
+
+    public GoDirectionView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        initialize();
+    }
+
+    private void initialize() {
         mSource = "";
         mDestination = "";
 
@@ -39,18 +57,6 @@ public class GoDirectionView extends View {
         mRoadSw = false;
         mRoadS = false;
         mRoadSe = false;
-    }
-
-    public GoDirectionView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public GoDirectionView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
-    public GoDirectionView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
     private void drawRoad(Canvas canvas, int id) {
