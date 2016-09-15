@@ -1,5 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="go_current_point">#333333</color>
-    <color name="go_not_current_point">#000000</color>
 </resources>
