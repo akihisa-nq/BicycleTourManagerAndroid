@@ -2,6 +2,7 @@ package net.nqlab.simple.view;
 
 import android.content.Context;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,11 +93,21 @@ public class GoListViewAdapter extends BaseAdapter {
                 convertView = layoutInflater.inflate(R.layout.list_item_go_junction,parent,false);
         }
 
+        TypedValue outValue = new TypedValue();
         if (position == mTourPlanPointIndex) {
-            convertView.setBackgroundColor(mContext.getColor(R.color.go_current_point));
+            mContext.getTheme().resolveAttribute(
+                    android.R.attr.colorControlHighlight,
+                    outValue,
+                    true
+            );
         } else {
-            convertView.setBackgroundColor(mContext.getColor(R.color.go_not_current_point));
+            mContext.getTheme().resolveAttribute(
+                    android.R.attr.colorControlNormal,
+                    outValue,
+                    true
+            );
         }
+        convertView.setBackgroundColor(outValue.data);
 
         if (! point.getPass()) {
             // 道
