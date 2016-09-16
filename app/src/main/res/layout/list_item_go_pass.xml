@@ -24,7 +24,7 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="name"
             android:id="@+id/name"
-            android:textSize="@dimen/abc_text_size_display_2_material"
+            android:textSize="@dimen/go_text_size"
             android:textColor="@color/colorTextPrimary" />
 
         <TextView
@@ -36,7 +36,7 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="comment"
             android:id="@+id/comment"
-            android:textSize="@dimen/abc_text_size_display_2_material"
+            android:textSize="@dimen/go_text_size"
             android:textColor="@color/colorTextPrimary" />
 
         <TextView
@@ -47,7 +47,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="0km"
             android:id="@+id/distance_addition"
-            android:textSize="@dimen/abc_text_size_display_2_material"
+            android:textSize="@dimen/go_text_size"
             android:textColor="@color/colorTextPrimary" />
 
         <TextView
@@ -58,7 +58,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="0m"
             android:id="@+id/elevation"
-            android:textSize="@dimen/abc_text_size_display_2_material"
+            android:textSize="@dimen/go_text_size"
             android:textColor="@color/colorTextPrimary" />
 
         <TextView
@@ -69,7 +69,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="15km/h"
             android:id="@+id/target_speed"
-            android:textSize="@dimen/abc_text_size_display_2_material"
+            android:textSize="@dimen/go_text_size"
             android:textColor="@color/colorTextPrimary" />
 
         <TextView
@@ -80,7 +80,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="15km/h"
             android:id="@+id/limit_speed"
-            android:textSize="@dimen/abc_text_size_display_2_material"
+            android:textSize="@dimen/go_text_size"
             android:textColor="@color/colorTextPrimary" />
 
         <TextView
@@ -91,7 +91,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="+00:00"
             android:id="@+id/target_time_addition"
-            android:textSize="@dimen/abc_text_size_display_2_material"
+            android:textSize="@dimen/go_text_size"
             android:textColor="@color/colorTextPrimary" />
 
         <TextView
@@ -102,7 +102,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="+00:00"
             android:id="@+id/limit_time_addition"
-            android:textSize="@dimen/abc_text_size_display_2_material"
+            android:textSize="@dimen/go_text_size"
             android:textColor="@color/colorTextPrimary" />
 
     </GridLayout>

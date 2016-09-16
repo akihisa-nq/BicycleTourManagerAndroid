@@ -94,21 +94,20 @@ public class GoActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume()
-    {
+    protected void onResume() {
         super.onResume();
+
+        Window window = getWindow();
+        window.addFlags(
+                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                        | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                        | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+        );
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
-        Window window = getWindow();
-        window.addFlags(
-                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
-                | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-        );
     }
 
     @Override
