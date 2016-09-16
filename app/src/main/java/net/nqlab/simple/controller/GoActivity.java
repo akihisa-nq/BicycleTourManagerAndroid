@@ -76,6 +76,13 @@ public class GoActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        Window window = getWindow();
+        window.addFlags(
+                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                        | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                        | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+        );
     }
 
     @Override
@@ -91,18 +98,18 @@ public class GoActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        Window window = getWindow();
+        window.clearFlags(
+                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+        );
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        Window window = getWindow();
-        window.addFlags(
-                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
-                        | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                        | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-        );
     }
 
     @Override
@@ -113,12 +120,6 @@ public class GoActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
-        Window window = getWindow();
-        window.clearFlags(
-                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
-                | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-        );
     }
 
     private BtmwApplication getBtmwApplication() {
