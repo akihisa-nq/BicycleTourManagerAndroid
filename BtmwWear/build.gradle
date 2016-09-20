@@ -6,14 +6,25 @@ android {
     buildToolsVersion "24.0.2"
 
     defaultConfig {
-        applicationId "net.nqlab.btmw.wear"
+        applicationId "net.nqlab.simple"
         minSdkVersion 21
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
     }
+
+    signingConfigs {
+        myConfig {
+            storeFile file("../../btmaw.keystore")
+            keyAlias "btmaw_history"
+            keyPassword "btmaw11"
+            storePassword "btmaw11"
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig signingConfigs.myConfig
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
