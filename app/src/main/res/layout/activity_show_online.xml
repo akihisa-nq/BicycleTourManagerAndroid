@@ -5,7 +5,7 @@
     android:id="@+id/drawer_layout_show_online"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="net.nqlab.simple.controller.ShowOnlineActivity">
+    tools:context="net.nqlab.handheld.controller.ShowOnlineActivity">
     <!-- The main content view -->
     <LinearLayout
         android:layout_width="match_parent"

@@ -4,5 +4,5 @@
 /.idea/libraries
 .DS_Store
 /build
-app/src/debug/java/net/nqlab/simple/model/ServerInfo.java
-app/src/release/java/net/nqlab/simple/model/ServerInfo.java
+app/src/release/java/net/nqlab/btmw/handheld/model/ServerInfo.java
+app/src/debug/java/net/nqlab/btmw/handheld/model/ServerInfo.java
