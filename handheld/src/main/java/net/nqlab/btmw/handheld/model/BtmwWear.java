@@ -4,14 +4,23 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.wearable.Wearable;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.DataApi;
+
+import net.nqlab.btmw.api.TourPlanSchedulePoint;
 
 public class BtmwWear {
-	private GoogleApiClient mApi;
+	private GoogleApiClient mGoogleApiClient;
+	private BtmwApi mBtmwApi;
 
-	public BtmwWear(Context context) {
-		mApi = new GoogleApiClient.Builder(context)
+	public BtmwWear(Context context, BtmwApi api) {
+		mBtmwApi = api;
+
+		mGoogleApiClient = new GoogleApiClient.Builder(context)
 			.addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                 @Override
                 public void onConnected(Bundle connectionHint) {
@@ -31,14 +40,23 @@ public class BtmwWear {
 	}
 
 	public void connect() {
-		if (mApi != null && !mApi.isConnected()) {
-			mApi.connect();
+		if (mGoogleApiClient != null && !mGoogleApiClient.isConnected()) {
+			mGoogleApiClient.connect();
 		}
 	}
 
 	public void disconnect() {
-		if (mApi != null && mApi.isConnected()) {
-			mApi.disconnect();
+		if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+			mGoogleApiClient.disconnect();
 		}	
 	}
+
+	public void sendPoint(TourPlanSchedulePoint point) {
+		String strJson = mBtmwApi.toJson(point);
+
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/point/set");
+        putDataMapReq.getDataMap().putString("data", strJson);
+        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+        PendingResult<DataApi.DataItemResult> pendingResult =
+                Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);	}
 }

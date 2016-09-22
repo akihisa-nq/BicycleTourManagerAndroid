@@ -1,10 +1,7 @@
 package net.nqlab.btmw.handheld.model;
 
 import java.lang.reflect.Type;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.NoSuchAlgorithmException;
@@ -37,30 +34,23 @@ import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.internal.bind.DateTypeAdapter;
 
 import net.nqlab.btmw.handheld.model.ServerInfo;
+import net.nqlab.btmw.api.SerDes;
 
 public class BtmwApi {
     private RestAdapter mAdapter = null;
     private SecureSaveData mSecureSaveData;
     private SaveData mSaveData;
     private String mAccessToken;
-    private Gson mGson;
     private BtmwApiLoginAdapter mLoginAdapter;
-    private SimpleDateFormat mFormat;
+	private SerDes mSerDes;
 
     public BtmwApi(SecureSaveData secureSaveData, SaveData saveData) {
-        mGson = new GsonBuilder()
-            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-            .registerTypeAdapter(Date.class, new DateTypeAdapter())
-            .create();
+		mSerDes = new SerDes();
         mSecureSaveData = secureSaveData;
         mSaveData = saveData;
-        mFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm::ss", Locale.JAPANESE);
     }
 
 	public OkClient createOkClient() {
@@ -113,7 +103,7 @@ public class BtmwApi {
 
         mAdapter = new RestAdapter.Builder()
             .setEndpoint(ServerInfo.URL_BASE)
-            .setConverter(new GsonConverter(mGson))
+            .setConverter(new GsonConverter(mSerDes.getGson()))
             .setLogLevel(RestAdapter.LogLevel.FULL)
             .setLog(new AndroidLog("=NETWORK="))
             .setRequestInterceptor(new RequestInterceptor() {
@@ -160,7 +150,7 @@ public class BtmwApi {
         // RestAdapterの生成
         RestAdapter adapter = new RestAdapter.Builder()
             .setEndpoint(ServerInfo.URL_BASE)
-            .setConverter(new GsonConverter(mGson))
+            .setConverter(new GsonConverter(mSerDes.getGson()))
             .setLogLevel(RestAdapter.LogLevel.FULL)
             .setLog(new AndroidLog("=NETWORK="))
 			.setClient(createOkClient())
@@ -249,23 +239,19 @@ public class BtmwApi {
 
     public String toJson(Object obj)
     {
-        return mGson.toJson(obj);
+        return mSerDes.toJson(obj);
     }
 
     public Object fromJson(String str, Type type)
     {
-        return mGson.fromJson(str, type);
+        return mSerDes.fromJson(str, type);
     }
 
     public Date fromStringToDate(String strDate) {
-        try {
-            return mFormat.parse(strDate);
-        } catch (ParseException e) {
-            return new Date();
-        }
+		return mSerDes.fromStringToDate(strDate);
     }
 
     public String fromDateToString(Date date) {
-        return mFormat.format(date);
+		return mSerDes.fromDateToString(date);
     }
 }
