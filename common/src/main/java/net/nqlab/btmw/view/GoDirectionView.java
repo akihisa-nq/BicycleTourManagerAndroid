@@ -1,4 +1,4 @@
-package net.nqlab.btmw.handheld.view;
+package net.nqlab.btmw.view;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -11,7 +11,7 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 
-import net.nqlab.btmw.handheld.R;
+import net.nqlab.btmw.R;
 
 public class GoDirectionView extends View {
     private String mSource;
@@ -75,32 +75,32 @@ public class GoDirectionView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (mRoadNw || isSourceOrDestinationMatch("nw")) { drawRoad(canvas, R.drawable.ic_normal_nw); }
-        if (mRoadN  || isSourceOrDestinationMatch("n" )) { drawRoad(canvas, R.drawable.ic_normal_n ); }
-        if (mRoadNe || isSourceOrDestinationMatch("ne")) { drawRoad(canvas, R.drawable.ic_normal_ne); }
-        if (mRoadW  || isSourceOrDestinationMatch("w" )) { drawRoad(canvas, R.drawable.ic_normal_w ); }
-        if (mRoadE  || isSourceOrDestinationMatch("e" )) { drawRoad(canvas, R.drawable.ic_normal_e ); }
-        if (mRoadSw || isSourceOrDestinationMatch("sw")) { drawRoad(canvas, R.drawable.ic_normal_sw); }
-        if (mRoadS  || isSourceOrDestinationMatch("s" )) { drawRoad(canvas, R.drawable.ic_normal_s ); }
-        if (mRoadSe || isSourceOrDestinationMatch("se")) { drawRoad(canvas, R.drawable.ic_normal_se); }
+        if (mRoadNw || isSourceOrDestinationMatch("nw")) { drawRoad(canvas, R.mipmap.ic_normal_nw); }
+        if (mRoadN  || isSourceOrDestinationMatch("n" )) { drawRoad(canvas, R.mipmap.ic_normal_n ); }
+        if (mRoadNe || isSourceOrDestinationMatch("ne")) { drawRoad(canvas, R.mipmap.ic_normal_ne); }
+        if (mRoadW  || isSourceOrDestinationMatch("w" )) { drawRoad(canvas, R.mipmap.ic_normal_w ); }
+        if (mRoadE  || isSourceOrDestinationMatch("e" )) { drawRoad(canvas, R.mipmap.ic_normal_e ); }
+        if (mRoadSw || isSourceOrDestinationMatch("sw")) { drawRoad(canvas, R.mipmap.ic_normal_sw); }
+        if (mRoadS  || isSourceOrDestinationMatch("s" )) { drawRoad(canvas, R.mipmap.ic_normal_s ); }
+        if (mRoadSe || isSourceOrDestinationMatch("se")) { drawRoad(canvas, R.mipmap.ic_normal_se); }
 
-        if (mSource.equals("nw")) { drawRoad(canvas, R.drawable.ic_orig_nw); }
-        else if (mSource.equals("n")) { drawRoad(canvas, R.drawable.ic_orig_n); }
-        else if (mSource.equals("ne")) { drawRoad(canvas, R.drawable.ic_orig_ne); }
-        else if (mSource.equals("w")) { drawRoad(canvas, R.drawable.ic_orig_w); }
-        else if (mSource.equals("e")) { drawRoad(canvas, R.drawable.ic_orig_e); }
-        else if (mSource.equals("sw")) { drawRoad(canvas, R.drawable.ic_orig_sw); }
-        else if (mSource.equals("s")) { drawRoad(canvas, R.drawable.ic_orig_s); }
-        else if (mSource.equals("se")) { drawRoad(canvas, R.drawable.ic_orig_se); }
+        if (mSource.equals("nw")) { drawRoad(canvas, R.mipmap.ic_orig_nw); }
+        else if (mSource.equals("n")) { drawRoad(canvas, R.mipmap.ic_orig_n); }
+        else if (mSource.equals("ne")) { drawRoad(canvas, R.mipmap.ic_orig_ne); }
+        else if (mSource.equals("w")) { drawRoad(canvas, R.mipmap.ic_orig_w); }
+        else if (mSource.equals("e")) { drawRoad(canvas, R.mipmap.ic_orig_e); }
+        else if (mSource.equals("sw")) { drawRoad(canvas, R.mipmap.ic_orig_sw); }
+        else if (mSource.equals("s")) { drawRoad(canvas, R.mipmap.ic_orig_s); }
+        else if (mSource.equals("se")) { drawRoad(canvas, R.mipmap.ic_orig_se); }
 
-        if (mDestination.equals("nw")) { drawRoad(canvas, R.drawable.ic_dest_nw); }
-        else if (mDestination.equals("n")) { drawRoad(canvas, R.drawable.ic_dest_n); }
-        else if (mDestination.equals("ne")) { drawRoad(canvas, R.drawable.ic_dest_ne); }
-        else if (mDestination.equals("w")) { drawRoad(canvas, R.drawable.ic_dest_w); }
-        else if (mDestination.equals("e")) { drawRoad(canvas, R.drawable.ic_dest_e); }
-        else if (mDestination.equals("sw")) { drawRoad(canvas, R.drawable.ic_dest_sw); }
-        else if (mDestination.equals("s")) { drawRoad(canvas, R.drawable.ic_dest_s); }
-        else if (mDestination.equals("se")) { drawRoad(canvas, R.drawable.ic_dest_se); }
+        if (mDestination.equals("nw")) { drawRoad(canvas, R.mipmap.ic_dest_nw); }
+        else if (mDestination.equals("n")) { drawRoad(canvas, R.mipmap.ic_dest_n); }
+        else if (mDestination.equals("ne")) { drawRoad(canvas, R.mipmap.ic_dest_ne); }
+        else if (mDestination.equals("w")) { drawRoad(canvas, R.mipmap.ic_dest_w); }
+        else if (mDestination.equals("e")) { drawRoad(canvas, R.mipmap.ic_dest_e); }
+        else if (mDestination.equals("sw")) { drawRoad(canvas, R.mipmap.ic_dest_sw); }
+        else if (mDestination.equals("s")) { drawRoad(canvas, R.mipmap.ic_dest_s); }
+        else if (mDestination.equals("se")) { drawRoad(canvas, R.mipmap.ic_dest_se); }
     }
 
     public void setRoadNw(boolean val) {

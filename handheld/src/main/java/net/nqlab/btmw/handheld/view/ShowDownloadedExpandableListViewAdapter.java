@@ -76,9 +76,9 @@ public class ShowDownloadedExpandableListViewAdapter extends BaseExpandableListA
 
         ImageView expandableIcon = (ImageView)convertView.findViewById(R.id.imageView);
         if (isExpanded) {
-            expandableIcon.setImageResource(R.drawable.ic_expand_less_white_24dp);
+            expandableIcon.setImageResource(R.mipmap.ic_expand_less_white_24dp);
         } else {
-            expandableIcon.setImageResource(R.drawable.ic_expand_more_white_24dp);
+            expandableIcon.setImageResource(R.mipmap.ic_expand_more_white_24dp);
         }
 
         return convertView;

@@ -1,1 +1,1 @@
-include ':app', ':BtmwWear'
+include ':handheld', ':wear', ':common'

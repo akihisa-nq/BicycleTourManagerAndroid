@@ -57,7 +57,7 @@
             android:textSize="@dimen/abc_text_size_headline_material"
             android:textColor="@color/colorTextPrimary" />
 
-        <net.nqlab.btmw.handheld.view.GoDirectionView
+        <net.nqlab.btmw.view.GoDirectionView
             android:layout_width="128dp"
             android:layout_height="128dp"
             android:layout_columnWeight="1"
