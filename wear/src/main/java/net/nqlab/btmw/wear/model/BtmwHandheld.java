@@ -6,6 +6,9 @@ import android.os.Bundle;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
@@ -32,11 +35,12 @@ public class BtmwHandheld {
 							for (DataEvent event : dataEvents) {
 								// event.getDataItem().getUri()
 								if (event.getType() == DataEvent.TYPE_DELETED) {
+									// nothing to do
 
 								} else if (event.getType() == DataEvent.TYPE_CHANGED) {
 									DataMap dataMap = DataMap.fromByteArray(event.getDataItem().getData());
 									String json = dataMap.getString(WearProtocol.REQUEST_POINT_SET_PARAM_DATA);
-									TourPlanSchedule point = (TourPlanSchedulePoint)mSerDes.fromJson(json, TourPlanSchedulePoint.class);
+									TourPlanSchedulePoint point = (TourPlanSchedulePoint)mSerDes.fromJson(json, TourPlanSchedulePoint.class);
 									// notify to activity
 								}
 							}
