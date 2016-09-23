@@ -53,7 +53,7 @@ public class ShowDownloadedActivity extends AppCompatActivity {
         switch (id) {
             case R.id.action_go: {
                     Intent intent = new Intent();
-                    intent.setClassName("net.nqlab.simple", "net.nqlab.simple.controller.GoActivity");
+                    intent.setClass(this, GoActivity.class);
                     intent.putExtra("TourPlan", mTourPlan.getId());
                     startActivity(intent);
                      return true;

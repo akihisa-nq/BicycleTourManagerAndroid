@@ -36,7 +36,7 @@ public class ListDownloadedActivity extends AppCompatActivity {
                 TourPlanSchedule item = (TourPlanSchedule)listView.getItemAtPosition(position);
 
                 Intent intent = new Intent();
-                intent.setClassName("net.nqlab.simple", "net.nqlab.simple.controller.ShowDownloadedActivity");
+                intent.setClass(ListDownloadedActivity.this, ShowDownloadedActivity.class);
                 intent.putExtra("TourPlan", item.getId().intValue());
                 startActivity(intent);
                 }

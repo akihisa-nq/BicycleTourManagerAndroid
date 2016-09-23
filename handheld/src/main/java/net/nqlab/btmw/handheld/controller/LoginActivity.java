@@ -133,7 +133,7 @@ public class LoginActivity extends AppCompatActivity {
         mTryLogin = false;
 
         Intent intent = new Intent();
-        intent.setClassName("net.nqlab.simple", "net.nqlab.simple.controller.ListDownloadedActivity");
+        intent.setClass(this, ListDownloadedActivity.class);
         startActivity(intent);
     }
 
@@ -141,7 +141,7 @@ public class LoginActivity extends AppCompatActivity {
         mTryLogin = false;
 
         Intent intent = new Intent();
-        intent.setClassName("net.nqlab.simple", "net.nqlab.simple.controller.ListOnlineActivity");
+        intent.setClass(this, ListOnlineActivity.class);
         startActivity(intent);
     }
 }

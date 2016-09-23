@@ -34,7 +34,7 @@ public class ListOnlineActivity extends AppCompatActivity {
                     TourPlan item = (TourPlan)listView.getItemAtPosition(position);
 
                     Intent intent = new Intent();
-                    intent.setClassName("net.nqlab.simple", "net.nqlab.simple.controller.ShowOnlineActivity");
+                    intent.setClass(ListOnlineActivity.this, ShowOnlineActivity.class);
                     intent.putExtra("TourPlan", item.getId().intValue());
                     startActivity(intent);
                 }

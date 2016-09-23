@@ -60,19 +60,19 @@ public class BtmwApplication extends Application {
                 {
                     case R.id.menu_login: {
                         Intent intent = new Intent();
-                        intent.setClassName("net.nqlab.simple", "net.nqlab.simple.controller.LoginActivity");
+                        intent.setClass(activity, LoginActivity.class);
                         activity.startActivity(intent);
                         return true;
                     }
                     case R.id.menu_list_online: {
                         Intent intent = new Intent();
-                        intent.setClassName("net.nqlab.simple", "net.nqlab.simple.controller.ListOnlineActivity");
+                        intent.setClass(activity, ListOnlineActivity.class);
                         activity.startActivity(intent);
                         return true;
                     }
                     case R.id.menu_list_downloaded: {
                         Intent intent = new Intent();
-                        intent.setClassName("net.nqlab.simple", "net.nqlab.simple.controller.ListDownloadedActivity");
+                        intent.setClass(activity, ListDownloadedActivity.class);
                         activity.startActivity(intent);
                         return true;
                     }
