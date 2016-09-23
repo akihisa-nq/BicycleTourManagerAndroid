@@ -68,13 +68,17 @@ public class GoListViewAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+	public TourPlanSchedulePoint getCurrentPoint() {
+        return getRoute().getTourPlanSchedulePoints().get(mTourPlanPointIndex);	
+	}
+
     @Override
     public int getCount() {
         return getRoute().getTourPlanSchedulePoints().size();
     }
 
     @Override
-    public Object getItem(int position) {
+    public TourPlanSchedulePoint getItem(int position) {
         return getRoute().getTourPlanSchedulePoints().get(position);
     }
 

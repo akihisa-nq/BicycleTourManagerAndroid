@@ -1,4 +1,4 @@
-package net.nqlab.btmw.handheld.model;
+package net.nqlab.btmw.wear.model;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -12,19 +12,36 @@ import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.DataApi;
 
 import net.nqlab.btmw.api.TourPlanSchedulePoint;
+import net.nqlab.btmw.api.SerDes;
 import net.nqlab.btmw.model.WearProtocol;
 
-public class BtmwWear {
+public class BtmwHandheld {
 	private GoogleApiClient mGoogleApiClient;
-	private BtmwApi mBtmwApi;
+	private SerDes mSerDes;
 
-	public BtmwWear(Context context, BtmwApi api) {
-		mBtmwApi = api;
-
+	public BtmwHandheld(Context context) {
+		mSerDes = new SerDes();
+	
 		mGoogleApiClient = new GoogleApiClient.Builder(context)
 			.addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                 @Override
                 public void onConnected(Bundle connectionHint) {
+					Wearable.DataApi.addListener(mGoogleApiClient, new DataApi.DataListener() {
+		                @Override
+						public void onDataChanged(DataEventBuffer dataEvents) {
+							for (DataEvent event : dataEvents) {
+								// event.getDataItem().getUri()
+								if (event.getType() == DataEvent.TYPE_DELETED) {
+
+								} else if (event.getType() == DataEvent.TYPE_CHANGED) {
+									DataMap dataMap = DataMap.fromByteArray(event.getDataItem().getData());
+									String json = dataMap.getString(WearProtocol.REQUEST_POINT_SET_PARAM_DATA);
+									TourPlanSchedule point = (TourPlanSchedulePoint)mSerDes.fromJson(json, TourPlanSchedulePoint.class);
+									// notify to activity
+								}
+							}
+						}
+					});
                 }
 
                 @Override
@@ -52,16 +69,4 @@ public class BtmwWear {
 		}	
 	}
 
-	public void sendPoint(TourPlanSchedulePoint point) {
-		if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
-			return;
-		}	
-
-		String strJson = mBtmwApi.toJson(point);
-
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create(WearProtocol.REQUEST_POINT_SET);
-        putDataMapReq.getDataMap().putString(WearProtocol.REQUEST_POINT_SET_PARAM_DATA, strJson);
-        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
-        PendingResult<DataApi.DataItemResult> pendingResult =
-                Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);	}
 }

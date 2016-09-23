@@ -23,6 +23,7 @@ import net.nqlab.btmw.api.TourPlanSchedule;
 import net.nqlab.btmw.handheld.controller.BtmwApplication;
 import net.nqlab.btmw.handheld.R;
 import net.nqlab.btmw.handheld.model.TourPlanScheduleStore;
+import net.nqlab.btmw.handheld.model.BtmwWear;
 import net.nqlab.btmw.handheld.view.GoListViewAdapter;
 import net.nqlab.btmw.handheld.view.GoSetPointListViewAdapter;
 import net.nqlab.btmw.handheld.view.GoSetRouteListViewAdapter;
@@ -32,11 +33,14 @@ import java.util.List;
 public class GoActivity extends AppCompatActivity {
     private TourPlanSchedule mTourPlan;
     private GoListViewAdapter mAdapter;
+	private BtmwWear mWear;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_go);
+
+		mWear = new BtmwWear(this, getBtmwApplication().getApi());
 
         Intent intent = getIntent();
         int tourPlanId = intent.getIntExtra("TourPlan", 0);
@@ -53,6 +57,7 @@ public class GoActivity extends AppCompatActivity {
         final GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onSingleTapConfirmed(MotionEvent motionEvent) {
+				mWear.sendPoint(mAdapter.getCurrentPoint());
                 return super.onSingleTapConfirmed(motionEvent);
             }
 
@@ -110,6 +115,7 @@ public class GoActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+		mWear.connect();
     }
 
     @Override
@@ -122,6 +128,12 @@ public class GoActivity extends AppCompatActivity {
         super.onStop();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+		mWear.disconnect();
+    }
+    
     private BtmwApplication getBtmwApplication() {
         return (BtmwApplication) getApplicationContext();
     }
