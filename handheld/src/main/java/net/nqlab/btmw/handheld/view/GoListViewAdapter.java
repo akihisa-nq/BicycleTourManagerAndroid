@@ -18,6 +18,7 @@ import net.nqlab.btmw.api.TourPlanSchedulePoint;
 import net.nqlab.btmw.api.TourPlanScheduleRoute;
 import net.nqlab.btmw.handheld.R;
 import net.nqlab.btmw.handheld.model.BtmwApi;
+import net.nqlab.btmw.view.GoDirectionView;
 
 public class GoListViewAdapter extends BaseAdapter {
 
