@@ -2,6 +2,7 @@ package net.nqlab.btmw.handheld.model;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -42,7 +43,7 @@ public class BtmwWear {
 
 	public void connect() {
 		if (mGoogleApiClient != null && !mGoogleApiClient.isConnected()) {
-			mGoogleApiClient.connect();
+            mGoogleApiClient.connect();
 		}
 	}
 
@@ -53,15 +54,16 @@ public class BtmwWear {
 	}
 
 	public void sendPoint(TourPlanSchedulePoint point) {
-		if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
-			return;
-		}	
+        if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
+            return;
+        }
 
-		String strJson = mBtmwApi.toJson(point);
+        String strJson = mBtmwApi.toJson(point);
 
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create(WearProtocol.REQUEST_POINT_SET);
         putDataMapReq.getDataMap().putString(WearProtocol.REQUEST_POINT_SET_PARAM_DATA, strJson);
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
         PendingResult<DataApi.DataItemResult> pendingResult =
-                Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);	}
+                Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
+    }
 }
