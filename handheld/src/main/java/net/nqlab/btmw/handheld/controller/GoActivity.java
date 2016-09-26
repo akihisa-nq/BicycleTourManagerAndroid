@@ -57,7 +57,6 @@ public class GoActivity extends AppCompatActivity {
         final GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onSingleTapConfirmed(MotionEvent motionEvent) {
-				mWear.sendPoint(mAdapter.getCurrentPoint());
                 return super.onSingleTapConfirmed(motionEvent);
             }
 
@@ -196,6 +195,7 @@ public class GoActivity extends AppCompatActivity {
         int selection = mAdapter.getCurrentPosition();
         final ListView listView = (ListView)findViewById(R.id.listView);
         listView.setSelection(selection);
+        mWear.sendPoint(mAdapter.getCurrentPoint());
     }
 
 }
