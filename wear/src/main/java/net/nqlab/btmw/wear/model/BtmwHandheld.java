@@ -6,8 +6,11 @@ import android.os.Bundle;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataItemBuffer;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.PutDataMapRequest;
@@ -30,11 +33,13 @@ public class BtmwHandheld {
 	public BtmwHandheld(Context context, BtmwHandheldListener listener) {
 		mSerDes = new SerDes();
 		mListener = listener;
-	
+
 		mGoogleApiClient = new GoogleApiClient.Builder(context)
 			.addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                 @Override
                 public void onConnected(Bundle connectionHint) {
+                    BtmwHandheld.this.recieveTourPlanSchedule();
+
 					Wearable.DataApi.addListener(mGoogleApiClient, new DataApi.DataListener() {
 		                @Override
 						public void onDataChanged(DataEventBuffer dataEvents) {
@@ -79,4 +84,21 @@ public class BtmwHandheld {
 		}	
 	}
 
+    private void recieveTourPlanSchedule() {
+        PendingResult<DataItemBuffer> dataItems = Wearable.DataApi.getDataItems(mGoogleApiClient);
+        dataItems.setResultCallback(new ResultCallback<DataItemBuffer>() {
+            @Override
+            public void onResult(DataItemBuffer dataItems) {
+                for (DataItem dataItem : dataItems) {
+                    if (dataItem.getUri().getPath().equals(WearProtocol.REQUEST_POINT_SET)) {
+                        DataMap dataMap = DataMap.fromByteArray(dataItem.getData());
+                        // データを使った処理
+                        String json = dataMap.getString(WearProtocol.REQUEST_POINT_SET_PARAM_DATA);
+                        TourPlanSchedulePoint point = (TourPlanSchedulePoint)mSerDes.fromJson(json, TourPlanSchedulePoint.class);
+                        mListener.onSetPoint(point);
+                    }
+                }
+            }
+        });
+    }
 }
