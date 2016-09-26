@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import net.nqlab.btmw.wear.R;
 import net.nqlab.btmw.wear.model.BtmwHandheld;
+import net.nqlab.btmw.api.TourPlanSchedulePoint;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,7 +23,12 @@ public class MainActivity extends WearableActivity {
         setContentView(R.layout.activity_main);
         setAmbientEnabled();
 
-        mHandheld = new BtmwHandheld(this);
+        mHandheld = new BtmwHandheld(this, new BtmwHandheld.BtmwHandheldListener() {
+			@Override
+			public void onSetPoint(TourPlanSchedulePoint point) {
+				MainActivity.this.setPoint(point);
+			}
+		});
     }
 
     @Override
@@ -51,4 +57,9 @@ public class MainActivity extends WearableActivity {
         super.onPause();
         mHandheld.disconnect();
     }
+
+	private void setPoint(TourPlanSchedulePoint point) {
+        TextView text = (TextView)findViewById(R.id.text);
+		text.setText(point.getName());
+	}
 }

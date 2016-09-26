@@ -19,11 +19,17 @@ import net.nqlab.btmw.api.SerDes;
 import net.nqlab.btmw.model.WearProtocol;
 
 public class BtmwHandheld {
+	public interface BtmwHandheldListener {
+		public void onSetPoint(TourPlanSchedulePoint point);
+	}
+
 	private GoogleApiClient mGoogleApiClient;
 	private SerDes mSerDes;
+	private BtmwHandheldListener mListener;
 
-	public BtmwHandheld(Context context) {
+	public BtmwHandheld(Context context, BtmwHandheldListener listener) {
 		mSerDes = new SerDes();
+		mListener = listener;
 	
 		mGoogleApiClient = new GoogleApiClient.Builder(context)
 			.addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
@@ -41,7 +47,7 @@ public class BtmwHandheld {
 									DataMap dataMap = DataMap.fromByteArray(event.getDataItem().getData());
 									String json = dataMap.getString(WearProtocol.REQUEST_POINT_SET_PARAM_DATA);
 									TourPlanSchedulePoint point = (TourPlanSchedulePoint)mSerDes.fromJson(json, TourPlanSchedulePoint.class);
-									// notify to activity
+									mListener.onSetPoint(point);
 								}
 							}
 						}
