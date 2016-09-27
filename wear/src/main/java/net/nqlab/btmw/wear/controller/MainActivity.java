@@ -7,6 +7,8 @@ import android.support.wearable.view.BoxInsetLayout;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import net.nqlab.btmw.wear.R;
@@ -93,6 +95,13 @@ public class MainActivity extends WearableActivity {
 
             }
         });
+
+        Window window = getWindow();
+        window.addFlags(
+                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                        | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                        | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+        );
     }
 
     @Override
@@ -120,5 +129,17 @@ public class MainActivity extends WearableActivity {
     protected void onPause() {
         super.onPause();
         mHandheld.disconnect();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Window window = getWindow();
+        window.clearFlags(
+                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                        | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                        | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+        );
     }
 }
