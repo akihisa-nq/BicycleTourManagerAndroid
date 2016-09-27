@@ -100,7 +100,6 @@ public class MainActivity extends WearableActivity {
         window.addFlags(
                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
                         | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                        | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
         );
     }
 
@@ -139,7 +138,6 @@ public class MainActivity extends WearableActivity {
         window.clearFlags(
                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
                         | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                        | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
         );
     }
 }

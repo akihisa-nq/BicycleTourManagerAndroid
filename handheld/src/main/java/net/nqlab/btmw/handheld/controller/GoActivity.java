@@ -98,6 +98,8 @@ public class GoActivity extends AppCompatActivity {
                         | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                         | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
         );
+
+        mWear.connect();
     }
 
     @Override
@@ -113,6 +115,7 @@ public class GoActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mWear.disconnect();
 
         Window window = getWindow();
         window.clearFlags(
@@ -125,7 +128,6 @@ public class GoActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-		mWear.connect();
     }
 
     @Override
@@ -141,7 +143,6 @@ public class GoActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-		mWear.disconnect();
     }
     
     private BtmwApplication getBtmwApplication() {
