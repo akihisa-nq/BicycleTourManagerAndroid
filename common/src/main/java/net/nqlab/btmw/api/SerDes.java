@@ -5,22 +5,24 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.internal.bind.DateTypeAdapter;
 import com.google.gson.Gson;
 
+import org.apache.commons.lang3.time.FastDateFormat;
+
 import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class SerDes {
     private Gson mGson;
-    private SimpleDateFormat mFormat;
+    private FastDateFormat mFormat;
 
 	public SerDes() {
         mGson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .registerTypeAdapter(Date.class, new DateTypeAdapter())
             .create();
-        mFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.JAPANESE);
+        mFormat = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSSZZ", Locale.JAPANESE);
 	}
 
 	public Gson getGson() {
