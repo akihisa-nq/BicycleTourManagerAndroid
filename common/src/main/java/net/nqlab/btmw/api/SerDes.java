@@ -22,7 +22,7 @@ public class SerDes {
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .registerTypeAdapter(Date.class, new DateTypeAdapter())
             .create();
-        mFormat = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSSZZ", Locale.JAPANESE);
+        mFormat = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.JAPANESE);
 	}
 
 	public Gson getGson() {
