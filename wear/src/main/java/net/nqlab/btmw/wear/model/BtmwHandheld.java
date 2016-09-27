@@ -2,6 +2,7 @@ package net.nqlab.btmw.wear.model;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -12,6 +13,9 @@ import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataItemBuffer;
 import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
@@ -20,6 +24,12 @@ import com.google.android.gms.wearable.DataApi;
 import net.nqlab.btmw.api.TourPlanSchedulePoint;
 import net.nqlab.btmw.api.SerDes;
 import net.nqlab.btmw.model.WearProtocol;
+
+import rx.Observable;
+import rx.Observer;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class BtmwHandheld {
 	public interface BtmwHandheldListener {
@@ -49,10 +59,12 @@ public class BtmwHandheld {
 									// nothing to do
 
 								} else if (event.getType() == DataEvent.TYPE_CHANGED) {
-									DataMap dataMap = DataMap.fromByteArray(event.getDataItem().getData());
-									String json = dataMap.getString(WearProtocol.REQUEST_POINT_SET_PARAM_DATA);
-									TourPlanSchedulePoint point = (TourPlanSchedulePoint)mSerDes.fromJson(json, TourPlanSchedulePoint.class);
-									mListener.onSetPoint(point);
+                                    if (event.getDataItem().getUri().getPath().equals(WearProtocol.REQUEST_POINT)) {
+                                        DataMap dataMap = DataMap.fromByteArray(event.getDataItem().getData());
+                                        String json = dataMap.getString(WearProtocol.REQUEST_POINT_PARAM_DATA);
+                                        TourPlanSchedulePoint point = (TourPlanSchedulePoint) mSerDes.fromJson(json, TourPlanSchedulePoint.class);
+                                        mListener.onSetPoint(point);
+                                    }
 								}
 							}
 						}
@@ -90,10 +102,10 @@ public class BtmwHandheld {
             @Override
             public void onResult(DataItemBuffer dataItems) {
                 for (DataItem dataItem : dataItems) {
-                    if (dataItem.getUri().getPath().equals(WearProtocol.REQUEST_POINT_SET)) {
+                    if (dataItem.getUri().getPath().equals(WearProtocol.REQUEST_POINT)) {
                         DataMap dataMap = DataMap.fromByteArray(dataItem.getData());
                         // データを使った処理
-                        String json = dataMap.getString(WearProtocol.REQUEST_POINT_SET_PARAM_DATA);
+                        String json = dataMap.getString(WearProtocol.REQUEST_POINT_PARAM_DATA);
                         TourPlanSchedulePoint point = (TourPlanSchedulePoint)mSerDes.fromJson(json, TourPlanSchedulePoint.class);
                         mListener.onSetPoint(point);
                     }
@@ -101,4 +113,43 @@ public class BtmwHandheld {
             }
         });
     }
+
+	public void requestNextPoint() {
+		Observable
+			.create(new Observable.OnSubscribe<MessageApi.SendMessageResult>() {
+				@Override
+				public void call(final Subscriber<? super MessageApi.SendMessageResult> subscriber) {
+					NodeApi.GetConnectedNodesResult nodeResult = Wearable.NodeApi.getConnectedNodes(BtmwHandheld.this.mGoogleApiClient).await();
+					for (Node node : nodeResult.getNodes()) {
+						PendingResult<MessageApi.SendMessageResult> result =
+							Wearable.MessageApi.sendMessage(mGoogleApiClient, node.getId(), WearProtocol.REQUEST_NEXT, "".getBytes());
+						result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
+							@Override
+							public void onResult(@NonNull MessageApi.SendMessageResult sendMessageResult) {
+								subscriber.onNext(sendMessageResult);
+							}
+						});
+					}
+
+					subscriber.onCompleted();
+				}
+			})
+			.subscribeOn(Schedulers.newThread())
+			.observeOn(AndroidSchedulers.mainThread())
+			.subscribe(new Observer<MessageApi.SendMessageResult>() {
+				@Override
+				public void onCompleted() {
+					// 処理完了コールバック
+				}
+
+				@Override
+				public void onError(Throwable e) {
+					// 処理内で例外が発生すると自動的にonErrorが呼ばれる
+				}
+
+				@Override
+				public void onNext(MessageApi.SendMessageResult result) {
+				}
+			});
+	}
 }

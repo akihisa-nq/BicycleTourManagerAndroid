@@ -3,6 +3,8 @@ package net.nqlab.btmw.wear.controller;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.BoxInsetLayout;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -29,6 +31,32 @@ public class MainActivity extends WearableActivity {
 				MainActivity.this.setPoint(point);
 			}
 		});
+
+        View view = findViewById(R.id.container);
+        final GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent motionEvent) {
+                return super.onSingleTapConfirmed(motionEvent);
+            }
+
+            @Override
+            public boolean onDoubleTap(MotionEvent motionEvent) {
+                MainActivity.this.mHandheld.requestNextPoint();
+                return super.onDoubleTap(motionEvent);
+            }
+
+            @Override
+            public void onLongPress(MotionEvent motionEvent) {
+                super.onLongPress(motionEvent);
+            }
+        });
+        view.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                gestureDetector.onTouchEvent(motionEvent);
+                return true;
+            }
+        });
     }
 
     @Override

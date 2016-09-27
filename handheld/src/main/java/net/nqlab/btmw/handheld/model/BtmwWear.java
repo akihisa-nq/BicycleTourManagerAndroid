@@ -8,6 +8,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
@@ -17,16 +19,28 @@ import net.nqlab.btmw.api.TourPlanSchedulePoint;
 import net.nqlab.btmw.model.WearProtocol;
 
 public class BtmwWear {
-	private GoogleApiClient mGoogleApiClient;
-	private BtmwApi mBtmwApi;
+    public interface BtmwWearListener {
+        void onGoNext();
+    }
 
-	public BtmwWear(Context context, BtmwApi api) {
+    private GoogleApiClient mGoogleApiClient;
+	private BtmwApi mBtmwApi;
+    private BtmwWearListener mListener;
+
+	public BtmwWear(Context context, BtmwApi api, BtmwWearListener listener) {
 		mBtmwApi = api;
+        mListener = listener;
 
 		mGoogleApiClient = new GoogleApiClient.Builder(context)
 			.addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                 @Override
                 public void onConnected(Bundle connectionHint) {
+                    Wearable.MessageApi.addListener(mGoogleApiClient, new MessageApi.MessageListener() {
+                        @Override
+                        public void onMessageReceived(MessageEvent messageEvent) {
+                            BtmwWear.this.mListener.onGoNext();
+                        }
+                    });
                 }
 
                 @Override
@@ -61,8 +75,8 @@ public class BtmwWear {
 
         String strJson = mBtmwApi.toJson(point);
 
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create(WearProtocol.REQUEST_POINT_SET);
-        putDataMapReq.getDataMap().putString(WearProtocol.REQUEST_POINT_SET_PARAM_DATA, strJson);
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create(WearProtocol.REQUEST_POINT);
+        putDataMapReq.getDataMap().putString(WearProtocol.REQUEST_POINT_PARAM_DATA, strJson);
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
         PendingResult<DataApi.DataItemResult> pendingResult =
                 Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);

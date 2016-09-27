@@ -40,7 +40,13 @@ public class GoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_go);
 
-		mWear = new BtmwWear(this, getBtmwApplication().getApi());
+		mWear = new BtmwWear(this, getBtmwApplication().getApi(), new BtmwWear.BtmwWearListener() {
+            @Override
+            public void onGoNext() {
+                mAdapter.succeed();
+                GoActivity.this.goToPoint();
+            }
+        });
 
         Intent intent = getIntent();
         int tourPlanId = intent.getIntExtra("TourPlan", 0);
