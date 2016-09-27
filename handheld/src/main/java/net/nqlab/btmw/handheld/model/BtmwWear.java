@@ -2,6 +2,7 @@ package net.nqlab.btmw.handheld.model;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -30,6 +31,7 @@ public class BtmwWear {
 	public BtmwWear(Context context, BtmwApi api, BtmwWearListener listener) {
 		mBtmwApi = api;
         mListener = listener;
+		final Handler handler = new Handler(); 
 
 		mGoogleApiClient = new GoogleApiClient.Builder(context)
 			.addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
@@ -38,7 +40,12 @@ public class BtmwWear {
                     Wearable.MessageApi.addListener(mGoogleApiClient, new MessageApi.MessageListener() {
                         @Override
                         public void onMessageReceived(MessageEvent messageEvent) {
-                            BtmwWear.this.mListener.onGoNext();
+							handler.post(new Runnable() {
+								@Override
+								public void run() {
+		                            BtmwWear.this.mListener.onGoNext();
+								}
+							});
                         }
                     });
                 }

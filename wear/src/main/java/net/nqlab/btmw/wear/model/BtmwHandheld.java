@@ -2,6 +2,7 @@ package net.nqlab.btmw.wear.model;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -39,10 +40,12 @@ public class BtmwHandheld {
 	private GoogleApiClient mGoogleApiClient;
 	private SerDes mSerDes;
 	private BtmwHandheldListener mListener;
+	private Handler mHandler; 
 
 	public BtmwHandheld(Context context, BtmwHandheldListener listener) {
 		mSerDes = new SerDes();
 		mListener = listener;
+		mHandler = new Handler();
 
 		mGoogleApiClient = new GoogleApiClient.Builder(context)
 			.addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
@@ -62,8 +65,14 @@ public class BtmwHandheld {
                                     if (event.getDataItem().getUri().getPath().equals(WearProtocol.REQUEST_POINT)) {
                                         DataMap dataMap = DataMap.fromByteArray(event.getDataItem().getData());
                                         String json = dataMap.getString(WearProtocol.REQUEST_POINT_PARAM_DATA);
-                                        TourPlanSchedulePoint point = (TourPlanSchedulePoint) mSerDes.fromJson(json, TourPlanSchedulePoint.class);
-                                        mListener.onSetPoint(point);
+                                        final TourPlanSchedulePoint point = (TourPlanSchedulePoint) mSerDes.fromJson(json, TourPlanSchedulePoint.class);
+
+										mHandler.post(new Runnable() {
+											@Override
+											public void run() {
+		                                        mListener.onSetPoint(point);
+											}
+										});
                                     }
 								}
 							}
@@ -106,8 +115,13 @@ public class BtmwHandheld {
                         DataMap dataMap = DataMap.fromByteArray(dataItem.getData());
                         // データを使った処理
                         String json = dataMap.getString(WearProtocol.REQUEST_POINT_PARAM_DATA);
-                        TourPlanSchedulePoint point = (TourPlanSchedulePoint)mSerDes.fromJson(json, TourPlanSchedulePoint.class);
-                        mListener.onSetPoint(point);
+                        final TourPlanSchedulePoint point = (TourPlanSchedulePoint)mSerDes.fromJson(json, TourPlanSchedulePoint.class);
+						mHandler.post(new Runnable() {
+							@Override
+							public void run() {
+		                        mListener.onSetPoint(point);
+							}
+						});
                     }
                 }
             }
