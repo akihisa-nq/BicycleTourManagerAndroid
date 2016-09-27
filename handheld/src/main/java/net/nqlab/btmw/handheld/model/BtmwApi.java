@@ -254,4 +254,8 @@ public class BtmwApi {
     public String fromDateToString(Date date) {
 		return mSerDes.fromDateToString(date);
     }
+
+    public SerDes getSerDes() {
+        return mSerDes;
+    }
 }

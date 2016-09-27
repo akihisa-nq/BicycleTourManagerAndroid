@@ -1,6 +1,6 @@
-package net.nqlab.btmw.handheld.view;
+package net.nqlab.btmw.view;
 
-import net.nqlab.btmw.handheld.model.BtmwApi;
+import net.nqlab.btmw.api.SerDes;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,12 +36,16 @@ public class FormatHelper
             );
     }
 
-    public static String formatTime(BtmwApi api, String time) {
-        Date date = api.fromStringToDate(time);
+    public static String formatTime(SerDes serDes, String time) {
+        Date date = serDes.fromStringToDate(time);
         return new SimpleDateFormat("HH:mm", Locale.JAPAN).format(date);
     }
 
     public static String formatRestTime(double time) {
         return Math.round(time * 60.0) + "min";
+    }
+
+    public static String formatRestComment(double time) {
+        return (time > 0 ? " (" + formatRestTime(time) + ")" : "");
     }
 }

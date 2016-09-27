@@ -10,6 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import net.nqlab.btmw.api.TourPlanSchedulePoint;
 import net.nqlab.btmw.api.TourPlanScheduleRoute;
 import net.nqlab.btmw.handheld.R;
 import net.nqlab.btmw.handheld.model.BtmwApi;
+import net.nqlab.btmw.view.FormatHelper;
 import net.nqlab.btmw.view.GoDirectionView;
 
 public class GoListViewAdapter extends BaseAdapter {
@@ -141,8 +143,7 @@ public class GoListViewAdapter extends BaseAdapter {
         // 名前とコメント
         ((TextView)convertView.findViewById(R.id.name)).setText(point.getName());
         ((TextView)convertView.findViewById(R.id.comment)).setText(
-                point.getComment()
-                + (point.getRestTime() > 0 ? " (" + FormatHelper.formatRestTime(point.getRestTime()) + ")" : "")
+                point.getComment() + FormatHelper.formatRestComment(point.getRestTime())
         );
 
         // 距離の加算と高度
@@ -175,7 +176,7 @@ public class GoListViewAdapter extends BaseAdapter {
                     FormatHelper.formatDistance(point.getPcTotalDistance())
                     );
             ((TextView) convertView.findViewById(R.id.total_limit_time)).setText(
-                    FormatHelper.formatTime(mApi, point.getTotalLimitTime())
+                    FormatHelper.formatTime(mApi.getSerDes(), point.getTotalLimitTime())
                 );
         }
 

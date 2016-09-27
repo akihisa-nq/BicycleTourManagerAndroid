@@ -1,6 +1,7 @@
 package net.nqlab.btmw.wear.controller;
 
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.BoxInsetLayout;
 import android.view.GestureDetector;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import net.nqlab.btmw.wear.R;
 import net.nqlab.btmw.wear.model.BtmwHandheld;
 import net.nqlab.btmw.api.TourPlanSchedulePoint;
+import net.nqlab.btmw.wear.view.MainViewPagerAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,6 +20,7 @@ import java.util.Locale;
 
 public class MainActivity extends WearableActivity {
     private BtmwHandheld mHandheld;
+    private MainViewPagerAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,11 +31,12 @@ public class MainActivity extends WearableActivity {
         mHandheld = new BtmwHandheld(this, new BtmwHandheld.BtmwHandheldListener() {
 			@Override
 			public void onSetPoint(TourPlanSchedulePoint point) {
-				MainActivity.this.setPoint(point);
+                MainActivity.this.mAdapter.setPoint(point);
 			}
 		});
+        mAdapter = new MainViewPagerAdapter(this, mHandheld.getSerDes());
 
-        View view = findViewById(R.id.container);
+        View view = findViewById(R.id.viewPager);
         final GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onSingleTapConfirmed(MotionEvent motionEvent) {
@@ -54,7 +58,39 @@ public class MainActivity extends WearableActivity {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 gestureDetector.onTouchEvent(motionEvent);
-                return true;
+                return false;
+            }
+        });
+
+        ViewPager pager = (ViewPager)findViewById(R.id.viewPager);
+        pager.setAdapter(mAdapter);
+        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                TextView view = (TextView)MainActivity.this.findViewById(R.id.textView);
+
+                String text = "";
+                for (int i = 0; i < position; i++) {
+                    text += "○";
+                }
+
+                text += "●";
+
+                for (int i = position + 1; i < mAdapter.getCount(); i++) {
+                    text += "○";
+                }
+
+                view.setText(text);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
             }
         });
     }
@@ -85,9 +121,4 @@ public class MainActivity extends WearableActivity {
         super.onPause();
         mHandheld.disconnect();
     }
-
-	private void setPoint(TourPlanSchedulePoint point) {
-        TextView text = (TextView)findViewById(R.id.text);
-		text.setText(point.getName());
-	}
 }

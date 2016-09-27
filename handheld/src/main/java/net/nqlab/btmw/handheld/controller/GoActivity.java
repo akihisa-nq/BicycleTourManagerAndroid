@@ -46,6 +46,11 @@ public class GoActivity extends AppCompatActivity {
                 mAdapter.succeed();
                 GoActivity.this.goToPoint();
             }
+
+            @Override
+            public void onConnect() {
+                mWear.sendPoint(mAdapter.getCurrentPoint());
+            }
         });
 
         Intent intent = getIntent();

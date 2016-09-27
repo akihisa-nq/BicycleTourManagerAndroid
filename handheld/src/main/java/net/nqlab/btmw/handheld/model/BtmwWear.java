@@ -22,6 +22,8 @@ import net.nqlab.btmw.model.WearProtocol;
 public class BtmwWear {
     public interface BtmwWearListener {
         void onGoNext();
+
+        void onConnect();
     }
 
     private GoogleApiClient mGoogleApiClient;
@@ -48,6 +50,8 @@ public class BtmwWear {
 							});
                         }
                     });
+
+                    BtmwWear.this.mListener.onConnect();
                 }
 
                 @Override

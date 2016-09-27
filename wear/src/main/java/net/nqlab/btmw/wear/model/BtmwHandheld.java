@@ -166,4 +166,8 @@ public class BtmwHandheld {
 				}
 			});
 	}
+
+    public SerDes getSerDes() {
+        return mSerDes;
+    }
 }

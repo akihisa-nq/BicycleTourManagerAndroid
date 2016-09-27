@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/page_main_direction"
+    tools:context="net.nqlab.btmw.wear.controller.MainActivity"
+    tools:deviceIds="wear"
+    android:layout_alignParentTop="true"
+    android:layout_alignParentStart="true"
+    android:columnCount="3"
+    android:rowCount="3">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_columnWeight="1"
+        android:layout_gravity="bottom|right"
+        android:text="R256"
+        android:id="@+id/text_view_nw"
+        android:textIsSelectable="false"
+        android:textSize="@dimen/abc_text_size_headline_material"
+        android:textColor="@color/colorTextPrimary" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_columnWeight="1"
+        android:layout_rowWeight="0.5"
+        android:layout_gravity="bottom|center_horizontal"
+        android:text="R256"
+        android:id="@+id/text_view_n"
+        android:textIsSelectable="false"
+        android:textSize="@dimen/abc_text_size_headline_material"
+        android:textColor="@color/colorTextPrimary" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_columnWeight="1"
+        android:layout_gravity="bottom|left"
+        android:text="R256"
+        android:id="@+id/text_view_ne"
+        android:textIsSelectable="false"
+        android:textSize="@dimen/abc_text_size_headline_material"
+        android:textColor="@color/colorTextPrimary" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_columnWeight="1"
+        android:layout_gravity="center_vertical|right"
+        android:text="R256"
+        android:id="@+id/text_view_w"
+        android:textIsSelectable="false"
+        android:textSize="@dimen/abc_text_size_headline_material"
+        android:textColor="@color/colorTextPrimary" />
+
+    <net.nqlab.btmw.view.GoDirectionView
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_columnWeight="1"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:id="@+id/direction"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_columnWeight="1"
+        android:layout_gravity="center_vertical|left"
+        android:text="R256"
+        android:id="@+id/text_view_e"
+        android:textIsSelectable="false"
+        android:textSize="@dimen/abc_text_size_headline_material"
+        android:textColor="@color/colorTextPrimary" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_columnWeight="1"
+        android:layout_gravity="top|right"
+        android:text="R256"
+        android:id="@+id/text_view_sw"
+        android:textIsSelectable="false"
+        android:textSize="@dimen/abc_text_size_headline_material"
+        android:textColor="@color/colorTextPrimary" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_columnWeight="1"
+        android:layout_gravity="top|center_horizontal"
+        android:text="R256"
+        android:id="@+id/text_view_s"
+        android:textIsSelectable="false"
+        android:textSize="@dimen/abc_text_size_headline_material"
+        android:textColor="@color/colorTextPrimary" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_columnWeight="1"
+        android:layout_rowWeight="0.5"
+        android:layout_gravity="top|left"
+        android:text="R256"
+        android:id="@+id/text_view_se"
+        android:textIsSelectable="false"
+        android:textSize="@dimen/abc_text_size_headline_material"
+        android:textColor="@color/colorTextPrimary" />
+
+</GridLayout>

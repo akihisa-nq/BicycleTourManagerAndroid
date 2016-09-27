@@ -12,6 +12,7 @@ import net.nqlab.btmw.api.TourPlanSchedule;
 import net.nqlab.btmw.api.TourPlanSchedulePoint;
 import net.nqlab.btmw.api.TourPlanScheduleRoute;
 import net.nqlab.btmw.handheld.R;
+import net.nqlab.btmw.view.FormatHelper;
 
 public class ShowDownloadedExpandableListViewAdapter extends BaseExpandableListAdapter {
 

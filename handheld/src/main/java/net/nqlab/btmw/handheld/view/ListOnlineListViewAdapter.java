@@ -14,6 +14,7 @@ import net.nqlab.btmw.api.TourPlan;
 import net.nqlab.btmw.api.TourPlanList;
 import net.nqlab.btmw.handheld.R;
 import net.nqlab.btmw.handheld.model.BtmwApi;
+import net.nqlab.btmw.view.FormatHelper;
 
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
