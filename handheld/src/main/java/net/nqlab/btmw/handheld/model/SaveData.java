@@ -6,6 +6,8 @@ import android.util.Log;
 
 import com.github.gfx.android.orma.AccessThreadConstraint;
 
+import java.util.List;
+
 public class SaveData {
     private OrmaDatabase mOrma;
 
@@ -118,6 +120,18 @@ public class SaveData {
                 cur.close();
             }
         }
+    }
+
+    public void addTourGo(TourGo go) {
+        mOrma.insertIntoTourGo(go);
+    }
+
+    public int getTourGoCount() {
+        return mOrma.selectFromTourGo().count();
+    }
+
+    public List<TourGo> getListTourGo() {
+        return mOrma.selectFromTourGo().toList();
     }
 }
 

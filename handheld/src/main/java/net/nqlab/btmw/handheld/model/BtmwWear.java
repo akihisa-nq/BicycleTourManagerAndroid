@@ -76,10 +76,14 @@ public class BtmwWear {
 	}
 
 	public void disconnect() {
-		if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+		if (isConnected()) {
 			mGoogleApiClient.disconnect();
 		}	
 	}
+
+    public boolean isConnected() {
+        return mGoogleApiClient != null && mGoogleApiClient.isConnected();
+    }
 
 	public void setBaseTime(String time) {
 		mBaseTime = time;

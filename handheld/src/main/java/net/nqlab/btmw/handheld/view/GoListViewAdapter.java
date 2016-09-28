@@ -31,13 +31,16 @@ public class GoListViewAdapter extends BaseAdapter {
     private int mTourPlanPointIndex;
 	private String mStartDate;
 
-    public GoListViewAdapter(Context context, BtmwApi api, TourPlanSchedule plan, String startDate) {
+    public GoListViewAdapter(Context context, BtmwApi api, TourPlanSchedule plan) {
         mContext = context;
         mApi = api;
         mTourPlan = plan;
         mTourPlanRouteIndex = 0;
         mTourPlanPointIndex = 0;
-		mStartDate = startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        mStartDate = startDate;
     }
 
     private TourPlanScheduleRoute getRoute() {

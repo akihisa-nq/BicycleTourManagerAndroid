@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.content.Intent;
 
 import android.view.GestureDetector;
@@ -18,35 +17,46 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ListView;
-import android.widget.RadioGroup;
+import android.widget.TimePicker;
 
 import net.nqlab.btmw.api.TourPlanSchedule;
-import net.nqlab.btmw.handheld.controller.BtmwApplication;
 import net.nqlab.btmw.handheld.R;
+import net.nqlab.btmw.handheld.view.GoSelectListViewAdapter;
+import net.nqlab.btmw.handheld.model.TourGo;
 import net.nqlab.btmw.handheld.model.TourPlanScheduleStore;
 import net.nqlab.btmw.handheld.model.BtmwWear;
 import net.nqlab.btmw.handheld.view.GoListViewAdapter;
 import net.nqlab.btmw.handheld.view.GoSetPointListViewAdapter;
 import net.nqlab.btmw.handheld.view.GoSetRouteListViewAdapter;
 
-import java.util.List;
+import org.joda.time.DateTime;
+
 import java.util.Date;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.RunnableFuture;
 
 public class GoActivity extends AppCompatActivity {
     private TourPlanSchedule mTourPlan;
     private GoListViewAdapter mAdapter;
 	private BtmwWear mWear;
     private Timer mTimer;
+    private TourGo mGo;
+    private boolean mSendFirstData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_go);
 
-		final String start = getBtmwApplication().getApi().fromDateToString(new Date());
+        mSendFirstData = false;
+        mGo = null;
+
+        if (getBtmwApplication().getSaveData().getTourGoCount() == 0) {
+            showSetStartTimeDialog();
+        } else {
+            showSelectStartTimeDialog();
+        }
 
         Intent intent = getIntent();
         int tourPlanId = intent.getIntExtra("TourPlan", 0);
@@ -65,16 +75,18 @@ public class GoActivity extends AppCompatActivity {
 
             @Override
             public void onConnect() {
-				mWear.setStartTime(start);
-				mWear.setBaseTime(mTourPlan.getStartTime());
-                mWear.sendPoint(mAdapter.getCurrentPoint());
+                mWear.setBaseTime(mTourPlan.getStartTime());
+
+                if (mGo != null) {
+                    mWear.sendPoint(mAdapter.getCurrentPoint());
+                    mSendFirstData = true;
+                }
             }
         });
 
-        final ListView listView = (ListView)findViewById(R.id.listView);
-        mAdapter = new GoListViewAdapter(GoActivity.this, getBtmwApplication().getApi(), mTourPlan, start);
-        listView.setAdapter(mAdapter);
+        mAdapter = new GoListViewAdapter(GoActivity.this, getBtmwApplication().getApi(), mTourPlan);
 
+        final ListView listView = (ListView)findViewById(R.id.listView);
         final GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onSingleTapConfirmed(MotionEvent motionEvent) {
@@ -172,6 +184,93 @@ public class GoActivity extends AppCompatActivity {
     
     private BtmwApplication getBtmwApplication() {
         return (BtmwApplication) getApplicationContext();
+    }
+
+    private void showSetStartTimeDialog() {
+        LayoutInflater layoutInflater = (LayoutInflater)GoActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View convertView = layoutInflater.inflate(R.layout.dialog_go_time_picker, null, false);
+
+        final TimePicker picker = (TimePicker)convertView.findViewById(R.id.timePicker);
+
+        {
+            DateTime nowDateTime = new DateTime(new Date());
+            picker.setHour(nowDateTime.hourOfDay().get());
+            picker.setMinute(nowDateTime.minuteOfHour().get());
+        }
+
+        final ListView listView = (ListView)findViewById(R.id.listView);
+
+        new AlertDialog.Builder(GoActivity.this)
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .setTitle("時刻設定")
+                .setView(convertView)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        DateTime nowDateTime = new DateTime(new Date());
+                        Date custom = new DateTime(
+                                nowDateTime.year().get(),
+                                nowDateTime.monthOfYear().get(),
+                                nowDateTime.dayOfMonth().get(),
+                                picker.getHour(),
+                                picker.getMinute()
+                                ).toDate();
+
+                        mGo = new TourGo();
+                        mGo.tour_go_id = null;
+                        mGo.tour_plan_shedule_id = mTourPlan.getId();
+                        mGo.start_time = getBtmwApplication().getApi().fromDateToString(custom);
+                        getBtmwApplication().getSaveData().addTourGo(mGo);
+
+                        mAdapter.setStartDate(mGo.start_time);
+                        mWear.setStartTime(mGo.start_time);
+                        listView.setAdapter(mAdapter);
+
+                        if (!mSendFirstData && mWear.isConnected()) {
+                            mWear.sendPoint(mAdapter.getCurrentPoint());
+                            mSendFirstData = true;
+                        }
+                    }
+                })
+                .show();
+    }
+
+    private void showSelectStartTimeDialog() {
+        LayoutInflater layoutInflater = (LayoutInflater)GoActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View convertView = layoutInflater.inflate(R.layout.dialog_go_set, null, false);
+
+        ListView listView = (ListView)convertView.findViewById(R.id.listView);
+        final GoSelectListViewAdapter adapter = new GoSelectListViewAdapter(
+                this,
+                getBtmwApplication().getApi().getSerDes(),
+                getBtmwApplication().getSaveData().getListTourGo()
+                );
+        listView.setAdapter(adapter);
+        listView.setSelection(0);
+
+        final ListView listViewSchedule = (ListView)findViewById(R.id.listView);
+
+        new AlertDialog.Builder(GoActivity.this)
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .setTitle("Go の選択")
+                .setView(convertView)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        GoActivity.this.mGo = adapter.getSelectedItem();
+                        if (mGo == null) {
+                            GoActivity.this.showSetStartTimeDialog();
+                        } else {
+                            mAdapter.setStartDate(mGo.start_time);
+                            mWear.setStartTime(mGo.start_time);
+                            listViewSchedule.setAdapter(mAdapter);
+
+                            if (!mSendFirstData && mWear.isConnected()) {
+                                mWear.sendPoint(mAdapter.getCurrentPoint());
+                                mSendFirstData = true;
+                            }
+                        }
+                    }
+                })
+                .show();
     }
 
     private void showSetRouteDialog() {

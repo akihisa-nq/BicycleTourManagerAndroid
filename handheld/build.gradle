@@ -53,7 +53,9 @@ dependencies {
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'io.reactivex:rxandroid:1.2.1'
 
-    compile 'com.google.android.gms:play-services:6.1.+'
+    compile group: 'joda-time', name: 'joda-time', version: '2.3'
+
+    compile 'com.google.android.gms:play-services-wearable:+'
 
     apt 'com.github.gfx.android.orma:orma-processor:1.0.0'
     compile 'com.github.gfx.android.orma:orma:1.0.0'
