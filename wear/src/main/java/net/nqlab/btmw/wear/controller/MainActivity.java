@@ -1,6 +1,7 @@
 package net.nqlab.btmw.wear.controller;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.BoxInsetLayout;
@@ -19,10 +20,13 @@ import net.nqlab.btmw.wear.view.MainViewPagerAdapter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends WearableActivity {
     private BtmwHandheld mHandheld;
     private MainViewPagerAdapter mAdapter;
+    private Timer mTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +44,7 @@ public class MainActivity extends WearableActivity {
 		});
         mAdapter = new MainViewPagerAdapter(this, mHandheld.getSerDes());
 
-        View view = findViewById(R.id.viewPager);
+        final ViewPager pager = (ViewPager)findViewById(R.id.viewPager);
         final GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onSingleTapConfirmed(MotionEvent motionEvent) {
@@ -58,7 +62,7 @@ public class MainActivity extends WearableActivity {
                 super.onLongPress(motionEvent);
             }
         });
-        view.setOnTouchListener(new View.OnTouchListener() {
+        pager.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 gestureDetector.onTouchEvent(motionEvent);
@@ -66,7 +70,6 @@ public class MainActivity extends WearableActivity {
             }
         });
 
-        ViewPager pager = (ViewPager)findViewById(R.id.viewPager);
         pager.setAdapter(mAdapter);
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -103,6 +106,20 @@ public class MainActivity extends WearableActivity {
                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
                         | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
         );
+
+        final Handler handler = new Handler();
+        mTimer = new Timer(true);
+        mTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        MainActivity.this.mAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }, 30 * 1000, 30 * 1000);
     }
 
     @Override
@@ -141,5 +158,7 @@ public class MainActivity extends WearableActivity {
                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
                         | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
         );
+
+        mTimer.cancel();
     }
 }

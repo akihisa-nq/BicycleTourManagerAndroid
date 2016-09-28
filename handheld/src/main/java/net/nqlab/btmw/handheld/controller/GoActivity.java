@@ -3,6 +3,7 @@ package net.nqlab.btmw.handheld.controller;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,11 +31,15 @@ import net.nqlab.btmw.handheld.view.GoSetRouteListViewAdapter;
 
 import java.util.List;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.RunnableFuture;
 
 public class GoActivity extends AppCompatActivity {
     private TourPlanSchedule mTourPlan;
     private GoListViewAdapter mAdapter;
 	private BtmwWear mWear;
+    private Timer mTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +110,20 @@ public class GoActivity extends AppCompatActivity {
         );
 
         mWear.connect();
+
+        final Handler handler = new Handler();
+        mTimer = new Timer(true);
+        mTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        GoActivity.this.mAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }, 30 * 1000, 30 * 1000);
     }
 
     @Override
@@ -121,6 +140,7 @@ public class GoActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mWear.disconnect();
+        mTimer.cancel();
 
         Window window = getWindow();
         window.clearFlags(

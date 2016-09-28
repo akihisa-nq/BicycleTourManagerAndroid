@@ -16,11 +16,9 @@ import net.nqlab.btmw.wear.R;
 public class MainViewPagerAdapter extends PagerAdapter {
     public static final int PAGE_DIRECTION = 0;
     public static final int PAGE_LABELS = 1;
-    public static final int PAGE_DISTANCE_AND_ELEVATION = 2;
-    public static final int PAGE_SPEED = 3;
-    public static final int PAGE_LEFT = 4;
-    public static final int PAGE_LIMIT = 5;
-    public static final int PAGE_COUNT = 6;
+    public static final int PAGE_DISTANCE_ELEVATION_LIMIT = 2;
+    public static final int PAGE_SPEED_LEFT = 3;
+    public static final int PAGE_COUNT = 4;
 
     /** コンテキスト. */
     private Context mContext;
@@ -113,52 +111,53 @@ public class MainViewPagerAdapter extends PagerAdapter {
 			} else {
                 setDirectionView(convertView, mPoint);
             }
-        } else {
+        } else if (position == PAGE_LABELS) {
             convertView = layoutInflater.inflate(R.layout.page_main_texts, container, false);
             TextView textView1 = (TextView) convertView.findViewById(R.id.textView1);
             TextView textView2 = (TextView) convertView.findViewById(R.id.textView2);
 
-            switch (position) {
-            case PAGE_LABELS:
-                textView1.setText(mPoint.getName());
-                textView2.setText(mPoint.getComment() + FormatHelper.formatRestComment(mPoint.getRestTime()));
-                break;
+            textView1.setText(mPoint.getName());
+            textView2.setText(mPoint.getComment() + FormatHelper.formatRestComment(mPoint.getRestTime()));
 
-            case PAGE_DISTANCE_AND_ELEVATION:
+        } else {
+            convertView = layoutInflater.inflate(R.layout.page_main_texts4, container, false);
+            TextView textView1 = (TextView) convertView.findViewById(R.id.textView1);
+            TextView textView2 = (TextView) convertView.findViewById(R.id.textView2);
+            TextView textView3 = (TextView) convertView.findViewById(R.id.textView3);
+            TextView textView4 = (TextView) convertView.findViewById(R.id.textView4);
+
+            switch (position) {
+            case PAGE_DISTANCE_ELEVATION_LIMIT:
                 textView1.setText("+" + FormatHelper.formatDistance(mPoint.getDistanceAddition()));
                 textView2.setText(FormatHelper.formatElevation(mPoint.getElevation()));
+                textView3.setText(FormatHelper.formatDistance(mPoint.getPcTotalDistance()));
+                textView4.setText(FormatHelper.formatTime(mSerDes, mPoint.getTotalLimitTime()));
                 break;
 
-            case PAGE_SPEED:
-                textView1.setText(FormatHelper.formatSpeed(mPoint.getTargetSpeed()));
-                textView2.setText(FormatHelper.formatSpeed(mPoint.getLimitSpeed()));
-                break;
+            case PAGE_SPEED_LEFT:
+                {
+                    textView1.setText(FormatHelper.formatSpeed(mPoint.getTargetSpeed()));
 
-            case PAGE_LEFT:
-				{
-					int leftTimeTarget = FormatHelper.getLeftTimeSeconds(
-						mSerDes,
-						mBaseTime,
-						mPoint.getTotalTargetTime(),
-						mStartTime
-						);
-					textView1.setText(FormatHelper.formatTimeAddition(leftTimeTarget));
-					textView1.setTextColor(FormatHelper.getColorForLeftTime(mContext, leftTimeTarget));
+                    int leftTimeTarget = FormatHelper.getLeftTimeSeconds(
+                            mSerDes,
+                            mBaseTime,
+                            mPoint.getTotalTargetTime(),
+                            mStartTime
+                    );
+                    textView2.setText(FormatHelper.formatTimeAddition(leftTimeTarget));
+                    textView2.setTextColor(FormatHelper.getColorForLeftTime(mContext, leftTimeTarget));
 
-					int leftTimeLimit = FormatHelper.getLeftTimeSeconds(
-						mSerDes,
-						mBaseTime,
-						mPoint.getTotalLimitTime(),
-						mStartTime
-						);
-					textView2.setText(FormatHelper.formatTimeAddition(leftTimeLimit));
-					textView2.setTextColor(FormatHelper.getColorForLeftTime(mContext, leftTimeLimit));
-				}
-                break;
+                    textView3.setText(FormatHelper.formatSpeed(mPoint.getLimitSpeed()));
 
-            case PAGE_LIMIT:
-                textView1.setText(FormatHelper.formatDistance(mPoint.getPcTotalDistance()));
-                textView2.setText(FormatHelper.formatTime(mSerDes, mPoint.getTotalLimitTime()));
+                    int leftTimeLimit = FormatHelper.getLeftTimeSeconds(
+                            mSerDes,
+                            mBaseTime,
+                            mPoint.getTotalLimitTime(),
+                            mStartTime
+                    );
+                    textView4.setText(FormatHelper.formatTimeAddition(leftTimeLimit));
+                    textView4.setTextColor(FormatHelper.getColorForLeftTime(mContext, leftTimeLimit));
+                }
                 break;
 
             }
