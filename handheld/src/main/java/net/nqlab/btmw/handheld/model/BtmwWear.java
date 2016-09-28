@@ -98,6 +98,7 @@ public class BtmwWear {
 
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create(WearProtocol.REQUEST_POINT);
         putDataMapReq.getDataMap().putString(WearProtocol.REQUEST_POINT_PARAM_DATA, strJson);
+        putDataMapReq.getDataMap().putString(WearProtocol.REQUEST_POINT_PARAM_BASE_DATE, mBaseTime);
         putDataMapReq.getDataMap().putString(WearProtocol.REQUEST_POINT_PARAM_START_DATE, mStartTime);
 
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
