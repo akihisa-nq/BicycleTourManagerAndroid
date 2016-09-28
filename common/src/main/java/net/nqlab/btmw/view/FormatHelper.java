@@ -1,6 +1,9 @@
 package net.nqlab.btmw.view;
 
+import android.content.Context;
+
 import net.nqlab.btmw.api.SerDes;
+import net.nqlab.btmw.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,9 +32,10 @@ public class FormatHelper
     }
 
     public static String formatTimeAddition(int timeAddition) {
+		timeAddition = Math.abs(timeAddition);
         return String.format(
                 Locale.JAPAN,
-                "%02d:%02d",
+                (timeAddition > 0 ? "+" : "-") + "%02d:%02d",
                 timeAddition / 3600, (timeAddition % 3600) / 60
             );
     }
@@ -48,4 +52,18 @@ public class FormatHelper
     public static String formatRestComment(double time) {
         return (time > 0 ? " (" + formatRestTime(time) + ")" : "");
     }
+
+	public static int getLeftTimeSeconds(SerDes serDes, String time) {
+        Date date = serDes.fromStringToDate(time);
+		Date now = new Date();
+		return (int)((date.getTime() - now.getTime()) / 1000);
+	}
+
+	public static int getColorForLeftTime(Context context, int time) {
+		if (time < 0) {
+			return context.getResources().getColor(R.color.over_time);
+		} else {
+			return context.getResources().getColor(R.color.in_time);
+		}
+	}
 }

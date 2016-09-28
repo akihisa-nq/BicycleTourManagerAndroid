@@ -18,10 +18,9 @@ public class MainViewPagerAdapter extends PagerAdapter {
     public static final int PAGE_LABELS = 1;
     public static final int PAGE_DISTANCE_AND_ELEVATION = 2;
     public static final int PAGE_SPEED = 3;
-    public static final int PAGE_TIME = 4;
+    public static final int PAGE_LEFT = 4;
     public static final int PAGE_LIMIT = 5;
-    public static final int PAGE_LEFT = 6;
-    public static final int PAGE_COUNT = 7;
+    public static final int PAGE_COUNT = 6;
 
     /** コンテキスト. */
     private Context mContext;
@@ -63,9 +62,31 @@ public class MainViewPagerAdapter extends PagerAdapter {
         direction.setRoadSe(!point.getRoadSe().isEmpty());
         direction.setSource(point.getSource());
         direction.setDestination(point.getDestination());
-
     }
- 
+
+    private void setDirectionViewPass(View convertView) {
+        ((TextView)convertView.findViewById(R.id.text_view_nw)).setText("");
+        ((TextView)convertView.findViewById(R.id.text_view_n )).setText("通過");
+        ((TextView)convertView.findViewById(R.id.text_view_ne)).setText("");
+        ((TextView)convertView.findViewById(R.id.text_view_w )).setText("");
+        ((TextView)convertView.findViewById(R.id.text_view_e )).setText("");
+        ((TextView)convertView.findViewById(R.id.text_view_sw)).setText("");
+        ((TextView)convertView.findViewById(R.id.text_view_s )).setText("通過");
+        ((TextView)convertView.findViewById(R.id.text_view_se)).setText("");
+
+        GoDirectionView direction = ((GoDirectionView)convertView.findViewById(R.id.direction));
+        direction.setRoadNw(false);
+        direction.setRoadN(true);
+        direction.setRoadNe(false);
+        direction.setRoadW(false);
+        direction.setRoadE(false);
+        direction.setRoadSw(false);
+        direction.setRoadS(true);
+        direction.setRoadSe(false);
+        direction.setSource("N");
+        direction.setDestination("S");
+    }
+
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         if (mPoint == null) {
@@ -74,14 +95,12 @@ public class MainViewPagerAdapter extends PagerAdapter {
 
         LayoutInflater layoutInflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        if (mPoint.getPass())  {
-            position += 1;
-        }
-
         View convertView;
         if (position == PAGE_DIRECTION) {
             convertView = layoutInflater.inflate(R.layout.page_main_direction, container, false);
-            if (! mPoint.getPass()) {
+            if (mPoint.getPass()) {
+				setDirectionViewPass(convertView);			
+			} else {
                 setDirectionView(convertView, mPoint);
             }
         } else {
@@ -105,9 +124,16 @@ public class MainViewPagerAdapter extends PagerAdapter {
                 textView2.setText(FormatHelper.formatSpeed(mPoint.getLimitSpeed()));
                 break;
 
-            case PAGE_TIME:
-                textView1.setText("+" + FormatHelper.formatTimeAddition(mPoint.getTargetTimeAddition()));
-                textView2.setText("+" + FormatHelper.formatTimeAddition(mPoint.getLimitTimeAddition()));
+            case PAGE_LEFT:
+				{
+					int leftTimeTarget = FormatHelper.getLeftTimeSeconds(mSerDes, mPoint.getTotalTargetTime());
+					textView1.setText(FormatHelper.formatTimeAddition(leftTimeTarget));
+					textView1.setTextColor(FormatHelper.getColorForLeftTime(mContext, leftTimeTarget));
+
+					int leftTimeLimit = FormatHelper.getLeftTimeSeconds(mSerDes, mPoint.getTotalLimitTime());
+					textView2.setText(FormatHelper.formatTimeAddition(leftTimeLimit));
+					textView2.setTextColor(FormatHelper.getColorForLeftTime(mContext, leftTimeLimit));
+				}
                 break;
 
             case PAGE_LIMIT:
@@ -115,10 +141,6 @@ public class MainViewPagerAdapter extends PagerAdapter {
                 textView2.setText(FormatHelper.formatTime(mSerDes, mPoint.getTotalLimitTime()));
                 break;
 
-            case PAGE_LEFT:
-                textView1.setText("");
-                textView2.setText("");
-                break;
             }
         }
  
@@ -138,8 +160,6 @@ public class MainViewPagerAdapter extends PagerAdapter {
     public int getCount() {
         if (mPoint == null) {
             return 0;
-        } else if (mPoint.getPass()) {
-            return PAGE_COUNT - 1;
         } else {
             return PAGE_COUNT;
         }

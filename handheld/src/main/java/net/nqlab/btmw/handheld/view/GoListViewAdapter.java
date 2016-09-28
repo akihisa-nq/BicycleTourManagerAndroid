@@ -97,7 +97,7 @@ public class GoListViewAdapter extends BaseAdapter {
         if (point.getPass()) {
             convertView = layoutInflater.inflate(R.layout.list_item_go_pass,parent,false);
         } else {
-                convertView = layoutInflater.inflate(R.layout.list_item_go_junction,parent,false);
+            convertView = layoutInflater.inflate(R.layout.list_item_go_junction,parent,false);
         }
 
         TypedValue outValue = new TypedValue();
@@ -163,12 +163,17 @@ public class GoListViewAdapter extends BaseAdapter {
             );
 
         // 時間の加算
-        ((TextView)convertView.findViewById(R.id.target_time_addition)).setText(
-                "+" + FormatHelper.formatTimeAddition(point.getTargetTimeAddition())
-            );
-        ((TextView)convertView.findViewById(R.id.limit_time_addition)).setText(
-                "+" + FormatHelper.formatTimeAddition(point.getLimitTimeAddition())
-            );
+		{
+			int leftTimeTarget = FormatHelper.getLeftTimeSeconds(mApi.getSerDes(), point.getTotalTargetTime());
+			TextView textView1 = ((TextView)convertView.findViewById(R.id.target_time_addition));
+			textView1.setText(FormatHelper.formatTimeAddition(leftTimeTarget));
+			textView1.setTextColor(FormatHelper.getColorForLeftTime(mContext, leftTimeTarget));
+
+			int leftTimeLimit = FormatHelper.getLeftTimeSeconds(mApi.getSerDes(), point.getTotalLimitTime());
+			TextView textView2 = ((TextView)convertView.findViewById(R.id.limit_time_addition));
+			textView2.setText(FormatHelper.formatTimeAddition(leftTimeLimit));
+			textView2.setTextColor(FormatHelper.getColorForLeftTime(mContext, leftTimeLimit));
+		}
 
         if (! point.getPass()) {
             // PC からの総距離と時間のリミット
