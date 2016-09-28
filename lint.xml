@@ -2,5 +2,6 @@
 <lint>
   <issue id="InvalidPackage">
     <ignore regexp="okio-1.6.0.jar"/>
+    <ignore regexp="antlr4-runtime-4.5.1.jar"/>
   </issue>
 </lint>
