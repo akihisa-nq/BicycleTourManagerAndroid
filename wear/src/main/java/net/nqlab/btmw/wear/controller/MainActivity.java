@@ -32,7 +32,9 @@ public class MainActivity extends WearableActivity {
 
         mHandheld = new BtmwHandheld(this, new BtmwHandheld.BtmwHandheldListener() {
 			@Override
-			public void onSetPoint(TourPlanSchedulePoint point) {
+			public void onSetPoint(String base, String start, TourPlanSchedulePoint point) {
+                MainActivity.this.mAdapter.setBaseTime(base);
+                MainActivity.this.mAdapter.setStartTime(start);
                 MainActivity.this.mAdapter.setPoint(point);
 			}
 		});

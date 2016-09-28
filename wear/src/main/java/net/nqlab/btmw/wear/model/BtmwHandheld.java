@@ -34,7 +34,7 @@ import rx.schedulers.Schedulers;
 
 public class BtmwHandheld {
 	public interface BtmwHandheldListener {
-		public void onSetPoint(TourPlanSchedulePoint point);
+		public void onSetPoint(String base, String start, TourPlanSchedulePoint point);
 	}
 
 	private GoogleApiClient mGoogleApiClient;
@@ -66,11 +66,13 @@ public class BtmwHandheld {
                                         DataMap dataMap = DataMap.fromByteArray(event.getDataItem().getData());
                                         String json = dataMap.getString(WearProtocol.REQUEST_POINT_PARAM_DATA);
                                         final TourPlanSchedulePoint point = (TourPlanSchedulePoint) mSerDes.fromJson(json, TourPlanSchedulePoint.class);
+										final String base = dataMap.getString(WearProtocol.REQUEST_POINT_PARAM_BASE_DATE);
+										final String start = dataMap.getString(WearProtocol.REQUEST_POINT_PARAM_START_DATE);
 
 										mHandler.post(new Runnable() {
 											@Override
 											public void run() {
-		                                        mListener.onSetPoint(point);
+		                                        mListener.onSetPoint(base, start, point);
 											}
 										});
                                     }
@@ -116,10 +118,12 @@ public class BtmwHandheld {
                         // データを使った処理
                         String json = dataMap.getString(WearProtocol.REQUEST_POINT_PARAM_DATA);
                         final TourPlanSchedulePoint point = (TourPlanSchedulePoint)mSerDes.fromJson(json, TourPlanSchedulePoint.class);
+						final String base = dataMap.getString(WearProtocol.REQUEST_POINT_PARAM_BASE_DATE);
+						final String start = dataMap.getString(WearProtocol.REQUEST_POINT_PARAM_START_DATE);
 						mHandler.post(new Runnable() {
 							@Override
 							public void run() {
-		                        mListener.onSetPoint(point);
+		                        mListener.onSetPoint(base, start, point);
 							}
 						});
                     }

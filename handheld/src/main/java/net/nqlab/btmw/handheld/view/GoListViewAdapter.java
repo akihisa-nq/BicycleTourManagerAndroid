@@ -29,13 +29,15 @@ public class GoListViewAdapter extends BaseAdapter {
     private TourPlanSchedule mTourPlan;
     private int mTourPlanRouteIndex;
     private int mTourPlanPointIndex;
+	private String mStartDate;
 
-    public GoListViewAdapter(Context context, BtmwApi api, TourPlanSchedule plan) {
+    public GoListViewAdapter(Context context, BtmwApi api, TourPlanSchedule plan, String startDate) {
         mContext = context;
         mApi = api;
         mTourPlan = plan;
         mTourPlanRouteIndex = 0;
         mTourPlanPointIndex = 0;
+		mStartDate = startDate;
     }
 
     private TourPlanScheduleRoute getRoute() {
@@ -164,12 +166,22 @@ public class GoListViewAdapter extends BaseAdapter {
 
         // 時間の加算
 		{
-			int leftTimeTarget = FormatHelper.getLeftTimeSeconds(mApi.getSerDes(), point.getTotalTargetTime());
+			int leftTimeTarget = FormatHelper.getLeftTimeSeconds(
+				mApi.getSerDes(),
+				mTourPlan.getStartTime(),
+				point.getTotalTargetTime(),
+				mStartDate
+				);
 			TextView textView1 = ((TextView)convertView.findViewById(R.id.target_time_addition));
 			textView1.setText(FormatHelper.formatTimeAddition(leftTimeTarget));
 			textView1.setTextColor(FormatHelper.getColorForLeftTime(mContext, leftTimeTarget));
 
-			int leftTimeLimit = FormatHelper.getLeftTimeSeconds(mApi.getSerDes(), point.getTotalLimitTime());
+			int leftTimeLimit = FormatHelper.getLeftTimeSeconds(
+				mApi.getSerDes(),
+				mTourPlan.getStartTime(),
+				point.getTotalLimitTime(),
+				mStartDate
+				);
 			TextView textView2 = ((TextView)convertView.findViewById(R.id.limit_time_addition));
 			textView2.setText(FormatHelper.formatTimeAddition(leftTimeLimit));
 			textView2.setTextColor(FormatHelper.getColorForLeftTime(mContext, leftTimeLimit));

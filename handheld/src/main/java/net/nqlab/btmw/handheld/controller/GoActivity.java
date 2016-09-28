@@ -29,6 +29,7 @@ import net.nqlab.btmw.handheld.view.GoSetPointListViewAdapter;
 import net.nqlab.btmw.handheld.view.GoSetRouteListViewAdapter;
 
 import java.util.List;
+import java.util.Date;
 
 public class GoActivity extends AppCompatActivity {
     private TourPlanSchedule mTourPlan;
@@ -40,18 +41,7 @@ public class GoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_go);
 
-		mWear = new BtmwWear(this, getBtmwApplication().getApi(), new BtmwWear.BtmwWearListener() {
-            @Override
-            public void onGoNext() {
-                mAdapter.succeed();
-                GoActivity.this.goToPoint();
-            }
-
-            @Override
-            public void onConnect() {
-                mWear.sendPoint(mAdapter.getCurrentPoint());
-            }
-        });
+		final String start = getBtmwApplication().getApi().fromDateToString(new Date());
 
         Intent intent = getIntent();
         int tourPlanId = intent.getIntExtra("TourPlan", 0);
@@ -61,8 +51,23 @@ public class GoActivity extends AppCompatActivity {
                 getBtmwApplication().getApi()
             ).load(tourPlanId);
 
+		mWear = new BtmwWear(this, getBtmwApplication().getApi(), new BtmwWear.BtmwWearListener() {
+            @Override
+            public void onGoNext() {
+                mAdapter.succeed();
+                GoActivity.this.goToPoint();
+            }
+
+            @Override
+            public void onConnect() {
+				mWear.setStartTime(start);
+				mWear.setBaseTime(mTourPlan.getStartTime());
+                mWear.sendPoint(mAdapter.getCurrentPoint());
+            }
+        });
+
         final ListView listView = (ListView)findViewById(R.id.listView);
-        mAdapter = new GoListViewAdapter(GoActivity.this, getBtmwApplication().getApi(), mTourPlan);
+        mAdapter = new GoListViewAdapter(GoActivity.this, getBtmwApplication().getApi(), mTourPlan, start);
         listView.setAdapter(mAdapter);
 
         final GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {

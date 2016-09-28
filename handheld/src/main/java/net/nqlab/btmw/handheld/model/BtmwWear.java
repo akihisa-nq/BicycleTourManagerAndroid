@@ -29,6 +29,8 @@ public class BtmwWear {
     private GoogleApiClient mGoogleApiClient;
 	private BtmwApi mBtmwApi;
     private BtmwWearListener mListener;
+	private String mBaseTime;
+	private String mStartTime;
 
 	public BtmwWear(Context context, BtmwApi api, BtmwWearListener listener) {
 		mBtmwApi = api;
@@ -79,6 +81,14 @@ public class BtmwWear {
 		}	
 	}
 
+	public void setBaseTime(String time) {
+		mBaseTime = time;
+	}
+
+	public void setStartTime(String time) {
+		mStartTime = time;
+	}
+
 	public void sendPoint(TourPlanSchedulePoint point) {
         if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
             return;
@@ -88,6 +98,8 @@ public class BtmwWear {
 
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create(WearProtocol.REQUEST_POINT);
         putDataMapReq.getDataMap().putString(WearProtocol.REQUEST_POINT_PARAM_DATA, strJson);
+        putDataMapReq.getDataMap().putString(WearProtocol.REQUEST_POINT_PARAM_START_DATE, mStartTime);
+
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
         PendingResult<DataApi.DataItemResult> pendingResult =
                 Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
