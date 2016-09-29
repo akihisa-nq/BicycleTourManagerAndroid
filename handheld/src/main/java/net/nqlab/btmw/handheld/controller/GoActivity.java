@@ -21,6 +21,7 @@ import android.widget.TimePicker;
 
 import net.nqlab.btmw.api.TourPlanSchedule;
 import net.nqlab.btmw.handheld.R;
+import net.nqlab.btmw.handheld.model.TourGoPassPoint;
 import net.nqlab.btmw.handheld.view.GoSelectListViewAdapter;
 import net.nqlab.btmw.handheld.model.TourGo;
 import net.nqlab.btmw.handheld.model.TourPlanScheduleStore;
@@ -69,8 +70,7 @@ public class GoActivity extends AppCompatActivity {
 		mWear = new BtmwWear(this, getBtmwApplication().getApi(), new BtmwWear.BtmwWearListener() {
             @Override
             public void onGoNext() {
-                mAdapter.succeed();
-                GoActivity.this.goToPoint();
+                GoActivity.this.succeedPoint();
             }
 
             @Override
@@ -95,8 +95,7 @@ public class GoActivity extends AppCompatActivity {
 
             @Override
             public boolean onDoubleTap(MotionEvent motionEvent) {
-                mAdapter.succeed();
-                GoActivity.this.goToPoint();
+                GoActivity.this.succeedPoint();
                 return super.onDoubleTap(motionEvent);
             }
 
@@ -334,4 +333,14 @@ public class GoActivity extends AppCompatActivity {
         mWear.sendPoint(mAdapter.getCurrentPoint());
     }
 
+    private void succeedPoint() {
+        TourGoPassPoint passPoint = new TourGoPassPoint();
+        passPoint.tour_go_id = mGo._id;
+        passPoint.passed_on = getBtmwApplication().getApi().fromDateToString(new Date());
+        passPoint.tour_plan_point_id = mAdapter.getCurrentPoint().getId();
+        getBtmwApplication().getSaveData().addTourGoPassPoint(passPoint);
+
+        mAdapter.succeed();
+        goToPoint();
+    }
 }

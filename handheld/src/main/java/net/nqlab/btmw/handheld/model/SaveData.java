@@ -6,6 +6,8 @@ import android.util.Log;
 
 import com.github.gfx.android.orma.AccessThreadConstraint;
 
+import net.nqlab.btmw.api.TourPlanSchedulePoint;
+
 import java.util.List;
 
 public class SaveData {
@@ -132,6 +134,13 @@ public class SaveData {
 
     public List<TourGo> getListTourGo() {
         return mOrma.selectFromTourGo().toList();
+    }
+
+    public void addTourGoPassPoint(TourGoPassPoint passPoint) {
+        TourGoPassPoint prev = mOrma.selectFromTourGoPassPoint().tour_plan_point_idEq(passPoint.tour_plan_point_id).get(0);
+        if (prev == null) {
+            mOrma.insertIntoTourGoPassPoint(passPoint);
+        }
     }
 }
 
