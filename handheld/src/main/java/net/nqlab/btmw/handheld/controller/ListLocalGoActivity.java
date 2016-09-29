@@ -57,7 +57,7 @@ public class ListLocalGoActivity extends AppCompatActivity {
                 goApi.setTourPlanId((int)go.tour_plan_shedule_id);
                 goApi.setTourGoEvents(listEvents);
 
-                if (go.tour_go_id == null) {
+                if (go.tour_go_id.longValue() == 0) {
                     api.create(goApi)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())

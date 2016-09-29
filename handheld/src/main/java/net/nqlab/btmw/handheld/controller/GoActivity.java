@@ -53,19 +53,19 @@ public class GoActivity extends AppCompatActivity {
         mSendFirstData = false;
         mGo = null;
 
-        if (getBtmwApplication().getSaveData().getTourGoCount() == 0) {
-            showSetStartTimeDialog();
-        } else {
-            showSelectStartTimeDialog();
-        }
-
         Intent intent = getIntent();
         int tourPlanId = intent.getIntExtra("TourPlan", 0);
         mTourPlan = new TourPlanScheduleStore(
                 getBtmwApplication().getSaveData(),
                 getBtmwApplication().getSecureSaveData(),
                 getBtmwApplication().getApi()
-            ).load(tourPlanId);
+        ).load(tourPlanId);
+
+        if (getBtmwApplication().getSaveData().getTourGoCount() == 0) {
+            showSetStartTimeDialog();
+        } else {
+            showSelectStartTimeDialog();
+        }
 
 		mWear = new BtmwWear(this, getBtmwApplication().getApi(), new BtmwWear.BtmwWearListener() {
             @Override
