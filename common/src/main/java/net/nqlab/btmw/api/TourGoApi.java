@@ -2,6 +2,8 @@ package net.nqlab.btmw.api;
  
 import retrofit.http.GET;
 import retrofit.http.POST;
+import retrofit.http.PUT;
+import retrofit.http.DELETE;
 import retrofit.http.Path;
 import retrofit.http.Query;
 import retrofit.http.Body;
@@ -17,5 +19,11 @@ public interface TourGoApi {
 
     @POST("/api/tour_go")
     public Observable<TourGoCreateResult> create(@Body TourGo go);
+
+    @PUT("/api/tour_go/{id}")
+    public Observable<TourGoUpdateResult> update(@Path("id") int id, @Body TourGo go);
+
+    @DELETE("/api/tour_go/{id}")
+    public Observable<TourGoDeleteResult> delete(@Path("id") int id);
  
 }
