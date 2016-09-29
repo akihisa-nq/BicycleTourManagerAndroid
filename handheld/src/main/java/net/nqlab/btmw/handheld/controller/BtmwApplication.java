@@ -76,6 +76,12 @@ public class BtmwApplication extends Application {
                         activity.startActivity(intent);
                         return true;
                     }
+                    case R.id.menu_list_local_go: {
+                        Intent intent = new Intent();
+                        intent.setClass(activity, ListLocalGoActivity.class);
+                        activity.startActivity(intent);
+                        return true;
+                    }
                 }
                 return false;
             }

@@ -40,6 +40,9 @@
         <activity
             android:name=".controller.GoActivity"
             android:label="@string/title_activity_go" />
+        <activity
+            android:name=".controller.ListLocalGoActivity"
+            android:label="@string/title_activity_list_local_go" />
     </application>
 
 </manifest>

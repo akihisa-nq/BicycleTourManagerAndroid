@@ -78,6 +78,10 @@ public class SaveData {
         }
     }
 
+    public String getTourPlanScheduleName(int id) {
+        return mOrma.selectFromTourPlan()._idEq(id).executeWithColumns("name").getString(0);
+    }
+
     public String loadTourPlanSchedle(int id) {
         String ret = null;
         Cursor cur = null;
@@ -95,6 +99,10 @@ public class SaveData {
         }
 
         return ret;
+    }
+
+    public List<TourGoPassPoint> getTourGoPassPoints(long id) {
+        return mOrma.selectFromTourGoPassPoint().tour_go_idEq(id).toList();
     }
 
     public interface TourPlanScheduleVisitor {
@@ -128,8 +136,19 @@ public class SaveData {
         mOrma.insertIntoTourGo(go);
     }
 
+    public void updateTourGoId(TourGo go) {
+        mOrma.updateTourGo()
+                ._idEq(go._id)
+                .tour_go_id(go.tour_go_id)
+            ;
+    }
+
     public int getTourGoCount() {
         return mOrma.selectFromTourGo().count();
+    }
+
+    public List<TourGo> getListTourGoOfSpecifiedTourPlan(long id) {
+        return mOrma.selectFromTourGo().tour_plan_shedule_idEq(id).toList();
     }
 
     public List<TourGo> getListTourGo() {

@@ -20,5 +20,6 @@
     <string name="download">Downloading...</string>
     <string name="download_failure">Download Failed</string>
     <string name="download_success">Download Success</string>
+    <string name="title_activity_list_local_go">List Go (Local)</string>
 
 </resources>

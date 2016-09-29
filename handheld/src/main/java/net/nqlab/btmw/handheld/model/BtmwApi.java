@@ -21,6 +21,7 @@ import net.nqlab.btmw.api.ExclusionAreaApi;
 import net.nqlab.btmw.api.ExclusionAreaList;
 import net.nqlab.btmw.api.LoginApi;
 import net.nqlab.btmw.api.AccessToken;
+import net.nqlab.btmw.api.TourGoApi;
 import net.nqlab.btmw.api.TourPlanApi;
 
 import com.squareup.okhttp.OkHttpClient;
@@ -225,6 +226,12 @@ public class BtmwApi {
     {
         if (mAdapter == null) { return null; }
         return mAdapter.create(TourPlanApi.class);
+    }
+
+    public TourGoApi getTourGoApi()
+    {
+        if (mAdapter == null) { return null; }
+        return mAdapter.create(TourGoApi.class);
     }
 
     public void registerLoginAdapter(BtmwApiLoginAdapter loginAdapter)

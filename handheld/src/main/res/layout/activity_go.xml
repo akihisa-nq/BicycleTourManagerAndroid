@@ -2,7 +2,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="net.nqlab.simple.controller.ListOnlineActivity"
+    tools:context="net.nqlab.btmw.handheld.controller.ListOnlineActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <ListView

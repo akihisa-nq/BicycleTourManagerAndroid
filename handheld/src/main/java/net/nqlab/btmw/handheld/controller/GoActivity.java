@@ -241,7 +241,7 @@ public class GoActivity extends AppCompatActivity {
         final GoSelectListViewAdapter adapter = new GoSelectListViewAdapter(
                 this,
                 getBtmwApplication().getApi().getSerDes(),
-                getBtmwApplication().getSaveData().getListTourGo()
+                getBtmwApplication().getSaveData().getListTourGoOfSpecifiedTourPlan(mTourPlan.getId())
                 );
         listView.setAdapter(adapter);
         listView.setSelection(0);

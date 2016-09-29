@@ -12,10 +12,10 @@ public class TourGo {
     @PrimaryKey
     public long _id;
 
-    @Column
+    @Column(indexed = true)
     public long tour_plan_shedule_id;
 
-    @Column
+    @Column(indexed = true)
     @Nullable
     public Long tour_go_id;
 
