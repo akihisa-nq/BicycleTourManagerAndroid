@@ -1,47 +1,33 @@
-<android.support.v4.widget.DrawerLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout_show_online"
+    tools:context="net.nqlab.btmw.handheld.controller.ShowOnlineActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="net.nqlab.btmw.handheld.controller.ShowOnlineActivity">
-    <!-- The main content view -->
-    <LinearLayout
+    android:orientation="vertical">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        app:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:title="@string/title_activity_show_online" />
+    <RelativeLayout
         android:layout_height="match_parent"
-        android:orientation="vertical">
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:layout_width="wrap_content">
+        <Button
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:minHeight="?attr/actionBarSize"
-            app:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:title="@string/title_activity_show_online" />
-        <RelativeLayout
-            android:layout_height="match_parent"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:paddingBottom="@dimen/activity_vertical_margin"
-            android:layout_width="wrap_content">
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="New Button"
-                android:id="@+id/download"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
-        </RelativeLayout>
-    </LinearLayout>
-    <!-- The navigation drawer -->
-    <android.support.design.widget.NavigationView
-        android:id="@+id/navigation_header"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        app:menu="@menu/menu_navigation"/>
-    <!-- app:headerLayout="@layout/navigation_header" -->
-</android.support.v4.widget.DrawerLayout>
+            android:text="New Button"
+            android:id="@+id/download"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+</LinearLayout>

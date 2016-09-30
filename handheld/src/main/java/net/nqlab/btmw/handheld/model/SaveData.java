@@ -142,6 +142,10 @@ public class SaveData {
         mOrma.insertIntoTourGo(go);
     }
 
+    public void deleteTourGo(TourGo go) {
+        mOrma.deleteFromTourGo()._idEq(go._id).execute();
+    }
+
     public void updateTourGoId(TourGo go) {
         mOrma.updateTourGo()
                 ._idEq(go._id)

@@ -1,11 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
     <TextView
         android:text="TextView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView" />
-</LinearLayout>
+        android:id="@+id/textView"
+        android:textSize="@dimen/abc_text_size_display_1_material" />
+
+    <Button
+        android:text="Delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonDelete"
+        android:layout_below="@+id/textView"
+        android:layout_toStartOf="@+id/buttonUpload" />
+
+    <Button
+        android:text="Upload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonUpload"
+        android:layout_alignBaseline="@+id/buttonDelete"
+        android:layout_alignBottom="@+id/buttonDelete"
+        android:layout_alignParentEnd="true" />
+</RelativeLayout>

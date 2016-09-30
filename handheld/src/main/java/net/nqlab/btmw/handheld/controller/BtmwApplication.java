@@ -88,10 +88,14 @@ public class BtmwApplication extends Application {
         };
     }
 
-    public void setupNavigation(AppCompatActivity activity, int parent)
-    {
+    public Toolbar setupActionBar(AppCompatActivity activity, int parent) {
         Toolbar toolbar = (Toolbar) activity.findViewById(parent).findViewById(R.id.toolbar);
         activity.setSupportActionBar(toolbar);
+        return toolbar;
+    }
+
+    public void setupNavigation(AppCompatActivity activity, int parent) {
+        Toolbar toolbar = setupActionBar(activity, parent);
 
         DrawerLayout drawerLayout = (DrawerLayout) activity.findViewById(parent);
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(

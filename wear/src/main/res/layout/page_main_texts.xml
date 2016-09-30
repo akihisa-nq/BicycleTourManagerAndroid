@@ -17,7 +17,7 @@
         android:text="Large Text"
         android:id="@+id/textView1"
         android:layout_weight="0.5"
-        android:textSize="@dimen/meterTextSize"
+        android:textSize="@dimen/commentTextSize"
         android:gravity="bottom|center_horizontal" />
 
     <TextView
@@ -27,6 +27,6 @@
         android:text="Large Text"
         android:id="@+id/textView2"
         android:layout_weight="0.5"
-        android:textSize="@dimen/meterTextSize"
+        android:textSize="@dimen/commentTextSize"
         android:gravity="top|center_horizontal" />
 </LinearLayout>

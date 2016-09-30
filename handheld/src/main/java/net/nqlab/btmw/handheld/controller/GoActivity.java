@@ -16,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.TimePicker;
 
@@ -189,29 +190,31 @@ public class GoActivity extends AppCompatActivity {
         LayoutInflater layoutInflater = (LayoutInflater)GoActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View convertView = layoutInflater.inflate(R.layout.dialog_go_time_picker, null, false);
 
-        final TimePicker picker = (TimePicker)convertView.findViewById(R.id.timePicker);
+        final DatePicker pickerDate = (DatePicker)convertView.findViewById(R.id.datePicker);
+        final TimePicker pickerTime = (TimePicker)convertView.findViewById(R.id.timePicker);
 
         {
             DateTime nowDateTime = new DateTime(new Date());
-            picker.setHour(nowDateTime.hourOfDay().get());
-            picker.setMinute(nowDateTime.minuteOfHour().get());
+            pickerDate.updateDate(nowDateTime.getYear(), nowDateTime.getMonthOfYear() - 1, nowDateTime.getDayOfMonth());
+            pickerTime.setHour(nowDateTime.hourOfDay().get());
+            pickerTime.setMinute(nowDateTime.minuteOfHour().get());
         }
 
         final ListView listView = (ListView)findViewById(R.id.listView);
 
         new AlertDialog.Builder(GoActivity.this)
+                .setCancelable(false)
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .setTitle("時刻設定")
                 .setView(convertView)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        DateTime nowDateTime = new DateTime(new Date());
                         Date custom = new DateTime(
-                                nowDateTime.year().get(),
-                                nowDateTime.monthOfYear().get(),
-                                nowDateTime.dayOfMonth().get(),
-                                picker.getHour(),
-                                picker.getMinute()
+                                pickerDate.getYear(),
+                                pickerDate.getMonth() + 1,
+                                pickerDate.getDayOfMonth(),
+                                pickerTime.getHour(),
+                                pickerTime.getMinute()
                                 ).toDate();
 
                         mGo = new TourGo();
@@ -249,6 +252,7 @@ public class GoActivity extends AppCompatActivity {
         final ListView listViewSchedule = (ListView)findViewById(R.id.listView);
 
         new AlertDialog.Builder(GoActivity.this)
+                .setCancelable(false)
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .setTitle("Go の選択")
                 .setView(convertView)

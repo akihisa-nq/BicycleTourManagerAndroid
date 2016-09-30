@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import net.nqlab.btmw.api.TourGoApi;
@@ -29,6 +30,7 @@ public class ListLocalGoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_local_go);
+        getBtmwApplication().setupNavigation(this, R.id.drawer_layout_list_local_go);
 
         ListView listView = (ListView)findViewById(R.id.listView);
         final ListLocalGoListViewAdapter adapter = new ListLocalGoListViewAdapter(
@@ -37,10 +39,9 @@ public class ListLocalGoActivity extends AppCompatActivity {
                 getBtmwApplication().getApi().getSerDes()
         );
         listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        adapter.setOnButtonListener(new ListLocalGoListViewAdapter.OnButtonListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final TourGo go = (TourGo)adapter.getItem(position);
+            public void onUploadClicked(final View v, final TourGo go) {
                 TourGoApi api = getBtmwApplication().getApi().getTourGoApi();
 
                 List<TourGoEvent> listEvents = new ArrayList<TourGoEvent>();
@@ -57,43 +58,55 @@ public class ListLocalGoActivity extends AppCompatActivity {
                 goApi.setTourPlanId((int)go.tour_plan_shedule_id);
                 goApi.setTourGoEvents(listEvents);
 
+                ((Button)v).setText("Uploading...");
+
                 if (go.tour_go_id.longValue() == 0) {
                     api.create(goApi)
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<TourGoCreateResult>() {
-                            @Override
-                            public void onCompleted() {
-                            }
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Observer<TourGoCreateResult>() {
+                                @Override
+                                public void onCompleted() {
+                                    ((Button)v).setText("Upload");
+                                }
 
-                            @Override
-                            public void onError(Throwable e) {
-                            }
+                                @Override
+                                public void onError(Throwable e) {
+                                    ((Button)v).setText("Upload Failure");
+                                }
 
-                            @Override
-                            public void onNext(TourGoCreateResult result) {
-                                go.tour_go_id = result.getId().longValue();
-                                getBtmwApplication().getSaveData().updateTourGoId(go);
-                            }
-                        });
+                                @Override
+                                public void onNext(TourGoCreateResult result) {
+                                    go.tour_go_id = result.getId().longValue();
+                                    getBtmwApplication().getSaveData().updateTourGoId(go);
+                                }
+                            });
                 } else {
                     api.update(go.tour_go_id.intValue(), goApi)
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<TourGoUpdateResult>() {
-                            @Override
-                            public void onCompleted() {
-                            }
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Observer<TourGoUpdateResult>() {
+                                @Override
+                                public void onCompleted() {
+                                    ((Button)v).setText("Upload");
+                                }
 
-                            @Override
-                            public void onError(Throwable e) {
-                            }
+                                @Override
+                                public void onError(Throwable e) {
+                                    ((Button)v).setText("Upload Failure");
+                                }
 
-                            @Override
-                            public void onNext(TourGoUpdateResult result) {
-                            }
-                        });
+                                @Override
+                                public void onNext(TourGoUpdateResult result) {
+                                }
+                            });
                 }
+            }
+
+            @Override
+            public void onDeleteClicked(View v, TourGo go) {
+                getBtmwApplication().getSaveData().deleteTourGo(go);
+                adapter.updateList();
             }
         });
     }
