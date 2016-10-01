@@ -8,9 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
 
+import android.view.ContextMenu;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -102,7 +104,7 @@ public class GoActivity extends AppCompatActivity {
 
             @Override
             public void onLongPress(MotionEvent motionEvent) {
-                showSetRouteDialog();
+                GoActivity.this.openContextMenu(listView);
                 super.onLongPress(motionEvent);
             }
         });
@@ -113,6 +115,7 @@ public class GoActivity extends AppCompatActivity {
                 return true;
             }
         });
+        registerForContextMenu(listView);
 
         Window window = getWindow();
         window.addFlags(
@@ -144,8 +147,31 @@ public class GoActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, view, menuInfo);
+
+        int id = view.getId();
+        switch (id) {
+        case R.id.listView:
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.menu_go, menu);
+            break;
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_go_jump:
+                showSetRouteDialog();
+                return true;
+        }
+        return super.onContextItemSelected(item);
     }
 
     @Override
