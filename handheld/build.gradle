@@ -49,8 +49,6 @@ dependencies {
 
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'org.glassfish:javax.annotation:3.1.1-b02'
-    compile 'com.squareup.okhttp:okhttp:2.7.5'
-    compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'io.reactivex:rxandroid:1.2.1'
 
     compile group: 'joda-time', name: 'joda-time', version: '2.3'

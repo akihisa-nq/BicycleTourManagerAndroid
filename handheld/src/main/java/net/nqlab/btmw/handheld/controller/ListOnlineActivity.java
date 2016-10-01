@@ -11,6 +11,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import net.nqlab.btmw.api.LoginApi;
 import net.nqlab.btmw.api.TourPlan;
 import net.nqlab.btmw.handheld.view.ListOnlineListViewAdapter;
 import net.nqlab.btmw.handheld.R;
@@ -60,7 +61,13 @@ public class ListOnlineActivity extends AppCompatActivity {
                  }
             );
 
-        adapter.readMore(ListOnlineListViewAdapter.Direction.NEWER, 10, true);
+        if (getBtmwApplication().getApi().getTourPlanApi() == null) {
+            Intent intent = new Intent();
+            intent.setClass(this, LoginActivity.class);
+            startActivity(intent);
+        } else {
+            adapter.readMore(ListOnlineListViewAdapter.Direction.NEWER, 10, true);
+        }
     }
 
     @Override

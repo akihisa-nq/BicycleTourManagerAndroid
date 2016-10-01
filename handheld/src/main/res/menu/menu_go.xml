@@ -3,4 +3,7 @@
     <item
         android:id="@+id/menu_go_jump"
         android:title="ジャンプ" />
+    <item
+        android:id="@+id/menu_go_upload"
+        android:title="アップロード" />
 </menu>

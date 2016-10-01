@@ -1,11 +1,15 @@
 package net.nqlab.btmw.handheld.model;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
+import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Date;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.NoSuchAlgorithmException;
 import java.security.KeyManagementException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
@@ -16,145 +20,164 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 
 import android.net.Uri;
+import android.util.Log;
 
+import net.nqlab.btmw.api.ExclusionArea;
 import net.nqlab.btmw.api.ExclusionAreaApi;
 import net.nqlab.btmw.api.ExclusionAreaList;
 import net.nqlab.btmw.api.LoginApi;
 import net.nqlab.btmw.api.AccessToken;
 import net.nqlab.btmw.api.TourGoApi;
+import net.nqlab.btmw.api.TourGoCreateResult;
+import net.nqlab.btmw.api.TourGoEvent;
+import net.nqlab.btmw.api.TourGoUpdateResult;
 import net.nqlab.btmw.api.TourPlanApi;
 
-import com.squareup.okhttp.OkHttpClient;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
 
-import retrofit.client.OkClient;
-import retrofit.RestAdapter;
-import retrofit.RequestInterceptor;
-import retrofit.android.AndroidLog;
-import retrofit.converter.GsonConverter;
+import okhttp3.Request;
+import okhttp3.Response;
+import retrofit2.Retrofit;
+import retrofit2.Retrofit.Builder;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 import com.google.gson.Gson;
 
+import net.nqlab.btmw.handheld.controller.ListLocalGoActivity;
 import net.nqlab.btmw.handheld.model.ServerInfo;
 import net.nqlab.btmw.api.SerDes;
 
 public class BtmwApi {
-    private RestAdapter mAdapter = null;
+    private Retrofit mAdapter = null;
     private SecureSaveData mSecureSaveData;
     private SaveData mSaveData;
     private String mAccessToken;
-    private BtmwApiLoginAdapter mLoginAdapter;
-	private SerDes mSerDes;
+    private SerDes mSerDes;
+
+    public interface OnLoginListener {
+        void onLoginSuccess();
+        void onLoginFailure();
+    }
 
     public BtmwApi(SecureSaveData secureSaveData, SaveData saveData) {
-		mSerDes = new SerDes();
+        mSerDes = new SerDes();
         mSecureSaveData = secureSaveData;
         mSaveData = saveData;
     }
 
-	public OkClient createOkClient() {
-		OkHttpClient client = new OkHttpClient();
-		final TrustManager[] trustManagers = new TrustManager[]{
-				new X509TrustManager() {
-					@Override
-					public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-						// 特に何もしない
-					}
+    public OkHttpClient createOkClient() {
+        final TrustManager[] trustManagers = new TrustManager[]{
+            new X509TrustManager() {
+                @Override
+                public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                }
 
-					@Override
-					public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-						// 特に何もしない
-					}
+                @Override
+                public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                }
 
-					@Override
-					public X509Certificate[] getAcceptedIssuers() {
-						return null;
-					}
-				}
-		};
+                @Override
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                    return new java.security.cert.X509Certificate[]{};
+                }
+            }
+        };
 
-		try {
-			final SSLContext sslContext = SSLContext.getInstance("SSL");
-			sslContext.init(null, trustManagers, new java.security.SecureRandom());
-			final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-			client.setSslSocketFactory(sslSocketFactory);
-			client.setHostnameVerifier(new HostnameVerifier() {
-				@Override
-				public boolean verify(String hostname, SSLSession session) {
-					// ホスト名の検証を行わない
-					return true;
-				}
-			});
+        OkHttpClient client = null;
+        try {
+            final SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustManagers, new java.security.SecureRandom());
+            final X509TrustManager trustManager = (X509TrustManager) trustManagers[0];
 
-            client.setReadTimeout(1, TimeUnit.MINUTES);
-            client.setWriteTimeout(1, TimeUnit.MINUTES);
-            client.setConnectTimeout(1, TimeUnit.MINUTES);
+            client = new OkHttpClient.Builder()
+                    .sslSocketFactory(sslContext.getSocketFactory(), trustManager)
+                    .hostnameVerifier(new HostnameVerifier() {
+                        @Override
+                        public boolean verify(String hostname, SSLSession session) {
+                            // ホスト名の検証を行わない
+                            return true;
+                        }
+                    })
+                    .connectTimeout(1, TimeUnit.MINUTES)
+                    .readTimeout(1, TimeUnit.MINUTES)
+                    .writeTimeout(1, TimeUnit.MINUTES)
+                    .addInterceptor(new Interceptor() {
+                        @Override
+                        public Response intercept(Chain chain) throws IOException {
+                            final Request.Builder builder = chain.request().newBuilder();
+                            builder.addHeader("Authorization", "Bearer " + mAccessToken);
+                            return chain.proceed(builder.build());
+                        }
+                    })
+                    .build();
 
-		} catch (NoSuchAlgorithmException | KeyManagementException e) {
-			e.printStackTrace();
-		}
-		return new OkClient(client);
-	}
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            e.printStackTrace();
+        }
+        return client;
+    }
 
-    private boolean createSession(String token)
+    private void createSession(String token, final OnLoginListener listener)
     {
         mAccessToken = token;
 
-        mAdapter = new RestAdapter.Builder()
-            .setEndpoint(ServerInfo.URL_BASE)
-            .setConverter(new GsonConverter(mSerDes.getGson()))
-            .setLogLevel(RestAdapter.LogLevel.FULL)
-            .setLog(new AndroidLog("=NETWORK="))
-            .setRequestInterceptor(new RequestInterceptor() {
-                    @Override
-                    public void intercept(RequestInterceptor.RequestFacade request) {
-                        request.addHeader("Authorization", "Bearer " + mAccessToken);
-                    }
-                })
-			.setClient(createOkClient())
+        mAdapter = new Retrofit.Builder()
+            .baseUrl(ServerInfo.URL_BASE + "/")
+            .addConverterFactory(GsonConverterFactory.create(mSerDes.getGson()))
+            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+            .client(createOkClient())
             .build();
 
-        try {
-            ExclusionAreaList list = getExclusionAreaApi().list().toBlocking().first();
-            if (list == null) {
-                mAdapter = null;
-                mAccessToken = null;
-                return false;
-            }
-        } catch (Exception e) {
-             mAdapter = null;
-             mAccessToken = null;
-             return false;
-        }
+        getExclusionAreaApi().list()
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Observer<ExclusionAreaList>() {
+                @Override
+                public void onCompleted() {
+                    listener.onLoginSuccess();
+                }
 
-        return true;
+                @Override
+                public void onError(Throwable e) {
+                    mAdapter = null;
+                    mAccessToken = null;
+                    listener.onLoginFailure();
+                }
+
+                @Override
+                public void onNext(ExclusionAreaList exclusionAreaList) {
+                }
+            });
     }
 
-    public boolean restoreSession()
+    public void restoreSession(OnLoginListener listener)
     {
         String encryptedToken = mSaveData.loadToken("token");
         if (encryptedToken == null) {
-            return false;
+            listener.onLoginFailure();
+            return;
         }
 
         String token = mSecureSaveData.decryptKey(encryptedToken);
         if (token == null) {
-            return false;
+            listener.onLoginFailure();
+            return;
         }
 
-        return createSession(token);
+        createSession(token, listener);
     }
 
-    public void login(String code) {
-        // RestAdapterの生成
-        RestAdapter adapter = new RestAdapter.Builder()
-            .setEndpoint(ServerInfo.URL_BASE)
-            .setConverter(new GsonConverter(mSerDes.getGson()))
-            .setLogLevel(RestAdapter.LogLevel.FULL)
-            .setLog(new AndroidLog("=NETWORK="))
-			.setClient(createOkClient())
+    public void login(String code, final OnLoginListener listener) {
+        Retrofit adapter = new Retrofit.Builder()
+            .baseUrl(ServerInfo.URL_BASE + "/")
+            .addConverterFactory(GsonConverterFactory.create(mSerDes.getGson()))
+            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+            .client(createOkClient())
             .build();
 
         // アクセス トークン取得
@@ -174,9 +197,7 @@ public class BtmwApi {
 
                 @Override
                 public void onError(Throwable e) {
-                    if (mLoginAdapter != null) {
-                        mLoginAdapter.onLoginFailure();
-                    }
+                    listener.onLoginFailure();
                 }
 
                 @Override
@@ -184,15 +205,7 @@ public class BtmwApi {
                     if (token != null) {
                         String accessToken = token.getAccessToken();
                         mSaveData.saveToken("token", mSecureSaveData.encryptKey(accessToken));
-                        if (createSession(accessToken)) {
-                            if (mLoginAdapter != null) {
-                                mLoginAdapter.onLoginSuccess();
-                            }
-                        } else {
-                            if (mLoginAdapter != null) {
-                                mLoginAdapter.onLoginFailure();
-                            }
-                        }
+                        createSession(accessToken, listener);
                     }
                 }
             });
@@ -222,6 +235,81 @@ public class BtmwApi {
         return mAdapter.create(ExclusionAreaApi.class);
     }
 
+    public interface UploadTourGoListerner {
+        void onBegin();
+        void onError();
+        void onDone();
+    }
+
+    public void uploadTourGo(final TourGo go, final UploadTourGoListerner listener) {
+        TourGoApi api = getTourGoApi();
+        if (api == null) {
+            listener.onError();
+            return;
+        }
+
+        List<TourGoEvent> listEvents = new ArrayList<TourGoEvent>();
+        for (TourGoPassPoint passPoint : mSaveData.getTourGoPassPoints(go._id)) {
+            TourGoEvent event = new TourGoEvent();
+            event.setEventType("pass_point");
+            event.setOccuredOn(passPoint.passed_on);
+            event.setTourPlanPointId((int)passPoint.tour_plan_point_id);
+            listEvents.add(event);
+        }
+
+        net.nqlab.btmw.api.TourGo goApi = new net.nqlab.btmw.api.TourGo();
+        goApi.setStartTime(go.start_time);
+        goApi.setTourPlanId((int)go.tour_plan_shedule_id);
+        goApi.setTourGoEvents(listEvents);
+
+        String str  = mSerDes.toJson(goApi);
+        Log.d("", str);
+
+        listener.onBegin();
+
+        if (go.tour_go_id.longValue() == 0) {
+            api.create(goApi)
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<TourGoCreateResult>() {
+                        @Override
+                        public void onCompleted() {
+                            listener.onDone();
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            listener.onError();
+                        }
+
+                        @Override
+                        public void onNext(TourGoCreateResult result) {
+                            go.tour_go_id = result.getId().longValue();
+                            mSaveData.updateTourGoId(go);
+                        }
+                    });
+        } else {
+            api.update(go.tour_go_id.intValue(), goApi)
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<TourGoUpdateResult>() {
+                        @Override
+                        public void onCompleted() {
+                            listener.onDone();
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            listener.onError();
+                        }
+
+                        @Override
+                        public void onNext(TourGoUpdateResult result) {
+                        }
+                    });
+        }
+    }
+
     public TourPlanApi getTourPlanApi()
     {
         if (mAdapter == null) { return null; }
@@ -232,16 +320,6 @@ public class BtmwApi {
     {
         if (mAdapter == null) { return null; }
         return mAdapter.create(TourGoApi.class);
-    }
-
-    public void registerLoginAdapter(BtmwApiLoginAdapter loginAdapter)
-    {
-        mLoginAdapter = loginAdapter;
-    }
-
-    public void unregisterLoginAdapter()
-    {
-        mLoginAdapter = null;
     }
 
     public String toJson(Object obj)
@@ -255,11 +333,11 @@ public class BtmwApi {
     }
 
     public Date fromStringToDate(String strDate) {
-		return mSerDes.fromStringToDate(strDate);
+        return mSerDes.fromStringToDate(strDate);
     }
 
     public String fromDateToString(Date date) {
-		return mSerDes.fromDateToString(date);
+        return mSerDes.fromDateToString(date);
     }
 
     public SerDes getSerDes() {

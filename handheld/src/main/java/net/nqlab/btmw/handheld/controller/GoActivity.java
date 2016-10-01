@@ -24,6 +24,7 @@ import android.widget.TimePicker;
 
 import net.nqlab.btmw.api.TourPlanSchedule;
 import net.nqlab.btmw.handheld.R;
+import net.nqlab.btmw.handheld.model.BtmwApi;
 import net.nqlab.btmw.handheld.model.TourGoPassPoint;
 import net.nqlab.btmw.handheld.view.GoSelectListViewAdapter;
 import net.nqlab.btmw.handheld.model.TourGo;
@@ -165,11 +166,30 @@ public class GoActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onContextItemSelected(MenuItem item) {
+    public boolean onContextItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_go_jump:
                 showSetRouteDialog();
                 return true;
+
+        case R.id.menu_go_upload:
+            getBtmwApplication().getApi().uploadTourGo(mGo, new BtmwApi.UploadTourGoListerner() {
+                @Override
+                public void onBegin() {
+                    item.setTitle("アップロード中...");
+                }
+
+                @Override
+                public void onError() {
+                    item.setTitle("アップロード失敗");
+                }
+
+                @Override
+                public void onDone() {
+                    item.setTitle("アップロード");
+                }
+            });
+            return true;
         }
         return super.onContextItemSelected(item);
     }
