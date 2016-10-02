@@ -39,20 +39,29 @@ public class TourGoApi {
     }
 
     class RequestTourGoBody extends RequestBody {
-        private String mValue;
+        private byte[] mValue;
 
         public RequestTourGoBody(String val) {
-            mValue = val;
+            try {
+                mValue = ("{ \"tour_go\": " + val + "}").getBytes("UTF-8");
+            } catch (Exception e) {
+                mValue = new byte[] {};
+            }
         }
 
         @Override
         public MediaType contentType() {
-            return MediaType.parse("application/json");
+            return MediaType.parse("application/json; charset=utf-8");
         }
 
         @Override
         public void writeTo(BufferedSink sink) throws IOException {
-            sink.write(("{ \"tour_go\": " + mValue + "}").getBytes("UTF-8"));
+            sink.write(mValue);
+        }
+
+        @Override
+        public long contentLength() {
+            return mValue.length;
         }
     }
 
