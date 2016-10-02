@@ -143,6 +143,7 @@ public class SaveData {
     }
 
     public void deleteTourGo(TourGo go) {
+        mOrma.deleteFromTourGoPassPoint().tour_go_idEq(go._id);
         mOrma.deleteFromTourGo()._idEq(go._id).execute();
     }
 
@@ -166,7 +167,10 @@ public class SaveData {
     }
 
     public void addTourGoPassPoint(TourGoPassPoint passPoint) {
-        int count = mOrma.selectFromTourGoPassPoint().tour_plan_point_idEq(passPoint.tour_plan_point_id).count();
+        int count = mOrma.selectFromTourGoPassPoint()
+                .tour_go_idEq(passPoint.tour_go_id)
+                .tour_plan_point_idEq(passPoint.tour_plan_point_id)
+                .count();
         if (count == 0) {
             mOrma.insertIntoTourGoPassPoint(passPoint);
         }
