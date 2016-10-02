@@ -148,9 +148,9 @@ public class SaveData {
 
     public void updateTourGoId(TourGo go) {
         mOrma.updateTourGo()
-                ._idEq(go._id)
-                .tour_go_id(go.tour_go_id)
-            ;
+            ._idEq(go._id)
+            .tour_go_id(go.tour_go_id)
+            .execute();
     }
 
     public int getTourGoCount() {

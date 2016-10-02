@@ -34,10 +34,13 @@ import net.nqlab.btmw.api.TourGoUpdateResult;
 import net.nqlab.btmw.api.TourPlanApi;
 
 import okhttp3.Interceptor;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
+import okio.BufferedSink;
 import retrofit2.Retrofit;
 import retrofit2.Retrofit.Builder;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -242,7 +245,7 @@ public class BtmwApi {
     }
 
     public void uploadTourGo(final TourGo go, final UploadTourGoListerner listener) {
-        TourGoApi api = getTourGoApi();
+        final TourGoApi api = getTourGoApi();
         if (api == null) {
             listener.onError();
             return;
@@ -257,13 +260,10 @@ public class BtmwApi {
             listEvents.add(event);
         }
 
-        net.nqlab.btmw.api.TourGo goApi = new net.nqlab.btmw.api.TourGo();
+        final net.nqlab.btmw.api.TourGo goApi = new net.nqlab.btmw.api.TourGo();
         goApi.setStartTime(go.start_time);
         goApi.setTourPlanId((int)go.tour_plan_shedule_id);
         goApi.setTourGoEvents(listEvents);
-
-        String str  = mSerDes.toJson(goApi);
-        Log.d("", str);
 
         listener.onBegin();
 
@@ -300,7 +300,26 @@ public class BtmwApi {
 
                         @Override
                         public void onError(Throwable e) {
-                            listener.onError();
+                            api.create(goApi)
+                                .subscribeOn(Schedulers.newThread())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new Observer<TourGoCreateResult>() {
+                                    @Override
+                                    public void onCompleted() {
+                                        listener.onDone();
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable e) {
+                                        listener.onError();
+                                    }
+
+                                    @Override
+                                    public void onNext(TourGoCreateResult result) {
+                                        go.tour_go_id = result.getId().longValue();
+                                        mSaveData.updateTourGoId(go);
+                                    }
+                                });
                         }
 
                         @Override
@@ -319,7 +338,7 @@ public class BtmwApi {
     public TourGoApi getTourGoApi()
     {
         if (mAdapter == null) { return null; }
-        return mAdapter.create(TourGoApi.class);
+        return new TourGoApi(mAdapter.create(TourGoApi.Impl.class), getSerDes());
     }
 
     public String toJson(Object obj)
