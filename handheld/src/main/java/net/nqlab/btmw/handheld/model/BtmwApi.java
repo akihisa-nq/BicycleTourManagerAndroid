@@ -40,6 +40,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 import okio.BufferedSink;
 import retrofit2.Retrofit;
 import retrofit2.Retrofit.Builder;
@@ -97,6 +98,9 @@ public class BtmwApi {
             sslContext.init(null, trustManagers, new java.security.SecureRandom());
             final X509TrustManager trustManager = (X509TrustManager) trustManagers[0];
 
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
             client = new OkHttpClient.Builder()
                     .sslSocketFactory(sslContext.getSocketFactory(), trustManager)
                     .hostnameVerifier(new HostnameVerifier() {
@@ -117,6 +121,7 @@ public class BtmwApi {
                             return chain.proceed(builder.build());
                         }
                     })
+                    .addInterceptor(logging)
                     .build();
 
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
