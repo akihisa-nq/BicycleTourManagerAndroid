@@ -52,6 +52,8 @@ import rx.schedulers.Schedulers;
 
 import com.google.gson.Gson;
 
+import net.nqlab.btmw.api.User;
+import net.nqlab.btmw.api.UserApi;
 import net.nqlab.btmw.handheld.controller.ListLocalGoActivity;
 import net.nqlab.btmw.handheld.model.ServerInfo;
 import net.nqlab.btmw.api.SerDes;
@@ -141,13 +143,12 @@ public class BtmwApi {
             .client(createOkClient())
             .build();
 
-        getExclusionAreaApi().list()
+        getUserApi().show("current")
             .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Observer<ExclusionAreaList>() {
+            .subscribe(new Observer<User>() {
                 @Override
                 public void onCompleted() {
-                    listener.onLoginSuccess();
                 }
 
                 @Override
@@ -158,7 +159,14 @@ public class BtmwApi {
                 }
 
                 @Override
-                public void onNext(ExclusionAreaList exclusionAreaList) {
+                public void onNext(User user) {
+                    if (user.getEmail() == null) {
+                        mAdapter = null;
+                        mAccessToken = null;
+                        listener.onLoginFailure();
+                    } else {
+                        listener.onLoginSuccess();
+                    }
                 }
             });
     }
@@ -334,14 +342,17 @@ public class BtmwApi {
         }
     }
 
-    public TourPlanApi getTourPlanApi()
-    {
+    public UserApi getUserApi() {
+        if (mAdapter == null) { return null; }
+        return mAdapter.create(UserApi.class);
+    }
+
+    public TourPlanApi getTourPlanApi() {
         if (mAdapter == null) { return null; }
         return mAdapter.create(TourPlanApi.class);
     }
 
-    public TourGoApi getTourGoApi()
-    {
+    public TourGoApi getTourGoApi() {
         if (mAdapter == null) { return null; }
         return new TourGoApi(mAdapter.create(TourGoApi.Impl.class), getSerDes());
     }
