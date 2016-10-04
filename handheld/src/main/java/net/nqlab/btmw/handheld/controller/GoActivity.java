@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
 
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -87,6 +88,12 @@ public class GoActivity extends AppCompatActivity {
 					GoActivity.this.sendPoint();
                     mSendFirstData = true;
                 }
+            }
+
+            @Override
+            public void onSoundRecorded(String date, byte[] data) {
+                // FIXME
+                Log.d("Sound", date + " : " + data.length);
             }
         });
 

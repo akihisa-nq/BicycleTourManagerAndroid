@@ -9,6 +9,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Wearable;
@@ -24,6 +28,8 @@ public class BtmwWear {
         void onGoNext();
 
         void onConnect();
+
+        void onSoundRecorded(String date, byte[] data);
     }
 
     private GoogleApiClient mGoogleApiClient;
@@ -53,6 +59,21 @@ public class BtmwWear {
                         }
                     });
 
+                    Wearable.DataApi.addListener(mGoogleApiClient, new DataApi.DataListener() {
+                        @Override
+                        public void onDataChanged(DataEventBuffer dataEvents) {
+                            for (DataEvent event : dataEvents) {
+                                // event.getDataItem().getUri()
+                                if (event.getType() == DataEvent.TYPE_DELETED) {
+                                    // nothing to do
+
+                                } else if (event.getType() == DataEvent.TYPE_CHANGED) {
+                                    BtmwWear.this.notifyDataRecieved(event.getDataItem());
+                                }
+                            }
+                        }
+                    });
+
                     BtmwWear.this.mListener.onConnect();
                 }
 
@@ -69,7 +90,16 @@ public class BtmwWear {
 			.build();
 	}
 
-	public void connect() {
+    private void notifyDataRecieved(DataItem item) {
+        DataMap dataMap = DataMap.fromByteArray(item.getData());
+        if (item.getUri().getPath().equals(WearProtocol.REQUEST_SOUND)) {
+            byte[] sound = dataMap.getByteArray(WearProtocol.REQUEST_POINT_PARAM_DATA);
+            String date = dataMap.getString(WearProtocol.REQUEST_SOUND_PARAM_DATE);
+            mListener.onSoundRecorded(date, sound);
+        }
+    }
+
+    public void connect() {
 		if (mGoogleApiClient != null && !mGoogleApiClient.isConnected()) {
             mGoogleApiClient.connect();
 		}

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -25,6 +26,8 @@ import com.google.android.gms.wearable.DataApi;
 import net.nqlab.btmw.api.TourPlanSchedulePoint;
 import net.nqlab.btmw.api.SerDes;
 import net.nqlab.btmw.model.WearProtocol;
+
+import java.util.Date;
 
 import rx.Observable;
 import rx.Observer;
@@ -133,7 +136,8 @@ public class BtmwHandheld {
 			.create(new Observable.OnSubscribe<MessageApi.SendMessageResult>() {
 				@Override
 				public void call(final Subscriber<? super MessageApi.SendMessageResult> subscriber) {
-					NodeApi.GetConnectedNodesResult nodeResult = Wearable.NodeApi.getConnectedNodes(BtmwHandheld.this.mGoogleApiClient).await();
+					NodeApi.GetConnectedNodesResult nodeResult = Wearable.NodeApi
+							.getConnectedNodes(BtmwHandheld.this.mGoogleApiClient).await();
 					for (Node node : nodeResult.getNodes()) {
 						PendingResult<MessageApi.SendMessageResult> result =
 							Wearable.MessageApi.sendMessage(mGoogleApiClient, node.getId(), WearProtocol.REQUEST_NEXT, "".getBytes());
@@ -167,7 +171,23 @@ public class BtmwHandheld {
 			});
 	}
 
-    public SerDes getSerDes() {
+	public void sendSoundData(byte[] data) {
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create(WearProtocol.REQUEST_SOUND);
+        putDataMapReq.getDataMap().putByteArray(WearProtocol.REQUEST_SOUND_PARAM_DATA, data);
+        putDataMapReq.getDataMap().putString(WearProtocol.REQUEST_SOUND_PARAM_DATE, mSerDes.fromDateToString(new Date()));
+        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+
+        PendingResult<DataApi.DataItemResult> pendingResult =
+                Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
+        pendingResult.setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
+            @Override
+            public void onResult(DataApi.DataItemResult dataItemResult) {
+                Log.d("Handheld", "" + dataItemResult.getStatus());
+            }
+        });
+	}
+
+	public SerDes getSerDes() {
         return mSerDes;
     }
 }

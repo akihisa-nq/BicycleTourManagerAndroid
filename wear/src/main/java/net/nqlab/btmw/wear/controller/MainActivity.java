@@ -1,7 +1,9 @@
 package net.nqlab.btmw.wear.controller;
 
+import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.MemoryFile;
 import android.support.v4.view.ViewPager;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.BoxInsetLayout;
@@ -16,12 +18,14 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import net.nqlab.btmw.model.MemoryFileUtil;
 import net.nqlab.btmw.model.WearProtocol;
 import net.nqlab.btmw.wear.R;
 import net.nqlab.btmw.wear.model.BtmwHandheld;
 import net.nqlab.btmw.api.TourPlanSchedulePoint;
 import net.nqlab.btmw.wear.view.MainViewPagerAdapter;
 
+import java.io.FileDescriptor;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -32,12 +36,17 @@ public class MainActivity extends WearableActivity {
     private BtmwHandheld mHandheld;
     private MainViewPagerAdapter mAdapter;
     private Timer mTimer;
+    private MediaRecorder mRecorder;
+    private MemoryFile mRecordFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setAmbientEnabled();
+
+        mRecorder = null;
+        mRecordFile = null;
 
         mHandheld = new BtmwHandheld(this, new BtmwHandheld.BtmwHandheldListener() {
 			@Override
@@ -81,6 +90,7 @@ public class MainActivity extends WearableActivity {
         final GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onSingleTapConfirmed(MotionEvent motionEvent) {
+                MainActivity.this.recordStop();
                 return super.onSingleTapConfirmed(motionEvent);
             }
 
@@ -214,6 +224,7 @@ public class MainActivity extends WearableActivity {
     public boolean onContextItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_main_record_sound:
+                recordStart();
                 return true;
 
             case R.id.menu_main_remember_text:
@@ -223,5 +234,45 @@ public class MainActivity extends WearableActivity {
                 return true;
         }
         return super.onContextItemSelected(item);
+    }
+
+    private void recordStart() {
+        try {
+            mRecordFile = new MemoryFile(null, 512 * 1024);
+
+            mRecorder = new MediaRecorder();
+            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+            mRecorder.setOutputFile(MemoryFileUtil.getFileDescriptor(mRecordFile));
+
+            //録音準備＆録音開始
+            mRecorder.prepare();
+            mRecorder.start();   //録音開始
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    private void recordStop() {
+        if (mRecorder != null) {
+            mRecorder.stop();
+            mRecorder.reset();   //オブジェクトのリセット
+            //release()前であればsetAudioSourceメソッドを呼び出すことで再利用可能
+            mRecorder.release(); //Recorderオブジェクトの解放
+            mRecorder = null;
+
+            try {
+                byte[] data = new byte[mRecordFile.length()];
+                mRecordFile.readBytes(data, 0, 0, data.length);
+                mRecordFile.close();
+
+                mHandheld.sendSoundData(data);
+            } catch (Exception e) {
+            }
+
+            mRecordFile = null;
+        }
     }
 }
