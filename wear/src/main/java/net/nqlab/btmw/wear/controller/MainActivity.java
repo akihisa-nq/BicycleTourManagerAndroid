@@ -258,7 +258,7 @@ public class MainActivity extends WearableActivity {
             }
             mRecorder = null;
 
-            Log.e("Sound", e.getMessage())
+            Log.e("Sound", e.getMessage());
         }
     }
 
