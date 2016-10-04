@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_main_remember_text"
+        android:title="テキストを記憶" />
+    <item
+        android:id="@+id/menu_main_mark_point"
+        android:title="この時点をマーク" />
+    <item
+        android:id="@+id/menu_main_record_sound"
+        android:title="この時点の録音" />
+
+</menu>

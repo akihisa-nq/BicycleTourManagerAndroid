@@ -5,7 +5,10 @@ import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.BoxInsetLayout;
+import android.view.ContextMenu;
 import android.view.GestureDetector;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -89,6 +92,7 @@ public class MainActivity extends WearableActivity {
 
             @Override
             public void onLongPress(MotionEvent motionEvent) {
+                MainActivity.this.openContextMenu(pager);
                 super.onLongPress(motionEvent);
             }
         });
@@ -99,6 +103,7 @@ public class MainActivity extends WearableActivity {
                 return false;
             }
         });
+        registerForContextMenu(pager);
 
         pager.setAdapter(mAdapter);
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -190,5 +195,33 @@ public class MainActivity extends WearableActivity {
         );
 
         mTimer.cancel();
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, view, menuInfo);
+
+        int id = view.getId();
+        switch (id) {
+            case R.id.viewPager:
+                MenuInflater inflater = getMenuInflater();
+                inflater.inflate(R.menu.menu_main, menu);
+                break;
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(final MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_main_record_sound:
+                return true;
+
+            case R.id.menu_main_remember_text:
+                return true;
+
+            case R.id.menu_main_mark_point:
+                return true;
+        }
+        return super.onContextItemSelected(item);
     }
 }
