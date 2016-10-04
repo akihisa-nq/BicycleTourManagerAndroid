@@ -34,7 +34,7 @@ import rx.schedulers.Schedulers;
 
 public class BtmwHandheld {
 	public interface BtmwHandheldListener {
-		public void onSetPoint(String base, String start, TourPlanSchedulePoint point);
+		public void onSetPoint(String base, String start, TourPlanSchedulePoint pointPrevious, TourPlanSchedulePoint pointCurrent, int pointType);
 	}
 
 	private GoogleApiClient mGoogleApiClient;
@@ -64,17 +64,7 @@ public class BtmwHandheld {
 								} else if (event.getType() == DataEvent.TYPE_CHANGED) {
                                     if (event.getDataItem().getUri().getPath().equals(WearProtocol.REQUEST_POINT)) {
                                         DataMap dataMap = DataMap.fromByteArray(event.getDataItem().getData());
-                                        String json = dataMap.getString(WearProtocol.REQUEST_POINT_PARAM_DATA);
-                                        final TourPlanSchedulePoint point = (TourPlanSchedulePoint) mSerDes.fromJson(json, TourPlanSchedulePoint.class);
-										final String base = dataMap.getString(WearProtocol.REQUEST_POINT_PARAM_BASE_DATE);
-										final String start = dataMap.getString(WearProtocol.REQUEST_POINT_PARAM_START_DATE);
-
-										mHandler.post(new Runnable() {
-											@Override
-											public void run() {
-		                                        mListener.onSetPoint(base, start, point);
-											}
-										});
+										BtmwHandheld.this.notifyDataRecieved(dataMap);
                                     }
 								}
 							}
@@ -93,6 +83,22 @@ public class BtmwHandheld {
 			})
 			.addApi(Wearable.API)
 			.build();
+	}
+
+	private void notifyDataRecieved(DataMap dataMap) {
+		String jsonPrevious = dataMap.getString(WearProtocol.REQUEST_POINT_PARAM_PREVIOUS);
+		final TourPlanSchedulePoint pointPrevious = (TourPlanSchedulePoint)mSerDes.fromJson(jsonPrevious, TourPlanSchedulePoint.class);
+		String json = dataMap.getString(WearProtocol.REQUEST_POINT_PARAM_DATA);
+		final TourPlanSchedulePoint point = (TourPlanSchedulePoint)mSerDes.fromJson(json, TourPlanSchedulePoint.class);
+		final String base = dataMap.getString(WearProtocol.REQUEST_POINT_PARAM_BASE_DATE);
+		final String start = dataMap.getString(WearProtocol.REQUEST_POINT_PARAM_START_DATE);
+		final int pointType = dataMap.getInt(WearProtocol.REQUEST_POINT_PARAM_POINT_TYPE);
+		mHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				mListener.onSetPoint(base, start, pointPrevious, point, pointType);
+			}
+		});
 	}
 
 	public void connect() {
@@ -115,17 +121,7 @@ public class BtmwHandheld {
                 for (DataItem dataItem : dataItems) {
                     if (dataItem.getUri().getPath().equals(WearProtocol.REQUEST_POINT)) {
                         DataMap dataMap = DataMap.fromByteArray(dataItem.getData());
-                        // データを使った処理
-                        String json = dataMap.getString(WearProtocol.REQUEST_POINT_PARAM_DATA);
-                        final TourPlanSchedulePoint point = (TourPlanSchedulePoint)mSerDes.fromJson(json, TourPlanSchedulePoint.class);
-						final String base = dataMap.getString(WearProtocol.REQUEST_POINT_PARAM_BASE_DATE);
-						final String start = dataMap.getString(WearProtocol.REQUEST_POINT_PARAM_START_DATE);
-						mHandler.post(new Runnable() {
-							@Override
-							public void run() {
-		                        mListener.onSetPoint(base, start, point);
-							}
-						});
+						BtmwHandheld.this.notifyDataRecieved(dataMap);
                     }
                 }
             }

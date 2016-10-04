@@ -23,6 +23,8 @@ import android.widget.ListView;
 import android.widget.TimePicker;
 
 import net.nqlab.btmw.api.TourPlanSchedule;
+import net.nqlab.btmw.api.TourPlanSchedulePoint;
+import net.nqlab.btmw.model.WearProtocol;
 import net.nqlab.btmw.handheld.R;
 import net.nqlab.btmw.handheld.model.BtmwApi;
 import net.nqlab.btmw.handheld.model.TourGoPassPoint;
@@ -82,7 +84,7 @@ public class GoActivity extends AppCompatActivity {
                 mWear.setBaseTime(mTourPlan.getStartTime());
 
                 if (mGo != null) {
-                    mWear.sendPoint(mAdapter.getCurrentPoint());
+					GoActivity.this.sendPoint();
                     mSendFirstData = true;
                 }
             }
@@ -274,7 +276,7 @@ public class GoActivity extends AppCompatActivity {
                         listView.setAdapter(mAdapter);
 
                         if (!mSendFirstData && mWear.isConnected()) {
-                            mWear.sendPoint(mAdapter.getCurrentPoint());
+							GoActivity.this.sendPoint();
                             mSendFirstData = true;
                         }
                     }
@@ -313,7 +315,7 @@ public class GoActivity extends AppCompatActivity {
                             listViewSchedule.setAdapter(mAdapter);
 
                             if (!mSendFirstData && mWear.isConnected()) {
-                                mWear.sendPoint(mAdapter.getCurrentPoint());
+								GoActivity.this.sendPoint();
                                 mSendFirstData = true;
                             }
                         }
@@ -380,7 +382,7 @@ public class GoActivity extends AppCompatActivity {
         int selection = mAdapter.getCurrentPosition();
         final ListView listView = (ListView)findViewById(R.id.listView);
         listView.setSelection(selection);
-        mWear.sendPoint(mAdapter.getCurrentPoint());
+		GoActivity.this.sendPoint();
     }
 
     private void succeedPoint() {
@@ -393,4 +395,33 @@ public class GoActivity extends AppCompatActivity {
         mAdapter.succeed();
         goToPoint();
     }
+
+	private void sendPoint() {
+		int pointType = 0;
+		if (mAdapter.getCurrentPosition() == 0) {
+			if (mAdapter.getCurrentRoute() == 0) {
+				pointType = WearProtocol.REQUEST_POINT_PARAM_POINT_TYPE_START;
+			} else {
+				pointType = WearProtocol.REQUEST_POINT_PARAM_POINT_TYPE_CONTROL_POINT_START;
+			}
+		} else if (mAdapter.getCurrentPosition() == mAdapter.getCount() - 1) {
+			if (mAdapter.getCurrentRoute() == mTourPlan.getTourPlanSchedules().getTourPlanScheduleRoutes().size() - 1) {
+				pointType = WearProtocol.REQUEST_POINT_PARAM_POINT_TYPE_GOAL;
+			} else {
+				pointType = WearProtocol.REQUEST_POINT_PARAM_POINT_TYPE_CONTROL_POINT_GOAL;
+			}
+		} else if (mAdapter.getCurrentPoint().getPass()) {
+			if (mAdapter.getCurrentPoint().getComment().contains("▲")) {
+				pointType = WearProtocol.REQUEST_POINT_PARAM_POINT_TYPE_PASS;
+			} else if (mAdapter.getCurrentPoint().getComment().contains("▼")) {
+				pointType = WearProtocol.REQUEST_POINT_PARAM_POINT_TYPE_BOTTOM;
+			} else {
+				pointType = WearProtocol.REQUEST_POINT_PARAM_POINT_TYPE_WAY;
+			}
+		} else {
+			pointType = WearProtocol.REQUEST_POINT_PARAM_POINT_TYPE_WAY;
+		}
+
+        mWear.sendPoint(mAdapter.getPreviousPoint(), mAdapter.getCurrentPoint(), pointType);
+	}
 }

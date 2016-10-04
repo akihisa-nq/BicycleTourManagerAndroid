@@ -10,8 +10,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import net.nqlab.btmw.model.WearProtocol;
 import net.nqlab.btmw.wear.R;
 import net.nqlab.btmw.wear.model.BtmwHandheld;
 import net.nqlab.btmw.api.TourPlanSchedulePoint;
@@ -36,10 +38,38 @@ public class MainActivity extends WearableActivity {
 
         mHandheld = new BtmwHandheld(this, new BtmwHandheld.BtmwHandheldListener() {
 			@Override
-			public void onSetPoint(String base, String start, TourPlanSchedulePoint point) {
+			public void onSetPoint(String base, String start, TourPlanSchedulePoint pointPrevious, TourPlanSchedulePoint pointCurrent, int pointType) {
                 MainActivity.this.mAdapter.setBaseTime(base);
                 MainActivity.this.mAdapter.setStartTime(start);
-                MainActivity.this.mAdapter.setPoint(point);
+                MainActivity.this.mAdapter.setPoint(pointPrevious, pointCurrent);
+
+                int id = 0;
+                switch (pointType) {
+                    case WearProtocol.REQUEST_POINT_PARAM_POINT_TYPE_START:
+                        id = net.nqlab.btmw.R.mipmap.ic_nav_start;
+                        break;
+                    case WearProtocol.REQUEST_POINT_PARAM_POINT_TYPE_GOAL:
+                        id = net.nqlab.btmw.R.mipmap.ic_nav_goal;
+                        break;
+                    case WearProtocol.REQUEST_POINT_PARAM_POINT_TYPE_CONTROL_POINT_START:
+                        id = net.nqlab.btmw.R.mipmap.ic_nav_control_point_start;
+                        break;
+                    case WearProtocol.REQUEST_POINT_PARAM_POINT_TYPE_CONTROL_POINT_GOAL:
+                        id = net.nqlab.btmw.R.mipmap.ic_nav_control_point_goal;
+                        break;
+                    case WearProtocol.REQUEST_POINT_PARAM_POINT_TYPE_PASS:
+                        id = net.nqlab.btmw.R.mipmap.ic_nav_pass;
+                        break;
+                    case WearProtocol.REQUEST_POINT_PARAM_POINT_TYPE_BOTTOM:
+                        id = net.nqlab.btmw.R.mipmap.ic_nav_bottom;
+                        break;
+                    case WearProtocol.REQUEST_POINT_PARAM_POINT_TYPE_WAY:
+                        id = net.nqlab.btmw.R.mipmap.ic_nav_way_point;
+                        break;
+                }
+
+                ImageView bg = (ImageView) MainActivity.this.findViewById(R.id.imageView);
+                bg.setImageResource(id);
 			}
 		});
         mAdapter = new MainViewPagerAdapter(this, mHandheld.getSerDes());

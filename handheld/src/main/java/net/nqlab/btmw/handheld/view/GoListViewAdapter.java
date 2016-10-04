@@ -75,6 +75,16 @@ public class GoListViewAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+	public TourPlanSchedulePoint getPreviousPoint() {
+		TourPlanSchedulePoint prev = null;
+		if (getCurrentPosition() == 0) {
+			prev = getCurrentPoint();
+		} else {
+			prev = (TourPlanSchedulePoint)getItem(getCurrentPosition() - 1);
+		}
+		return prev;
+	}
+
 	public TourPlanSchedulePoint getCurrentPoint() {
         return getRoute().getTourPlanSchedulePoints().get(mTourPlanPointIndex);	
 	}
@@ -98,7 +108,8 @@ public class GoListViewAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater layoutInflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        TourPlanSchedulePoint point = getRoute().getTourPlanSchedulePoints().get(position);
+        TourPlanSchedulePoint pointPrevious = getPreviousPoint();
+        TourPlanSchedulePoint point = getCurrentPoint();
         if (point.getPass()) {
             convertView = layoutInflater.inflate(R.layout.list_item_go_pass,parent,false);
         } else {
@@ -161,10 +172,10 @@ public class GoListViewAdapter extends BaseAdapter {
 
         // 速度
         ((TextView)convertView.findViewById(R.id.target_speed)).setText(
-                FormatHelper.formatSpeed(point.getTargetSpeed())
+                FormatHelper.formatSpeed(pointPrevious.getTargetSpeed())
             );
         ((TextView)convertView.findViewById(R.id.limit_speed)).setText(
-                FormatHelper.formatSpeed(point.getLimitSpeed())
+                FormatHelper.formatSpeed(pointPrevious.getLimitSpeed())
             );
 
         // 時間の加算

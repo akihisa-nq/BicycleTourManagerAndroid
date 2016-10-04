@@ -22,11 +22,12 @@ public class MainViewPagerAdapter extends PagerAdapter {
 
     /** コンテキスト. */
     private Context mContext;
+    private TourPlanSchedulePoint mPointPrevious;
     private TourPlanSchedulePoint mPoint;
     private SerDes mSerDes;
 	private String mBaseTime;
 	private String mStartTime;
-     
+
     /**
      * コンストラクタ.
      */
@@ -36,8 +37,9 @@ public class MainViewPagerAdapter extends PagerAdapter {
         mSerDes = serDes;
     }
 
-    public void setPoint(TourPlanSchedulePoint point) {
-        mPoint = point;
+    public void setPoint(TourPlanSchedulePoint pointPrevious, TourPlanSchedulePoint pointCurrent) {
+        mPointPrevious = pointPrevious;
+        mPoint = pointCurrent;
         notifyDataSetChanged();
     }
 
@@ -136,7 +138,7 @@ public class MainViewPagerAdapter extends PagerAdapter {
 
             case PAGE_SPEED_LEFT:
                 {
-                    textView1.setText(FormatHelper.formatSpeed(mPoint.getTargetSpeed()));
+                    textView1.setText(FormatHelper.formatSpeed(mPointPrevious.getTargetSpeed()));
 
                     int leftTimeTarget = FormatHelper.getLeftTimeSeconds(
                             mSerDes,
@@ -147,7 +149,7 @@ public class MainViewPagerAdapter extends PagerAdapter {
                     textView2.setText(FormatHelper.formatTimeAddition(leftTimeTarget));
                     textView2.setTextColor(FormatHelper.getColorForLeftTime(mContext, leftTimeTarget));
 
-                    textView3.setText(FormatHelper.formatSpeed(mPoint.getLimitSpeed()));
+                    textView3.setText(FormatHelper.formatSpeed(mPointPrevious.getLimitSpeed()));
 
                     int leftTimeLimit = FormatHelper.getLeftTimeSeconds(
                             mSerDes,

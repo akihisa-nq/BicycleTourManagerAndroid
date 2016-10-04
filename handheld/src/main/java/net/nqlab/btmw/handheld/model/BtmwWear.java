@@ -93,17 +93,20 @@ public class BtmwWear {
 		mStartTime = time;
 	}
 
-	public void sendPoint(TourPlanSchedulePoint point) {
+	public void sendPoint(TourPlanSchedulePoint pointPrev, TourPlanSchedulePoint pointCurrent, int pointType) {
         if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
             return;
         }
 
-        String strJson = mBtmwApi.toJson(point);
+        String strJsonPrev = mBtmwApi.toJson(pointPrev);
+        String strJsonCurrent = mBtmwApi.toJson(pointCurrent);
 
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create(WearProtocol.REQUEST_POINT);
-        putDataMapReq.getDataMap().putString(WearProtocol.REQUEST_POINT_PARAM_DATA, strJson);
+        putDataMapReq.getDataMap().putString(WearProtocol.REQUEST_POINT_PARAM_PREVIOUS, strJsonPrev);
+        putDataMapReq.getDataMap().putString(WearProtocol.REQUEST_POINT_PARAM_DATA, strJsonCurrent);
         putDataMapReq.getDataMap().putString(WearProtocol.REQUEST_POINT_PARAM_BASE_DATE, mBaseTime);
         putDataMapReq.getDataMap().putString(WearProtocol.REQUEST_POINT_PARAM_START_DATE, mStartTime);
+        putDataMapReq.getDataMap().putInt(WearProtocol.REQUEST_POINT_PARAM_POINT_TYPE, pointType);
 
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
         PendingResult<DataApi.DataItemResult> pendingResult =
