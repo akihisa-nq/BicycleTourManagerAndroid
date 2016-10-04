@@ -7,6 +7,7 @@ import android.os.MemoryFile;
 import android.support.v4.view.ViewPager;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.BoxInsetLayout;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.GestureDetector;
 import android.view.MenuInflater;
@@ -251,7 +252,13 @@ public class MainActivity extends WearableActivity {
             mRecorder.start();   //録音開始
 
         } catch (Exception e) {
+            if (mRecordFile != null) {
+                mRecordFile.close();
+                mRecordFile = null;
+            }
+            mRecorder = null;
 
+            Log.e("Sound", e.getMessage())
         }
     }
 
