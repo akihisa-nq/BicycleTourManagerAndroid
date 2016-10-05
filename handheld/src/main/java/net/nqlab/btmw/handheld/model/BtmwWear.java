@@ -93,7 +93,7 @@ public class BtmwWear {
     private void notifyDataRecieved(DataItem item) {
         DataMap dataMap = DataMap.fromByteArray(item.getData());
         if (item.getUri().getPath().equals(WearProtocol.REQUEST_SOUND)) {
-            byte[] sound = dataMap.getByteArray(WearProtocol.REQUEST_POINT_PARAM_DATA);
+            byte[] sound = dataMap.getByteArray(WearProtocol.REQUEST_SOUND_PARAM_DATA);
             String date = dataMap.getString(WearProtocol.REQUEST_SOUND_PARAM_DATE);
             mListener.onSoundRecorded(date, sound);
         }

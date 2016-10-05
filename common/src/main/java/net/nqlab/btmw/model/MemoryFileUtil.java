@@ -1,7 +1,6 @@
 package net.nqlab.btmw.model;
 
 import android.os.MemoryFile;
-import android.os.ParcelFileDescriptor;
 
 import java.io.FileDescriptor;
 import java.lang.reflect.InvocationTargetException;

@@ -1,12 +1,12 @@
 package net.nqlab.btmw.wear.controller;
 
+import android.media.AudioFormat;
+import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.MemoryFile;
 import android.support.v4.view.ViewPager;
 import android.support.wearable.activity.WearableActivity;
-import android.support.wearable.view.BoxInsetLayout;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.GestureDetector;
@@ -19,17 +19,13 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import net.nqlab.btmw.model.MemoryFileUtil;
 import net.nqlab.btmw.model.WearProtocol;
 import net.nqlab.btmw.wear.R;
 import net.nqlab.btmw.wear.model.BtmwHandheld;
 import net.nqlab.btmw.api.TourPlanSchedulePoint;
 import net.nqlab.btmw.wear.view.MainViewPagerAdapter;
 
-import java.io.FileDescriptor;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.nio.ByteBuffer;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -37,17 +33,14 @@ public class MainActivity extends WearableActivity {
     private BtmwHandheld mHandheld;
     private MainViewPagerAdapter mAdapter;
     private Timer mTimer;
-    private MediaRecorder mRecorder;
-    private MemoryFile mRecordFile;
+    private AudioRecord mRecorder;
+    private ByteBuffer mAudioData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setAmbientEnabled();
-
-        mRecorder = null;
-        mRecordFile = null;
 
         mHandheld = new BtmwHandheld(this, new BtmwHandheld.BtmwHandheldListener() {
 			@Override
@@ -90,6 +83,11 @@ public class MainActivity extends WearableActivity {
         final ViewPager pager = (ViewPager)findViewById(R.id.viewPager);
         final GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
+            public boolean onDown(MotionEvent e) {
+                return true;
+            }
+
+            @Override
             public boolean onSingleTapConfirmed(MotionEvent motionEvent) {
                 MainActivity.this.recordStop();
                 return super.onSingleTapConfirmed(motionEvent);
@@ -110,8 +108,7 @@ public class MainActivity extends WearableActivity {
         pager.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                gestureDetector.onTouchEvent(motionEvent);
-                return false;
+                return gestureDetector.onTouchEvent(motionEvent);
             }
         });
         registerForContextMenu(pager);
@@ -239,52 +236,59 @@ public class MainActivity extends WearableActivity {
 
     private void recordStart() {
         try {
-            mRecordFile = new MemoryFile(null, 512 * 1024);
+            // AudioRecord作成
+            final int SAMPLE_RATE = 8000;
+            final int bufferSize = AudioRecord.getMinBufferSize(
+                    SAMPLE_RATE,
+                    AudioFormat.CHANNEL_IN_MONO,
+                    AudioFormat.ENCODING_PCM_16BIT);
+            mRecorder = new AudioRecord(
+                    MediaRecorder.AudioSource.MIC,
+                    SAMPLE_RATE,
+                    AudioFormat.CHANNEL_IN_MONO,
+                    AudioFormat.ENCODING_PCM_16BIT,
+                    bufferSize
+            );
+            mAudioData = ByteBuffer.allocate(SAMPLE_RATE * 5);
+            mRecorder.setRecordPositionUpdateListener(new AudioRecord.OnRecordPositionUpdateListener() {
+                // フレームごとの処理
+                @Override
+                public void onPeriodicNotification(AudioRecord recorder) {
+                    short[] tmp = new short[bufferSize / 2];
+                    recorder.read(tmp, 0, bufferSize / 2);
+                    mAudioData.asShortBuffer().put(tmp);
+                    if (mAudioData.position() + bufferSize >= mAudioData.limit()) {
+                        MainActivity.this.recordStop();
+                    } else {
+                        mAudioData.position(mAudioData.position() + bufferSize);
+                    }
+                }
 
-            mRecorder = new MediaRecorder();
-            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
-            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
-            mRecorder.setOutputFile(MemoryFileUtil.getFileDescriptor(mRecordFile));
+                @Override
+                public void onMarkerReached(AudioRecord recorder) {
+                }
+            });
 
-            //録音準備＆録音開始
-            mRecorder.prepare();
-            mRecorder.start();   //録音開始
+            mRecorder.setPositionNotificationPeriod(bufferSize / 2);
+
+            // 録音開始
+            mRecorder.startRecording();
 
         } catch (Exception e) {
-            if (mRecordFile != null) {
-                mRecordFile.close();
-                mRecordFile = null;
-            }
-
-            if (mRecorder != null) {
-                mRecorder.reset();
-                mRecorder.release();
-                mRecorder = null;
-            }
-
             Log.e("Sound", e.getMessage());
         }
     }
 
     private void recordStop() {
         if (mRecorder != null) {
+            mRecorder.setRecordPositionUpdateListener(null);
             mRecorder.stop();
-            mRecorder.reset();   //オブジェクトのリセット
-            //release()前であればsetAudioSourceメソッドを呼び出すことで再利用可能
-            mRecorder.release(); //Recorderオブジェクトの解放
             mRecorder = null;
 
-            try {
-                byte[] data = new byte[mRecordFile.length()];
-                mRecordFile.readBytes(data, 0, 0, data.length);
-                mRecordFile.close();
-
-                mHandheld.sendSoundData(data);
-            } catch (Exception e) {
-            }
-
-            mRecordFile = null;
+            mAudioData.limit(mAudioData.position());
+            mAudioData.position(0);
+            mHandheld.sendSoundData(mAudioData.slice().array());
+            mAudioData = null;
         }
     }
 }
