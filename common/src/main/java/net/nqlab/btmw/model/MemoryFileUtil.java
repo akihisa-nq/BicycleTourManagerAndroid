@@ -8,21 +8,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class MemoryFileUtil {
-    private static final Method sMethodGetParcelFileDescriptor;
     private static final Method sMethodGetFileDescriptor;
     static {
-        sMethodGetParcelFileDescriptor = get("getParcelFileDescriptor");
         sMethodGetFileDescriptor = get("getFileDescriptor");
-    }
-
-    public static ParcelFileDescriptor getParcelFileDescriptor(MemoryFile file) {
-        try {
-            return (ParcelFileDescriptor) sMethodGetParcelFileDescriptor.invoke(file);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public static FileDescriptor getFileDescriptor(MemoryFile file) {

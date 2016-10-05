@@ -243,7 +243,7 @@ public class MainActivity extends WearableActivity {
 
             mRecorder = new MediaRecorder();
             mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
             mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
             mRecorder.setOutputFile(MemoryFileUtil.getFileDescriptor(mRecordFile));
 
@@ -256,7 +256,12 @@ public class MainActivity extends WearableActivity {
                 mRecordFile.close();
                 mRecordFile = null;
             }
-            mRecorder = null;
+
+            if (mRecorder != null) {
+                mRecorder.reset();
+                mRecorder.release();
+                mRecorder = null;
+            }
 
             Log.e("Sound", e.getMessage());
         }
