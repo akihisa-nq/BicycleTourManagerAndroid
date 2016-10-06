@@ -161,7 +161,7 @@ public class BtmwApi {
 
                 @Override
                 public void onNext(User user) {
-                    if (user.getEmail() == null) {
+                    if (user.getEmail() == null || user.getEmail().isEmpty()) {
                         mAdapter = null;
                         mAccessToken = null;
                         listener.onLoginFailure();
@@ -288,7 +288,7 @@ public class BtmwApi {
 
         listener.onBegin();
 
-        if (go.tour_go_id.longValue() == 0) {
+        if (go.tour_go_id == null || go.tour_go_id.longValue() == 0) {
             api.create(goApi)
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
