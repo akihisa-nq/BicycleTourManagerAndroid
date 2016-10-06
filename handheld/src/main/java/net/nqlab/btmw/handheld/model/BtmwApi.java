@@ -21,6 +21,7 @@ import javax.net.ssl.SSLSession;
 
 import android.net.Uri;
 import android.util.Log;
+import android.util.Base64;
 
 import net.nqlab.btmw.api.ExclusionArea;
 import net.nqlab.btmw.api.ExclusionAreaApi;
@@ -276,7 +277,7 @@ public class BtmwApi {
             TourGoEvent event = new TourGoEvent();
             event.setEventType("sound");
             event.setOccuredOn(sound.recorded_on);
-            event.setBlob(sound.sound_data);
+            event.setBlob(Base64.encodeToString(sound.sound_data, sound.sound_data.length));
             listEvents.add(event);
         }
 

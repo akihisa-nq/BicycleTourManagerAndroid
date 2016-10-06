@@ -26,7 +26,7 @@ public class TourGoEvent {
     private Integer tourPlanPointId;
     @SerializedName("blob")
     @Expose
-    private byte[] blob;
+    private String blob;
 
     /**
      * 
@@ -123,7 +123,7 @@ public class TourGoEvent {
      * @return
      *     The blob
      */
-    public byte[] getBlob() {
+    public String getBlob() {
         return blob;
     }
 
@@ -132,7 +132,7 @@ public class TourGoEvent {
      * @param blob
      *     The blob
      */
-    public void setBlob(byte[] blob) {
+    public void setBlob(String blob) {
         this.blob = blob;
     }
 
