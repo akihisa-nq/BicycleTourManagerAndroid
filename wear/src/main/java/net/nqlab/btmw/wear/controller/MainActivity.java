@@ -281,6 +281,8 @@ public class MainActivity extends WearableActivity {
                     mAudioDataOffset += bufferSize;
                     if (mAudioDataOffset >= mAudioData.limit()) {
                         MainActivity.this.recordStop();
+                    } else {
+                        mAudioData.position(mAudioDataOffset);
                     }
                 }
 
@@ -325,6 +327,7 @@ public class MainActivity extends WearableActivity {
 				(byte)((waveSize >> 24) & 0xFF)
 			};
 			mAudioData.put(headerSizeWave);
+            mAudioData.position(0);
 
             if (mAudioDataOffset < mAudioData.limit()) {
                 byte[] tmp = new byte[mAudioDataOffset];

@@ -277,7 +277,7 @@ public class BtmwApi {
             TourGoEvent event = new TourGoEvent();
             event.setEventType("sound");
             event.setOccuredOn(sound.recorded_on);
-            event.setBlob(Base64.encodeToString(sound.sound_data, sound.sound_data.length));
+            event.setBlob(Base64.encodeToString(sound.sound_data, Base64.DEFAULT));
             listEvents.add(event);
         }
 
