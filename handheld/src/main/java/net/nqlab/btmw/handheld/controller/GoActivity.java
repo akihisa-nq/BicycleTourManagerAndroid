@@ -29,6 +29,7 @@ import net.nqlab.btmw.model.WearProtocol;
 import net.nqlab.btmw.handheld.R;
 import net.nqlab.btmw.handheld.model.BtmwApi;
 import net.nqlab.btmw.handheld.model.TourGoPassPoint;
+import net.nqlab.btmw.handheld.model.TourGoSound;
 import net.nqlab.btmw.handheld.view.GoSelectListViewAdapter;
 import net.nqlab.btmw.handheld.model.TourGo;
 import net.nqlab.btmw.handheld.model.TourPlanScheduleStore;
@@ -92,8 +93,11 @@ public class GoActivity extends AppCompatActivity {
 
             @Override
             public void onSoundRecorded(String date, byte[] data) {
-                // FIXME
-                Log.d("Sound", date + " : " + data.length);
+                TourGoSound sound = new TourGoSound();
+                sound.recorded_on = date;
+                sound.sound_data = data;
+                sound.tour_go_id = mGo._id;
+                getBtmwApplication().getSaveData().addTourGoSound(sound);
             }
         });
 

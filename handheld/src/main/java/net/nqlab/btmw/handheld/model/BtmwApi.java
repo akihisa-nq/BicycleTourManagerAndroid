@@ -272,6 +272,13 @@ public class BtmwApi {
             event.setTourPlanPointId((int)passPoint.tour_plan_point_id);
             listEvents.add(event);
         }
+        for (TourGoSound sound : mSaveData.getTourGoSounds(go._id)) {
+            TourGoEvent event = new TourGoEvent();
+            event.setEventType("sound");
+            event.setOccuredOn(sound.recorded_on);
+            event.setBlob(sound.sound_data);
+            listEvents.add(event);
+        }
 
         final net.nqlab.btmw.api.TourGo goApi = new net.nqlab.btmw.api.TourGo();
         goApi.setStartTime(go.start_time);

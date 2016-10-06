@@ -111,6 +111,10 @@ public class SaveData {
         return mOrma.selectFromTourGoPassPoint().tour_go_idEq(id).toList();
     }
 
+    public List<TourGoSound> getTourGoSounds(long id) {
+        return mOrma.selectFromTourGoSound().tour_go_idEq(id).toList();
+    }
+
     public interface TourPlanScheduleVisitor {
         void visit(int id, String name);
     }
@@ -174,6 +178,10 @@ public class SaveData {
         if (count == 0) {
             mOrma.insertIntoTourGoPassPoint(passPoint);
         }
+    }
+
+    public void addTourGoSound(TourGoSound sound) {
+        mOrma.insertIntoTourGoSound(sound);
     }
 }
 

@@ -24,6 +24,9 @@ public class TourGoEvent {
     @SerializedName("tour_plan_point_id")
     @Expose
     private Integer tourPlanPointId;
+    @SerializedName("blob")
+    @Expose
+    private byte[] blob;
 
     /**
      * 
@@ -115,6 +118,24 @@ public class TourGoEvent {
         this.tourPlanPointId = tourPlanPointId;
     }
 
+    /**
+     *
+     * @return
+     *     The blob
+     */
+    public byte[] getBlob() {
+        return blob;
+    }
+
+    /**
+     *
+     * @param blob
+     *     The blob
+     */
+    public void setBlob(byte[] blob) {
+        this.blob = blob;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
@@ -122,7 +143,7 @@ public class TourGoEvent {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(id).append(tourGoId).append(occuredOn).append(eventType).append(tourPlanPointId).toHashCode();
+        return new HashCodeBuilder().append(id).append(tourGoId).append(occuredOn).append(eventType).append(tourPlanPointId).append(blob).toHashCode();
     }
 
     @Override
@@ -134,7 +155,7 @@ public class TourGoEvent {
             return false;
         }
         TourGoEvent rhs = ((TourGoEvent) other);
-        return new EqualsBuilder().append(id, rhs.id).append(tourGoId, rhs.tourGoId).append(occuredOn, rhs.occuredOn).append(eventType, rhs.eventType).append(tourPlanPointId, rhs.tourPlanPointId).isEquals();
+        return new EqualsBuilder().append(id, rhs.id).append(tourGoId, rhs.tourGoId).append(occuredOn, rhs.occuredOn).append(eventType, rhs.eventType).append(tourPlanPointId, rhs.tourPlanPointId).append(blob, rhs.blob).isEquals();
     }
 
 }

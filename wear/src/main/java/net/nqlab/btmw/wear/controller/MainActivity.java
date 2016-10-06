@@ -35,6 +35,7 @@ public class MainActivity extends WearableActivity {
     private Timer mTimer;
     private AudioRecord mRecorder;
     private ByteBuffer mAudioData;
+    private int mAudioDataOffset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +44,8 @@ public class MainActivity extends WearableActivity {
         setAmbientEnabled();
 
         mHandheld = new BtmwHandheld(this, new BtmwHandheld.BtmwHandheldListener() {
-			@Override
-			public void onSetPoint(String base, String start, TourPlanSchedulePoint pointPrevious, TourPlanSchedulePoint pointCurrent, int pointType) {
+            @Override
+            public void onSetPoint(String base, String start, TourPlanSchedulePoint pointPrevious, TourPlanSchedulePoint pointCurrent, int pointType) {
                 MainActivity.this.mAdapter.setBaseTime(base);
                 MainActivity.this.mAdapter.setStartTime(start);
                 MainActivity.this.mAdapter.setPoint(pointPrevious, pointCurrent);
@@ -76,8 +77,8 @@ public class MainActivity extends WearableActivity {
 
                 ImageView bg = (ImageView) MainActivity.this.findViewById(R.id.imageView);
                 bg.setImageResource(id);
-			}
-		});
+            }
+        });
         mAdapter = new MainViewPagerAdapter(this, mHandheld.getSerDes());
 
         final ViewPager pager = (ViewPager)findViewById(R.id.viewPager);
@@ -250,6 +251,7 @@ public class MainActivity extends WearableActivity {
                     bufferSize
             );
             mAudioData = ByteBuffer.allocate(SAMPLE_RATE * 5);
+            mAudioDataOffset = 0;
             mRecorder.setRecordPositionUpdateListener(new AudioRecord.OnRecordPositionUpdateListener() {
                 // フレームごとの処理
                 @Override
@@ -257,10 +259,9 @@ public class MainActivity extends WearableActivity {
                     short[] tmp = new short[bufferSize / 2];
                     recorder.read(tmp, 0, bufferSize / 2);
                     mAudioData.asShortBuffer().put(tmp);
-                    if (mAudioData.position() + bufferSize >= mAudioData.limit()) {
+                    mAudioDataOffset += bufferSize;
+                    if (mAudioDataOffset >= mAudioData.limit()) {
                         MainActivity.this.recordStop();
-                    } else {
-                        mAudioData.position(mAudioData.position() + bufferSize);
                     }
                 }
 
@@ -275,19 +276,25 @@ public class MainActivity extends WearableActivity {
             mRecorder.startRecording();
 
         } catch (Exception e) {
+            mRecorder = null;
             Log.e("Sound", e.getMessage());
         }
     }
 
     private void recordStop() {
         if (mRecorder != null) {
-            mRecorder.setRecordPositionUpdateListener(null);
             mRecorder.stop();
+            mRecorder.setRecordPositionUpdateListener(null);
             mRecorder = null;
 
-            mAudioData.limit(mAudioData.position());
-            mAudioData.position(0);
-            mHandheld.sendSoundData(mAudioData.slice().array());
+            if (mAudioDataOffset < mAudioData.limit()) {
+                byte[] tmp = new byte[mAudioDataOffset];
+                mAudioData.get(tmp, 0, mAudioDataOffset);
+                mHandheld.sendSoundData(tmp);
+            } else {
+                mHandheld.sendSoundData(mAudioData.array());
+            }
+
             mAudioData = null;
         }
     }
