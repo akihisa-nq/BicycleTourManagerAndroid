@@ -250,8 +250,27 @@ public class MainActivity extends WearableActivity {
                     AudioFormat.ENCODING_PCM_16BIT,
                     bufferSize
             );
-            mAudioData = ByteBuffer.allocate(SAMPLE_RATE * 5);
-            mAudioDataOffset = 0;
+			final int HEADER_SIZE = 44;
+            mAudioData = ByteBuffer.allocate(HEADER_SIZE + SAMPLE_RATE * 5);
+            mAudioDataOffset = HEADER_SIZE;
+
+			byte[] header = {
+				0x52, 0x49, 0x46, 0x46, // RIFF
+				0x00, 0x00, 0x00, 0x00, // size (resrved)
+				0x57, 0x41, 0x56, 0x45, // WAVE
+				0x66, 0x6d, 0x74, 0x20, // 'fmt '
+				0x0F, 0x00, 0x00, 0x00, // size(16 byte)
+				0x01, 0x00,				//
+				0x01, 0x00,				//
+				0x40, 0x1f, 0x00, 0x00, // 8 kHz
+				(byte)0x80, 0x3e, 0x00, 0x00, // 8000 * 2 bytes
+				0x02, 0x00,				//
+				0x0f, 0x00,				//
+				0x64, 0x61, 0x74, 0x61, // 'data'
+				0x00, 0x00, 0x00, 0x00, // size (reserved)
+			};
+			mAudioData.put(header);
+
             mRecorder.setRecordPositionUpdateListener(new AudioRecord.OnRecordPositionUpdateListener() {
                 // フレームごとの処理
                 @Override
@@ -286,6 +305,26 @@ public class MainActivity extends WearableActivity {
             mRecorder.stop();
             mRecorder.setRecordPositionUpdateListener(null);
             mRecorder = null;
+
+			final int totalSize = mAudioDataOffset - 8;
+			mAudioData.position(4);
+			byte[] headerSizeTotal = {
+				(byte)((totalSize >>  0) & 0xFF),
+				(byte)((totalSize >>  8) & 0xFF),
+				(byte)((totalSize >> 16) & 0xFF),
+				(byte)((totalSize >> 24) & 0xFF)
+			};
+			mAudioData.put(headerSizeTotal);
+
+			final int waveSize = mAudioDataOffset - 44;
+			mAudioData.position(40);
+			byte[] headerSizeWave = {
+				(byte)((waveSize >>  0) & 0xFF),
+				(byte)((waveSize >>  8) & 0xFF),
+				(byte)((waveSize >> 16) & 0xFF),
+				(byte)((waveSize >> 24) & 0xFF)
+			};
+			mAudioData.put(headerSizeWave);
 
             if (mAudioDataOffset < mAudioData.limit()) {
                 byte[] tmp = new byte[mAudioDataOffset];
